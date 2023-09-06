@@ -1,0 +1,4 @@
+name: EasyClans
+main: net.astrona.easyclans.ClansPlugin
+api-version: 1.19
+version: @version@
