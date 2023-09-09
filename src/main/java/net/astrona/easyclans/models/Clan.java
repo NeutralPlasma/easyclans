@@ -1,5 +1,9 @@
 package net.astrona.easyclans.models;
 
+import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
+
 /**
  * TODO:
  * bank (money)
@@ -14,5 +18,7 @@ package net.astrona.easyclans.models;
  *
 */
 
-public record Clan(int id, String name, String displayName) {
+public record Clan(int id, UUID owner, String name, String displayName, int autoKickTime,
+                   int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
+                   ItemStack banner, double bank, String tag) {
 }

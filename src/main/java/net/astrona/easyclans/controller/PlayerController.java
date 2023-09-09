@@ -19,7 +19,7 @@ public class PlayerController {
     }
 
     public void addPlayer(UUID uuid) {
-        CPlayer clanPlayer = new CPlayer(uuid, null);
+        CPlayer clanPlayer = new CPlayer(uuid, null, 0);
         cache.add(clanPlayer);
     }
 

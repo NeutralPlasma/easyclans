@@ -122,8 +122,8 @@ public class SQLStorage {
                             id INTEGER PRIMARY KEY,
                             clan INT,
                             player_id VARCHAR(36),
-                            expire_date DATETIME,
-                            created_on DATETIME,
+                            expire_date BIGINT,
+                            created_on BIGINT,
                             
                             FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
                             FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
@@ -145,8 +145,8 @@ public class SQLStorage {
                             id INTEGER PRIMARY KEY,
                             clan INT,
                             player_id VARCHAR(36),
-                            expire_date DATETIME,
-                            created_on DATETIME,
+                            expire_date BIGINT,
+                            created_on BIGINT,
                             
                             FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
                             FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)

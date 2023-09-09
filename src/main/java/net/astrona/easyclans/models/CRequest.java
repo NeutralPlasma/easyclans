@@ -1,4 +1,6 @@
 package net.astrona.easyclans.models;
 
-public record CRequest() {
+import java.util.UUID;
+
+public record CRequest(int requestId, int clanId, UUID playerUuid, long expiredTime, long createdTime) {
 }
