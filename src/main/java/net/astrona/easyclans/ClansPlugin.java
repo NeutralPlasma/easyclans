@@ -17,6 +17,8 @@ public class ClansPlugin extends JavaPlugin {
         PlayerController playerController = new PlayerController(this, cache, sqlStorage);
 
         this.listening(pluginManager, playerController);
+
+
     }
 
     private void listening(PluginManager pluginManager, PlayerController playerController) {

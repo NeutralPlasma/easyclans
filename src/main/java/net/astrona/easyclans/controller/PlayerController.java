@@ -18,8 +18,12 @@ public class PlayerController {
         this.sqlStorage = sqlStorage;
     }
 
+    /**
+     * Adds new player if it's not cached, so new player.
+     * @param uuid the id of the player
+     */
     public void addPlayer(UUID uuid) {
-        CPlayer clanPlayer = new CPlayer(uuid, null, 0);
+        CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis());
         cache.add(clanPlayer);
     }
 
