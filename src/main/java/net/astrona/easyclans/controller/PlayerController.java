@@ -2,20 +2,21 @@ package net.astrona.easyclans.controller;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
-import net.astrona.easyclans.models.Cache;
 import net.astrona.easyclans.storage.SQLStorage;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerController {
+    private final Map<UUID, CPlayer> players;
     private final ClansPlugin plugin;
-    private final Cache cache;
     private final SQLStorage sqlStorage;
 
-    public PlayerController(ClansPlugin plugin, Cache cache, SQLStorage sqlStorage) {
+    public PlayerController(ClansPlugin plugin, SQLStorage sqlStorage) {
         this.plugin = plugin;
-        this.cache = cache;
         this.sqlStorage = sqlStorage;
+        this.players = new HashMap<>();
     }
 
     /**
@@ -24,10 +25,10 @@ public class PlayerController {
      */
     public void addPlayer(UUID uuid) {
         CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis());
-        cache.add(clanPlayer);
+        players.put(uuid, clanPlayer);
     }
 
     public void removePlayer(UUID uuid) {
-        cache.remove(uuid);
+        players.remove(uuid);
     }
 }
