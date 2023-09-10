@@ -2,6 +2,7 @@ package net.astrona.easyclans.models;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,5 +21,5 @@ import java.util.UUID;
 
 public record Clan(int id, UUID owner, String name, String displayName, int autoKickTime,
                    int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
-                   ItemStack banner, double bank, String tag) {
+                   ItemStack banner, double bank, String tag, List<UUID> members) {
 }

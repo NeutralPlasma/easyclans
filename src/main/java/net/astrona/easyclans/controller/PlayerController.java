@@ -31,4 +31,15 @@ public class PlayerController {
     public void removePlayer(UUID uuid) {
         players.remove(uuid);
     }
+
+    /**
+     * Retrieves a cached player object based on their UUID.
+     *
+     * @param uuid the id of the player
+     * @return the cached player object associated with the provided UUID,
+     *         or null if no player with the given UUID is found in the cache.
+     */
+    public CPlayer getPlayer(UUID uuid) {
+        return players.get(uuid);
+    }
 }
