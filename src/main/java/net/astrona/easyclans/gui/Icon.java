@@ -2,6 +2,7 @@ package net.astrona.easyclans.gui;
 
 import net.astrona.easyclans.gui.actions.Action;
 import net.astrona.easyclans.gui.actions.ItemAction;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -17,8 +18,16 @@ public class Icon {
     private final List<Action> shiftRightClickActions = new ArrayList<>();
     private final List<ItemAction> dragItemActions = new ArrayList<>();
 
+    private final Action refreshAction;
+
+
     public Icon(ItemStack itemStack) {
         this.itemStack = itemStack;
+        this.refreshAction = null;
+    }
+    public Icon(ItemStack itemStack, Action refreshAction) {
+        this.itemStack = itemStack;
+        this.refreshAction = refreshAction;
     }
 
     public List<Action> getClickActions() {
@@ -45,6 +54,16 @@ public class Icon {
         return dragItemActions;
     }
 
+    /**
+     * Refreshes the icon
+     * DOES NOT UPDATE THE UI!
+     * Action that specifies what happens when refresh on icon is called :)
+     * @param player which player so blabla
+     */
+    public void refresh(Player player){
+        if(this.refreshAction != null)
+            this.refreshAction.execute(player);
+    }
 
     public void addClickAction(Action action) {
         this.clickActions.add(action);

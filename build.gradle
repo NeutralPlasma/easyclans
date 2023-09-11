@@ -35,7 +35,7 @@ processResources {
 }
 
 shadowJar {
-    archiveBaseName.set(plugin)
+    /*archiveBaseName.set(plugin)
     archiveClassifier.set('')
-    archiveVersion.set(version)
+    archiveVersion.set(version)*/
 }

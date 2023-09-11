@@ -1,5 +1,6 @@
 package net.astrona.easyclans.gui;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,25 +57,20 @@ public class GUIListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClick(InventoryClickEvent event) {
-        if (!(event.getInventory() instanceof GUI)) return;
+        if (!(event.getInventory().getHolder() instanceof GUI)) return;
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack itemStack = event.getCurrentItem();
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
-
         GUI gui = (GUI) event.getView().getTopInventory().getHolder();
-
         if (gui == null) return;
-
-        Icon icon = gui.getIcon(event.getRawSlot());
         event.setCancelled(true);
+        Icon icon = gui.getIcon(event.getRawSlot());
         if (icon == null) return;
-
 
         if (event.getClick() == ClickType.LEFT)
             icon.getLeftClickActions().forEach(it -> it.execute(player));
-
         if (event.getClick() == ClickType.RIGHT)
             icon.getRightClickActions().forEach(it -> it.execute(player));
         if (event.getClick() == ClickType.SHIFT_LEFT)

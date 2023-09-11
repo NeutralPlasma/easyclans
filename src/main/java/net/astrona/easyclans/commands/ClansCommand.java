@@ -1,7 +1,9 @@
 package net.astrona.easyclans.commands;
 
+import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.gui.ui.ClanGUI;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -32,13 +34,15 @@ import static net.astrona.easyclans.ClansPlugin.MM;
 
  */
 public class ClansCommand implements TabExecutor {
-    private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create");
+    private ClansPlugin plugin;
+    private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test");
     private final PlayerController playerController;
     private final ClansController clansController;
 
-    public ClansCommand(PlayerController playerController, ClansController clansController) {
+    public ClansCommand(PlayerController playerController, ClansController clansController, ClansPlugin plugin) {
         this.playerController = playerController;
         this.clansController = clansController;
+        this.plugin = plugin;
     }
 
     @Override
@@ -73,6 +77,9 @@ public class ClansCommand implements TabExecutor {
                 case "create" -> {
                     this.executeCreateSubCommand(playerSender);
                 }
+                case "test" -> {
+                    new ClanGUI(playerSender, plugin);
+                }
             }
         } else if (args.length == 2) {
             switch (args[0]) {
@@ -99,18 +106,30 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeMenuSubCommand(Player sender) {
+
+        // first check if player has clan, if has open clan menu, else open clans list to join or create.
+
         // TODO: gasper implementaj menu
     }
 
     private void executeBankSubCommand(Player sender) {
+
+        // check if player is in clan
+
         // TODO: gasper implementaj od banke menu
     }
 
     private void executeMembersSubCommand(Player sender) {
+
+        // check if player is in clan
+
         // TODO: gasper implementaj od members menu
     }
 
     private void executeListSubCommand(Player sender) {
+
+        // check if player is in clan
+
         // TODO: gasper implementaj od clans list menu
     }
 
