@@ -12,21 +12,21 @@ public class Handler {
     private final List<UUID> openedInv = new ArrayList<>();
     private final GUIListener listener;
 
-    public Handler(Plugin plugin){
+    public Handler(Plugin plugin) {
         this.listener = new GUIListener(this, plugin);
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
     }
 
 
-    public void addPlayer(UUID player){
+    public void addPlayer(UUID player) {
         this.openedInv.add(player);
     }
 
-    public void removePlayer(UUID player){
+    public void removePlayer(UUID player) {
         this.openedInv.remove(player);
     }
 
-    public boolean hasPlayer(UUID player){
+    public boolean hasPlayer(UUID player) {
         return this.openedInv.contains(player);
     }
 }

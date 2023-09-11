@@ -63,16 +63,16 @@ public class SQLStorage {
     }
 
 
-    private void createPlayersTable(){
+    private void createPlayersTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                        CREATE TABLE IF NOT EXISTS ec_player_data (
-                            uuid CHAR(36) PRIMARY KEY,
-                            INT clan,
-                            last_active BIGINT
-                        );
-                        """
+                            CREATE TABLE IF NOT EXISTS ec_player_data (
+                                uuid CHAR(36) PRIMARY KEY,
+                                INT clan,
+                                last_active BIGINT
+                            );
+                            """
             );
             statement.execute();
         } catch (SQLException e) {
@@ -82,28 +82,28 @@ public class SQLStorage {
     }
 
 
-    private void createClansTable(){
+    private void createClansTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                    CREATE TABLE IF NOT EXISTS ec_clan_data(
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        owner CHAR(36) NOT NULL,
-                        clan_name VARCHAR(16),
-                        display_name TEXT,
-                        autokick_time INT,
-                        join_points_price INT,
-                        join_money_price DOUBLE,
-                        auto_pay_out_time INT,
-                        auto_pay_out_percentage DOUBLE,
-                        banner TEXT,
-                        bank DOUBLE,
-                        tag VARCHAR(16),
-                        
-                        created_on DATETIME,
-                        FOREIGN KEY (owner) REFERENCES ec_player_data(uuid)
-                    );
-                    """//.formatted(autoIncrement)
+                            CREATE TABLE IF NOT EXISTS ec_clan_data(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                owner CHAR(36) NOT NULL,
+                                clan_name VARCHAR(16),
+                                display_name TEXT,
+                                autokick_time INT,
+                                join_points_price INT,
+                                join_money_price DOUBLE,
+                                auto_pay_out_time INT,
+                                auto_pay_out_percentage DOUBLE,
+                                banner TEXT,
+                                bank DOUBLE,
+                                tag VARCHAR(16),
+                                
+                                created_on DATETIME,
+                                FOREIGN KEY (owner) REFERENCES ec_player_data(uuid)
+                            );
+                            """//.formatted(autoIncrement)
             );
             statement.execute();
         } catch (SQLException e) {
@@ -113,21 +113,21 @@ public class SQLStorage {
     }
 
 
-    private void createClanInvitesTable(){
+    private void createClanInvitesTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                        CREATE TABLE IF NOT EXISTS ec_clan_invites (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            clan INT,
-                            player_id VARCHAR(36),
-                            expire_date BIGINT,
-                            created_on BIGINT,
-                            
-                            FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
-                            FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
-                        );
-                        """
+                            CREATE TABLE IF NOT EXISTS ec_clan_invites (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                clan INT,
+                                player_id VARCHAR(36),
+                                expire_date BIGINT,
+                                created_on BIGINT,
+                                
+                                FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
+                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                            );
+                            """
             );
             statement.execute();
         } catch (SQLException e) {
@@ -136,21 +136,21 @@ public class SQLStorage {
         }
     }
 
-    private void createClanJoinRequestsTable(){
+    private void createClanJoinRequestsTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                        CREATE TABLE IF NOT EXISTS ec_clan_join_requests (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            clan INT,
-                            player_id VARCHAR(36),
-                            expire_date BIGINT,
-                            created_on BIGINT,
-                            
-                            FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
-                            FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
-                        );
-                        """
+                            CREATE TABLE IF NOT EXISTS ec_clan_join_requests (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                clan INT,
+                                player_id VARCHAR(36),
+                                expire_date BIGINT,
+                                created_on BIGINT,
+                                
+                                FOREIGN KEY (clan) REFERENCES ec_clan_data(id),
+                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                            );
+                            """
             );
             statement.execute();
         } catch (SQLException e) {

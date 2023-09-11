@@ -52,8 +52,8 @@ public class ClansCommand implements TabExecutor {
             if (!oneArgumentSubCommands.contains(args[0])) {
                 sender.sendMessage(MM.deserialize(
                         """
-                        <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Too many arguments.</dark_red>
-                        """.formatted(args[0])
+                                <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Too many arguments.</dark_red>
+                                """.formatted(args[0])
                 ));
                 return false;
             }

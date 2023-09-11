@@ -16,8 +16,7 @@ import java.util.UUID;
  * join price (price for member to join the clan)
  * clan symbol (character .... also changable)
  * customizable flag (that can be purchased to be changed, like an actuall flag)
- *
-*/
+ */
 
 public class Clan {
     private int id;

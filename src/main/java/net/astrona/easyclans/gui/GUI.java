@@ -25,11 +25,11 @@ public class GUI implements InventoryHolder {
         this.title = title;
     }
 
-    public void setIcon(int pos, Icon icon){
+    public void setIcon(int pos, Icon icon) {
         this.icons.put(pos, icon);
     }
 
-    public Icon getIcon(int pos){
+    public Icon getIcon(int pos) {
         return this.icons.get(pos);
     }
 
@@ -37,9 +37,10 @@ public class GUI implements InventoryHolder {
         return closeActions;
     }
 
-    public void open(Player player){
+    public void open(Player player) {
         player.openInventory(getInventory());
     }
+
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, this.size, ClansPlugin.MM.deserialize(this.title));

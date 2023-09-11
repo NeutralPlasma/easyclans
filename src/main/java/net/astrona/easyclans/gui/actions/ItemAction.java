@@ -1,7 +1,7 @@
 package net.astrona.easyclans.gui.actions;
 
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public interface ItemAction {
 

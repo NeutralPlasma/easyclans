@@ -22,41 +22,42 @@ public class GUIListener implements Listener {
         this.handler = handler;
         this.plugin = plugin;
     }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInventoryOpen(InventoryOpenEvent event){
-        if(event.getInventory() instanceof GUI){
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        if (event.getInventory() instanceof GUI) {
             handler.addPlayer(event.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInventoryClose(InventoryCloseEvent event){
-        if(!(event.getInventory() instanceof GUI))  return;
-        if(!handler.hasPlayer(event.getPlayer().getUniqueId())) return;
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getInventory() instanceof GUI)) return;
+        if (!handler.hasPlayer(event.getPlayer().getUniqueId())) return;
         handler.removePlayer(event.getPlayer().getUniqueId());
 
 
         //Get our CustomHolder
         GUI gui;
-        if(event.getView().getTopInventory().getHolder() instanceof GUI) {
+        if (event.getView().getTopInventory().getHolder() instanceof GUI) {
             gui = (GUI) event.getView().getTopInventory().getHolder();
-        }else {
+        } else {
             return;
         }
-        if(gui != null)
-            new BukkitRunnable(){
+        if (gui != null)
+            new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if(!handler.hasPlayer(event.getPlayer().getUniqueId()))
-                        gui.getCloseActions().forEach(it -> it.execute((Player)event.getPlayer()));
+                    if (!handler.hasPlayer(event.getPlayer().getUniqueId()))
+                        gui.getCloseActions().forEach(it -> it.execute((Player) event.getPlayer()));
                 }
             }.runTaskLater(plugin, 2L);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onClick(InventoryClickEvent event){
-        if(!(event.getInventory() instanceof GUI))  return;
-        if(!(event.getWhoClicked() instanceof  Player)) return;
+    public void onClick(InventoryClickEvent event) {
+        if (!(event.getInventory() instanceof GUI)) return;
+        if (!(event.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack itemStack = event.getCurrentItem();
@@ -64,21 +65,21 @@ public class GUIListener implements Listener {
 
         GUI gui = (GUI) event.getView().getTopInventory().getHolder();
 
-        if(gui == null) return;
+        if (gui == null) return;
 
         Icon icon = gui.getIcon(event.getRawSlot());
         event.setCancelled(true);
         if (icon == null) return;
 
 
-        if(event.getClick() == ClickType.LEFT)
+        if (event.getClick() == ClickType.LEFT)
             icon.getLeftClickActions().forEach(it -> it.execute(player));
 
-        if(event.getClick() == ClickType.RIGHT)
+        if (event.getClick() == ClickType.RIGHT)
             icon.getRightClickActions().forEach(it -> it.execute(player));
-        if(event.getClick() == ClickType.SHIFT_LEFT)
+        if (event.getClick() == ClickType.SHIFT_LEFT)
             icon.getShiftLeftClickActions().forEach(it -> it.execute(player));
-        if(event.getClick() == ClickType.SHIFT_RIGHT)
+        if (event.getClick() == ClickType.SHIFT_RIGHT)
             icon.getShiftRightClickActions().forEach(it -> it.execute(player));
 
         // TODO

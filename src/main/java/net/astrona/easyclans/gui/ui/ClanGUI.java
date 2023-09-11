@@ -12,11 +12,11 @@ public class ClanGUI extends GUI {
     }
 
 
-    private void refresh(){
+    private void refresh() {
 
     }
 
-    private void construct(){
+    private void construct() {
 
     }
 

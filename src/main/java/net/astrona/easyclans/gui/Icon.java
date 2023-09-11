@@ -46,25 +46,29 @@ public class Icon {
     }
 
 
-    public void addClickAction(Action action){
+    public void addClickAction(Action action) {
         this.clickActions.add(action);
     }
-    public void addLeftClickAction(Action action){
+
+    public void addLeftClickAction(Action action) {
         this.leftClickActions.add(action);
     }
-    public void addRightClickAction(Action action){
+
+    public void addRightClickAction(Action action) {
         this.rightClickActions.add(action);
     }
-    public void addShiftLeftClickAction(Action action){
+
+    public void addShiftLeftClickAction(Action action) {
         this.shiftLeftClickActions.add(action);
     }
-    public void addShiftRightClickAction(Action action){
+
+    public void addShiftRightClickAction(Action action) {
         this.shiftRightClickActions.add(action);
     }
-    public void addDragItemAction(ItemAction action){
+
+    public void addDragItemAction(ItemAction action) {
         this.dragItemActions.add(action);
     }
-
 
 
 }

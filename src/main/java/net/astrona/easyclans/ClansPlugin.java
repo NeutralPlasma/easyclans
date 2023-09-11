@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ClansPlugin extends JavaPlugin {
     private Handler guiHandler;
     public final static MiniMessage MM = MiniMessage.miniMessage();
+
     @Override
     public void onEnable() {
         SQLStorage sqlStorage = new SQLStorage(this);
@@ -25,7 +26,7 @@ public class ClansPlugin extends JavaPlugin {
         pluginManager.registerEvents(new PlayerConnectionListener(this, playerController), this);
     }
 
-    private void registerGUI(){
+    private void registerGUI() {
         guiHandler = new Handler(this);
     }
 }
