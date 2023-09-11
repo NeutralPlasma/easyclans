@@ -107,40 +107,11 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeMembersSubCommand(Player sender) {
-        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-        Clan clan = clansController.getClan(cPlayer.clan());
-
-        if (clan == null) {
-            sender.sendMessage(MM.deserialize("<dark_red>You are not in a clan.</dark_red>"));
-            return;
-        }
-
-        List<UUID> members = clan.members();
-
-        if (members.isEmpty()) {
-            sender.sendMessage(MM.deserialize("<gray>The clan has no members.</gray>"));
-            return;
-        }
-
-        StringBuilder memberList = new StringBuilder().append(
-                """
-                -------------------------<br>
-                %s Member List<br>
-                <br>
-                """);
-
-        for (UUID memberId : members) {
-            OfflinePlayer member = Bukkit.getOfflinePlayer(memberId);
-            memberList.append("- ").append(member.getName()).append("<br>");
-        }
-
-        memberList.append("-------------------------");
-
-        sender.sendMessage(MM.deserialize(memberList.toString()));
+        // TODO: gasper implementaj od members menu
     }
 
     private void executeListSubCommand(Player sender) {
-
+        // TODO: gasper implementaj od clans list menu
     }
 
     private void executeCreateSubCommand(Player sender) {

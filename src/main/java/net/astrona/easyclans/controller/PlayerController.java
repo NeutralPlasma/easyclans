@@ -20,14 +20,20 @@ public class PlayerController {
     }
 
     /**
-     * Adds new player if it's not cached, so new player.
-     * @param uuid the id of the player
+     * Adds a new player to the player cache.
+     *
+     * @param uuid the UUID of the player to add.
      */
     public void addPlayer(UUID uuid) {
         CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis());
         players.put(uuid, clanPlayer);
     }
 
+    /**
+     * Removes a player from the player cache.
+     *
+     * @param uuid the UUID of the player to remove.
+     */
     public void removePlayer(UUID uuid) {
         players.remove(uuid);
     }
