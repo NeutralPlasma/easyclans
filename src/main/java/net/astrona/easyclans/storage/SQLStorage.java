@@ -60,7 +60,6 @@ public class SQLStorage {
         this.createClansTable();
         this.createClanInvitesTable();
         this.createClanJoinRequestsTable();
-        //this.initTables(isMysql);
     }
 
 
@@ -119,7 +118,7 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement(
                     """
                         CREATE TABLE IF NOT EXISTS ec_clan_invites (
-                            id INTEGER PRIMARY KEY,
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                             clan INT,
                             player_id VARCHAR(36),
                             expire_date BIGINT,
@@ -142,7 +141,7 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement(
                     """
                         CREATE TABLE IF NOT EXISTS ec_clan_join_requests (
-                            id INTEGER PRIMARY KEY,
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                             clan INT,
                             player_id VARCHAR(36),
                             expire_date BIGINT,
