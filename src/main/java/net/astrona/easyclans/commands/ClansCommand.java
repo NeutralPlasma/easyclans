@@ -63,7 +63,7 @@ public class ClansCommand implements TabExecutor {
                                 <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Too many arguments.</dark_red>
                                 """.formatted(args[0])
                 ));
-                return false;
+                return true;
             }
             switch (args[0]) {
                 case "menu" -> {
@@ -82,9 +82,10 @@ public class ClansCommand implements TabExecutor {
                     this.executeCreateSubCommand(playerSender);
                 }
                 case "test" -> {
+                    CPlayer test = new CPlayer(playerSender.getUniqueId(), 10, System.currentTimeMillis(), System.currentTimeMillis());
                     new ClanGUI(playerSender, new Clan(
-                        10,
-                            playerSender.getUniqueId(),
+                            10,
+                            test,
                             "Testing clan",
                             "DISPLAY!",
                             0,
@@ -95,7 +96,16 @@ public class ClansCommand implements TabExecutor {
                             new ItemStack(Material.CYAN_BANNER),
                             0,
                             "DD",
-                            Collections.emptyList(),
+                            List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test),
                             true
                     ), clansController);
                 }
@@ -116,7 +126,7 @@ public class ClansCommand implements TabExecutor {
             }
         }
 
-        return false;
+        return true;
     }
 
     @Override

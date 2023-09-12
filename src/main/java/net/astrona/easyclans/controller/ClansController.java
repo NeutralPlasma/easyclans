@@ -1,6 +1,7 @@
 package net.astrona.easyclans.controller;
 
 import net.astrona.easyclans.ClansPlugin;
+import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.storage.SQLStorage;
 import org.bukkit.inventory.ItemStack;
@@ -39,9 +40,9 @@ public class ClansController {
      * @param members the list of UUIDs of clan members.
      * @return the newly created clan object.
      */
-    public Clan addClan(UUID owner, String name, String displayName, int autoKickTime,
+    public Clan addClan(CPlayer owner, String name, String displayName, int autoKickTime,
                         int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
-                        ItemStack banner, double bank, String tag, List<UUID> members) {
+                        ItemStack banner, double bank, String tag, List<CPlayer> members) {
 
         this.count = this.count + 1;
         Clan clan = new Clan(this.count, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,

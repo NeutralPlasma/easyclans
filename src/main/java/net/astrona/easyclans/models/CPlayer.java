@@ -1,16 +1,20 @@
 package net.astrona.easyclans.models;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import java.util.UUID;
 
 public class CPlayer {
     private UUID uuid;
     private Integer clan;
-    private long lastActive;
+    private long lastActive, joinClanDate;
 
-    public CPlayer(UUID uuid, Integer clan, long lastActive) {
+    public CPlayer(UUID uuid, Integer clan, long lastActive, long joinClanDate) {
         this.uuid = uuid;
         this.clan = clan;
         this.lastActive = lastActive;
+        this.joinClanDate = joinClanDate;
     }
 
     public UUID getUuid() {
@@ -35,5 +39,17 @@ public class CPlayer {
 
     public void setLastActive(long lastActive) {
         this.lastActive = lastActive;
+    }
+
+    public long getJoinClanDate() {
+        return joinClanDate;
+    }
+
+    public void setJoinClanDate(long joinClanDate) {
+        this.joinClanDate = joinClanDate;
+    }
+
+    public OfflinePlayer getOfflinePlayer(){
+        return Bukkit.getOfflinePlayer(uuid);
     }
 }

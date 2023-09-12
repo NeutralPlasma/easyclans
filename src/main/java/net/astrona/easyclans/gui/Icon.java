@@ -1,6 +1,7 @@
 package net.astrona.easyclans.gui;
 
 import net.astrona.easyclans.gui.actions.Action;
+import net.astrona.easyclans.gui.actions.Condition;
 import net.astrona.easyclans.gui.actions.ItemAction;
 import net.astrona.easyclans.gui.actions.UpdateAction;
 import org.bukkit.entity.Player;
@@ -9,9 +10,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Icon {
+public class Icon implements Comparable<Icon> {
 
     public ItemStack itemStack;
+    private int priority;
     private final List<Action> clickActions = new ArrayList<>();
     private final List<Action> leftClickActions = new ArrayList<>();
     private final List<Action> rightClickActions = new ArrayList<>();
@@ -20,15 +22,32 @@ public class Icon {
     private final List<ItemAction> dragItemActions = new ArrayList<>();
 
     private final UpdateAction refreshAction;
+    private Condition visibilityCondition;
 
 
     public Icon(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.refreshAction = null;
+        this.priority = 1;
+    }
+    public Icon(ItemStack itemStack, int priority) {
+        this.itemStack = itemStack;
+        this.refreshAction = null;
+        this.priority = priority;
     }
     public Icon(ItemStack itemStack, UpdateAction refreshAction) {
         this.itemStack = itemStack;
         this.refreshAction = refreshAction;
+        this.priority = 1;
+    }
+    public Icon(ItemStack itemStack, UpdateAction refreshAction, int priority) {
+        this.itemStack = itemStack;
+        this.refreshAction = refreshAction;
+        this.priority = priority;
+    }
+
+    public void setVisibilityCondition(Condition visibilityCondition){
+        this.visibilityCondition = visibilityCondition;
     }
 
     public List<Action> getClickActions() {
@@ -53,6 +72,10 @@ public class Icon {
 
     public List<ItemAction> getDragItemActions() {
         return dragItemActions;
+    }
+
+    public Condition getVisibilityCondition() {
+        return visibilityCondition;
     }
 
     /**
@@ -90,5 +113,17 @@ public class Icon {
         this.dragItemActions.add(action);
     }
 
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    @Override
+    public int compareTo(Icon u) {
+        return u.getPriority() - getPriority();
+    }
 
 }

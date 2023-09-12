@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class Clan {
     private int id;
-    private UUID owner;
+    private CPlayer owner;
     private String name;
     private String displayName;
     private int autoKickTime;
@@ -31,12 +31,12 @@ public class Clan {
     private ItemStack banner;
     private double bank;
     private String tag;
-    private List<UUID> members;
+    private List<CPlayer> members;
     private boolean active;
 
-    public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+    public Clan(int id, CPlayer owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
                 int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage, ItemStack banner, double bank,
-                String tag, List<UUID> members, boolean active) {
+                String tag, List<CPlayer> members, boolean active) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -69,11 +69,11 @@ public class Clan {
         this.id = id;
     }
 
-    public UUID getOwner() {
+    public CPlayer getOwner() {
         return owner;
     }
 
-    public void setOwner(UUID owner) {
+    public void setOwner(CPlayer owner) {
         this.owner = owner;
     }
 
@@ -157,11 +157,11 @@ public class Clan {
         this.tag = tag;
     }
 
-    public List<UUID> getMembers() {
+    public List<CPlayer> getMembers() {
         return members;
     }
 
-    public void setMembers(List<UUID> members) {
+    public void setMembers(List<CPlayer> members) {
         this.members = members;
     }
 }

@@ -25,7 +25,7 @@ public class PlayerController {
      * @param uuid the UUID of the player to add.
      */
     public void addPlayer(UUID uuid) {
-        CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis());
+        CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis(), 0);
         players.put(uuid, clanPlayer);
     }
 

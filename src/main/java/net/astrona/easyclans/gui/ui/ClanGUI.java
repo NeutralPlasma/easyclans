@@ -85,7 +85,11 @@ public class ClanGUI extends GUI {
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             // open new menu
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
+            player.closeInventory();
+
+            new MembersGUI(player, clan, clansController);
+
+            //player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }

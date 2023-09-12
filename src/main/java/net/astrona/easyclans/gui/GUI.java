@@ -10,15 +10,18 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GUI implements InventoryHolder {
 
     private List<Action> closeActions = new ArrayList<>();
+
+    private final Map<Integer, Icon> activeIcons = new HashMap<>();
+    private final Map<Integer, List<Icon>> actualIcons = new HashMap<>();
+
+
     private final Map<Integer, Icon> icons = new HashMap<>();
+    private final Map<Integer, Icon> fallback = new HashMap<>();
     private final int size;
     private String title;
     private List<Integer> noBackgroundSlots = new ArrayList<>();
@@ -34,12 +37,24 @@ public class GUI implements InventoryHolder {
         this.noBackgroundSlots = noBackgroundSlots;
     }
 
-    public void setIcon(int pos, Icon icon) {
+    public void addIcon(int pos, Icon icon){
+        this.actualIcons.computeIfAbsent(pos, k -> new ArrayList<>());
+        this.actualIcons.get(pos).add(icon);
+    }
+    public void setIcon(int pos, Icon icon){
+        this.actualIcons.computeIfAbsent(pos, k -> new ArrayList<>());
+        this.actualIcons.get(pos).clear();
+        this.actualIcons.get(pos).add(icon);
+    }
+    /*public void setIcon(int pos, Icon icon) {
         this.icons.put(pos, icon);
+    }*/
+    public void setFallback(int pos, Icon icon){
+        this.fallback.put(pos, icon);
     }
 
     public Icon getIcon(int pos) {
-        return this.icons.get(pos);
+        return this.activeIcons.get(pos);
     }
 
     public List<Action> getCloseActions() {
@@ -64,17 +79,17 @@ public class GUI implements InventoryHolder {
         var stack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         var stack2 = new ItemStack(Material.PURPLE_STAINED_GLASS_PANE);
 
-        var icon1 = new Icon(stack);
-        var icon2 = new Icon(stack2);
+        var icon1 = new Icon(stack, 0);
+        var icon2 = new Icon(stack2, 0);
 
 
         // set items in inventory
-        setIcon(0, icon2);
-        setIcon(1, icon2);
-        setIcon(7, icon2);
-        setIcon(8, icon2);
-        setIcon(9, icon2);
-        setIcon(17, icon2);
+        addIcon(0, icon2);
+        addIcon(1, icon2);
+        addIcon(7, icon2);
+        addIcon(8, icon2);
+        addIcon(9, icon2);
+        addIcon(17, icon2);
 
         int start = 20;
         if(size < 45){
@@ -87,17 +102,18 @@ public class GUI implements InventoryHolder {
 
         for(int i = start; i < start+5; i++){
             if(!icons.containsKey(i) && !noBackgroundSlots.contains(i)) {
-                setIcon(i, icon2);
+                addIcon(i, icon2);
             }
         }
 
         for(int i = 0; i < size ; i++){
             if(!icons.containsKey(i) && !noBackgroundSlots.contains(i)){
                 if(getIcon(i) == null) {
-                    setIcon(i, icon1);
+                    addIcon(i, icon1);
                 }
             }
         }
+
 
     }
 
@@ -121,17 +137,50 @@ public class GUI implements InventoryHolder {
         if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
             var inv = player.getOpenInventory().getTopInventory();
             icons.forEach((integer, icon) -> {
-                icon.refresh(player);
-                inv.setItem(integer, icon.itemStack);
+                if(icon.getVisibilityCondition() != null){
+                    if(icon.getVisibilityCondition().checkCondition(player, icon)){
+                        inv.setItem(integer, icon.itemStack);
+                        icon.refresh(player);
+                    }else{
+                        inv.setItem(integer, fallback.get(integer).itemStack);
+                    }
+                }else{
+                    inv.setItem(integer, icon.itemStack);
+                    icon.refresh(player);
+                }
             });
+        }
+    }
+
+    private void setupIcons(Player player){
+        for (Map.Entry<Integer, List<Icon>> entry : this.actualIcons.entrySet()) {
+            Collections.sort(entry.getValue());
+            for(Icon icon : entry.getValue()){
+                if(icon == null) continue;
+                if(icon.getVisibilityCondition() == null){
+                    activeIcons.put(entry.getKey(), icon);
+                    break;
+                }
+                else if(icon.getVisibilityCondition().checkCondition(player, icon)){
+                    activeIcons.put(entry.getKey(), icon);
+                    break;
+                }
+            }
         }
     }
 
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, this.size, ClansPlugin.MM.deserialize(this.title));
-        for (Map.Entry<Integer, Icon> entry : this.icons.entrySet()) {
-            inventory.setItem(entry.getKey(), entry.getValue().itemStack);
+
+        setupIcons(player);
+
+        for (Map.Entry<Integer, Icon> entry : this.activeIcons.entrySet()) {
+            if(entry.getValue() == null){
+                inventory.setItem(entry.getKey(), null);
+            }else{
+                inventory.setItem(entry.getKey(), entry.getValue().itemStack);
+            }
         }
         return inventory;
     }
