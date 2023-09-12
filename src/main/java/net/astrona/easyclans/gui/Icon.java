@@ -2,6 +2,7 @@ package net.astrona.easyclans.gui;
 
 import net.astrona.easyclans.gui.actions.Action;
 import net.astrona.easyclans.gui.actions.ItemAction;
+import net.astrona.easyclans.gui.actions.UpdateAction;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class Icon {
 
-    public final ItemStack itemStack;
+    public ItemStack itemStack;
     private final List<Action> clickActions = new ArrayList<>();
     private final List<Action> leftClickActions = new ArrayList<>();
     private final List<Action> rightClickActions = new ArrayList<>();
@@ -18,14 +19,14 @@ public class Icon {
     private final List<Action> shiftRightClickActions = new ArrayList<>();
     private final List<ItemAction> dragItemActions = new ArrayList<>();
 
-    private final Action refreshAction;
+    private final UpdateAction refreshAction;
 
 
     public Icon(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.refreshAction = null;
     }
-    public Icon(ItemStack itemStack, Action refreshAction) {
+    public Icon(ItemStack itemStack, UpdateAction refreshAction) {
         this.itemStack = itemStack;
         this.refreshAction = refreshAction;
     }
@@ -62,7 +63,7 @@ public class Icon {
      */
     public void refresh(Player player){
         if(this.refreshAction != null)
-            this.refreshAction.execute(player);
+            this.refreshAction.execute(this, player);
     }
 
     public void addClickAction(Action action) {

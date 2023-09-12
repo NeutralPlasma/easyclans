@@ -8,14 +8,18 @@ import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,7 +82,22 @@ public class ClansCommand implements TabExecutor {
                     this.executeCreateSubCommand(playerSender);
                 }
                 case "test" -> {
-                    new ClanGUI(playerSender, plugin);
+                    new ClanGUI(playerSender, new Clan(
+                        10,
+                            playerSender.getUniqueId(),
+                            "Testing clan",
+                            "DISPLAY!",
+                            0,
+                            0,
+                            0,
+                            0,
+                            10.0,
+                            new ItemStack(Material.CYAN_BANNER),
+                            0,
+                            "DD",
+                            Collections.emptyList(),
+                            true
+                    ), clansController);
                 }
             }
         } else if (args.length == 2) {
