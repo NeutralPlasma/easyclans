@@ -2,6 +2,7 @@ package net.astrona.easyclans.listener;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.models.CPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,12 +19,22 @@ public class PlayerConnectionListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        this.playerController.addPlayer(event.getPlayer().getUniqueId());
+        CPlayer cPlayer = this.playerController.getPlayer(event.getPlayer().getUniqueId());
+        if(cPlayer == null){
+            cPlayer = this.playerController.createPlayer(event.getPlayer());
+            cPlayer.setActive(true);
+        }else{
+            cPlayer.setActive(true);
+        }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        this.playerController.removePlayer(event.getPlayer().getUniqueId());
+        CPlayer cPlayer = this.playerController.getPlayer(event.getPlayer().getUniqueId());
+        cPlayer.setLastActive(System.currentTimeMillis());
+        cPlayer.setActive(false);
+        this.playerController.updatePlayer(cPlayer);
+        //this.playerController.removePlayer(event.getPlayer().getUniqueId());
     }
 
 

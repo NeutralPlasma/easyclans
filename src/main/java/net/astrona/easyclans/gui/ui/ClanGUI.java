@@ -2,6 +2,7 @@ package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
+import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.actions.Action;
@@ -19,13 +20,15 @@ import java.util.List;
 public class ClanGUI extends GUI {
     private Clan clan;
     private ClansController clansController;
+    private PlayerController playerController;
 
 
-    public ClanGUI(Player player, Clan clan, ClansController clansController) {
+    public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController) {
         super(54, "Clan settings");
 
         this.clan = clan;
         this.clansController = clansController;
+        this.playerController = playerController;
 
         construct();
         fancyBackground();
@@ -42,11 +45,6 @@ public class ClanGUI extends GUI {
         setIcon(33, requestsIcon());
         //  33, 31, 29
 
-
-        /*ItemStack test = new ItemStack(Material.APPLE);
-        Icon appleIcon = new Icon(test, player -> test.setAmount(player.getLevel()));
-        appleIcon.addClickAction(player -> this.update(player, 10));
-        setIcon(10, appleIcon);*/
     }
 
 
@@ -87,7 +85,7 @@ public class ClanGUI extends GUI {
             // open new menu
             player.closeInventory();
 
-            new MembersGUI(player, clan, clansController);
+            new MembersGUI(player, clan, clansController, playerController);
 
             //player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));

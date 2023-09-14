@@ -3,10 +3,10 @@ package net.astrona.easyclans.controller;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.storage.SQLStorage;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerController {
     private final Map<UUID, CPlayer> players;
@@ -17,16 +17,62 @@ public class PlayerController {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
         this.players = new HashMap<>();
+        init();
+    }
+
+
+
+    private void init(){
+        var lPlayers = sqlStorage.getAllPlayers();
+        for(CPlayer cplayer : lPlayers){
+            players.put(cplayer.getUuid(), cplayer);
+        }
     }
 
     /**
      * Adds a new player to the player cache.
      *
-     * @param uuid the UUID of the player to add.
+     * @param player the player object
      */
-    public void addPlayer(UUID uuid) {
-        CPlayer clanPlayer = new CPlayer(uuid, null, System.currentTimeMillis(), 0);
-        players.put(uuid, clanPlayer);
+    private void addPlayer(CPlayer player) {
+        players.put(player.getUuid(), player);
+    }
+
+
+    public CPlayer createPlayer(Player player){
+        CPlayer cPlayer = new CPlayer(player.getUniqueId(),
+                -1,
+                System.currentTimeMillis(),
+                0,
+                player.getName()
+        );
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.insertPlayer(cPlayer);
+        });
+        addPlayer(cPlayer);
+        return cPlayer;
+    }
+
+    public void loadPlayer(Player player){
+        if(!players.containsKey(player.getUniqueId())){
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                CPlayer cplayer = sqlStorage.getPlayer(player.getUniqueId());
+                if(cplayer == null){
+                    cplayer = new CPlayer(player.getUniqueId(),
+                            -1,
+                            System.currentTimeMillis(),
+                            0,
+                            player.getName()
+                    );
+                    cplayer.setActive(true);
+                    sqlStorage.insertPlayer(cplayer);
+                }
+                addPlayer(cplayer);
+            });
+        }else{
+            players.get(player.getUniqueId()).setActive(true);
+        }
     }
 
     /**
@@ -47,5 +93,27 @@ public class PlayerController {
      */
     public CPlayer getPlayer(UUID uuid) {
         return players.get(uuid);
+    }
+
+
+    /**
+     * Updates player in database
+     * @param cPlayer the player :3
+     */
+    public void updatePlayer(CPlayer cPlayer){
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.updatePlayer(cPlayer);
+        });
+    }
+
+
+    public List<CPlayer> getClanPlayers(int clan_id){
+        List<CPlayer> playerss = new ArrayList<>();
+        for(CPlayer player : players.values()){
+            if(player.getClanID() == clan_id){
+                playerss.add(player);
+            }
+        }
+        return playerss;
     }
 }

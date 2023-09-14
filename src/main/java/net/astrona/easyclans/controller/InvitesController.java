@@ -38,21 +38,10 @@ public class InvitesController {
         return cInvite;
     }
 
-    /**
-     * Checks if an invite with the given ID is currently active.
-     *
-     * @param requestId the ID of the invite to check.
-     * @return {@code true} if the invite is active (not expired), {@code false} otherwise.
-     */
-    public boolean isInviteActive(int requestId) {
-        CInvite cInvite = this.getInvite(requestId);
-        long currentTime = System.currentTimeMillis();
 
-        return currentTime >= cInvite.createdTime() && currentTime <= cInvite.expireTime();
-    }
 
     /**
-     * Retrieves an invite object by its ID.
+     * Retrieves an Invite object by its ID.
      *
      * @param id the ID of the invite to retrieve.
      * @return the invite object associated with the provided ID, or {@code null} if no

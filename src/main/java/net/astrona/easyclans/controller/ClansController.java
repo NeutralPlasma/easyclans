@@ -4,6 +4,7 @@ import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.storage.SQLStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -13,7 +14,6 @@ import java.util.UUID;
 
 public class ClansController {
     private final Map<Integer, Clan> clans;
-    private int count;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
@@ -21,6 +21,29 @@ public class ClansController {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
         this.clans = new HashMap<>();
+    }
+
+    private void loadClans(){
+
+
+        for(var clan : sqlStorage.getAllClans()){
+            // get clan members...
+
+
+
+
+            // add to cache
+            this.clans.put(clan.getId(), clan);
+        }
+
+
+
+    }
+
+
+
+    private void addClan(Clan clan) {
+        clans.put(clan.getId(), clan);
     }
 
     /**
@@ -38,20 +61,26 @@ public class ClansController {
      * @param bank the initial bank balance of the clan.
      * @param tag the tag associated with the clan.
      * @param members the list of UUIDs of clan members.
-     * @return the newly created clan object.
      */
-    public Clan addClan(CPlayer owner, String name, String displayName, int autoKickTime,
-                        int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
-                        ItemStack banner, double bank, String tag, List<CPlayer> members) {
+    public void createClan(UUID owner, String name, String displayName, int autoKickTime,
+                           int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
+                           ItemStack banner, double bank, String tag, List<UUID> members){
 
-        this.count = this.count + 1;
-        Clan clan = new Clan(this.count, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
-                autoPayOutTime, autoPayOutPercentage, banner, bank, tag, members, true);
+        Clan clan = new Clan(-1,owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
+                autoPayOutTime, autoPayOutPercentage, banner, bank, tag, members, System.currentTimeMillis());
 
-        clans.put(clan.getId(), clan);
-        return clan;
+        // database insert and update id
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+
+
+
+            clan.setId(-1);
+        });
+
+
+        addClan(clan);
+
     }
-
 
     /**
      * Retrieves a clan object by its id.
@@ -61,6 +90,10 @@ public class ClansController {
      *         no clan with the given id is found.
      */
     public Clan getClan(int id) {
-        return clans.get(id);
+        if(clans.containsKey(id))
+            return clans.get(id);
+        return null;
     }
+
+
 }

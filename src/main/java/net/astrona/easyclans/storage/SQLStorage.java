@@ -3,12 +3,18 @@ package net.astrona.easyclans.storage;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.astrona.easyclans.ClansPlugin;
+import net.astrona.easyclans.models.CPlayer;
+import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.utils.Serialization;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class SQLStorage {
@@ -40,22 +46,29 @@ public class SQLStorage {
 
         HikariConfig hikariConfig = new HikariConfig();
         if (isMysql) {
-            hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(password);
-            hikariConfig.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + SSL);
+            hikariConfig.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
+
+            hikariConfig.addDataSourceProperty("user", username);
+            hikariConfig.addDataSourceProperty("password", password);
+            hikariConfig.addDataSourceProperty("useSSL", SSL);
+            hikariConfig.addDataSourceProperty("databaseName", database);
+            hikariConfig.addDataSourceProperty("serverName", hostname);
+            hikariConfig.addDataSourceProperty("port", port);
+            //hikariConfig.setUsername(username);
+            //hikariConfig.setPassword(password);
+            //hikariConfig.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + SSL);
         } else {
             hikariConfig.setDriverClassName("org.sqlite.JDBC");
-            hikariConfig.setDriverClassName("jdbc:sqlite:" + path + "/db.sqlite");
+            hikariConfig.setJdbcUrl("jdbc:sqlite:" + path + "/db.sqlite");
         }
 
         hikariConfig.setPoolName("EasyClansPlugin");
         hikariConfig.setMaximumPoolSize(60000);
         hikariConfig.setMaximumPoolSize(10);
-        hikariConfig.addDataSourceProperty("database", database);
-
+        //hikariConfig.addDataSourceProperty("database", database);
         this.dataSource = new HikariDataSource(hikariConfig);
 
+        logger.info("Creating database tables...");
         this.createPlayersTable();
         this.createClansTable();
         this.createClanInvitesTable();
@@ -63,14 +76,18 @@ public class SQLStorage {
     }
 
 
+
+    // <editor-fold desc="Table creation">
     private void createPlayersTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
                             CREATE TABLE IF NOT EXISTS ec_player_data (
                                 uuid CHAR(36) PRIMARY KEY,
-                                INT clan,
-                                last_active BIGINT
+                                clan INT,
+                                last_active BIGINT,
+                                joined_clan BIGINT,
+                                name TEXT
                             );
                             """
             );
@@ -158,4 +175,242 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="player stuff">
+    public void insertPlayer(CPlayer cPlayer){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            INSERT INTO ec_player_data
+            (uuid, clan, last_active, joined_clan, name)
+            VALUES
+            (?, ?, ?, ?, ?)
+            """);
+            statement.setString(1, cPlayer.getUuid().toString());
+            statement.setInt(2, cPlayer.getClanID());
+            statement.setLong(3, cPlayer.getLastActive());
+            statement.setLong(4, cPlayer.getJoinClanDate());
+            statement.setString(5, cPlayer.getName());
+            statement.execute();
+        }catch (SQLException e){
+            // ja jebi se logger neh mi tezit :)
+            e.printStackTrace();
+        }
+    }
+    public void updatePlayer(CPlayer cPlayer){
+
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            UPDATE ec_player_data
+            SET
+            clan = ?,
+            last_active = ?,
+            joined_clan = ?
+            """);
+            statement.setInt(1, cPlayer.getClanID());
+            statement.setLong(2, cPlayer.getLastActive());
+            statement.setLong(3, cPlayer.getJoinClanDate());
+            statement.execute();
+        }catch (SQLException e){
+            // ja jebi se logger neh mi tezit :)
+            e.printStackTrace();
+        }
+    }
+
+
+    // todo: setup getting actual clan.
+    public CPlayer getPlayer(UUID uuid){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            SELECT * FROM
+            ec_player_data
+            WHERE
+            uuid = ?
+            """);
+            statement.setString(1, uuid.toString());
+            var result = statement.executeQuery();
+            if(result.next()){
+                return new CPlayer(
+                        uuid,
+                        result.getInt("clan"),
+                        result.getLong("last_active"),
+                        result.getLong("joined_clan"),
+                        result.getString("name")
+                );
+            }else{
+                return null;
+            }
+        }catch (SQLException e){
+            // ja jebi se logger neh mi tezit :)
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<CPlayer> getAllPlayers(){
+        List<CPlayer> players = new ArrayList<>();
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            SELECT * FROM
+            ec_player_data
+            WHERE
+            """);
+            var result = statement.executeQuery();
+            while(result.next()){
+                players.add(new CPlayer(
+                        UUID.fromString(result.getString("uuid")),
+                        result.getInt("clan"),
+                        result.getLong("last_active"),
+                        result.getLong("joined_clan"),
+                        result.getString("name")
+                ));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+
+    //</editor-fold>
+
+    //<editor-fold desc="clan stuff">
+
+    private List<UUID> getClanMembers(int clan_id){
+        List<UUID> members = new ArrayList<>();
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            SELECT uuid FROM
+            ec_player_data
+            WHERE clan = ?
+            """);
+            statement.setInt(1, clan_id);
+
+            var result = statement.executeQuery();
+            while(result.next()){
+                members.add(
+                       UUID.fromString(result.getString("uuid"))
+                );
+            }
+
+        }catch (SQLException e){
+           e.printStackTrace();
+        }
+        return members;
+    }
+
+    public List<Clan> getAllClans(){
+        List<Clan> clans = new ArrayList<>();
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            SELECT * FROM
+            ec_clan_data
+            """);
+            var result = statement.executeQuery();
+            while(result.next()){
+                var clan = new Clan(
+                        result.getInt("id"),
+                        null,
+                        result.getString("clan_name"),
+                        result.getString("display_name"),
+                        result.getInt("autokick_time"),
+                        result.getInt("join_points_price"),
+                        result.getDouble("join_money_price"),
+                        result.getInt("auto_pay_out_time"),
+                        result.getDouble("auto_pay_out_percentage"),
+                        Serialization.decodeItemBase64(result.getString("banner")),
+                        result.getDouble("bank"),
+                        result.getString("tag"),
+                        new ArrayList<>(),
+                        result.getLong("created_on")
+                );
+                clan.setMembers(getClanMembers(clan.getId()));
+                clans.add(clan);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public void updateClan(Clan clan){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            UPDATE ec_clan_data
+            SET
+            owner = ?,
+            clan_name = ?,
+            display_name = ?,
+            autokick_time = ?,
+            join_points_price = ?,
+            join_money_price = ?,
+            auto_pay_out_time = ?,
+            auto_pay_out_percentage = ?,
+            banner = ?,
+            bank = ?,
+            tag = ?
+            """);
+            statement.setString(1, clan.getOwner().toString());
+            statement.setString(2, clan.getName());
+            statement.setString(3, clan.getDisplayName());
+            statement.setInt(4, clan.getAutoKickTime());
+            statement.setInt(5, clan.getJoinPointsPrice());
+            statement.setDouble(6, clan.getJoinMoneyPrice());
+            statement.setInt(7, clan.getAutoPayOutTime());
+            statement.setDouble(8, clan.getAutoPayOutPercentage());
+            statement.setString(9, Serialization.encodeItemBase64(clan.getBanner()));
+            statement.setDouble(10, clan.getBank());
+            statement.setString(11, clan.getTag());
+
+            statement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void saveClan(Clan clan){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            INSERT INTO ec_clan_data
+            (
+            owner,
+            clan_name,
+            display_name,
+            autokick_time,
+            join_points_price,
+            join_money_price,
+            auto_pay_out_time,
+            auto_pay_out_percentage,
+            banner,
+            bank,
+            tag,
+            created_on
+            )
+            VALUES
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """);
+            statement.setString(1, clan.getOwner().toString());
+            statement.setString(2, clan.getName());
+            statement.setString(3, clan.getDisplayName());
+            statement.setInt(4, clan.getAutoKickTime());
+            statement.setInt(5, clan.getJoinPointsPrice());
+            statement.setDouble(6, clan.getJoinMoneyPrice());
+            statement.setInt(7, clan.getAutoPayOutTime());
+            statement.setDouble(8, clan.getAutoPayOutPercentage());
+            statement.setString(9, Serialization.encodeItemBase64(clan.getBanner()));
+            statement.setDouble(10, clan.getBank());
+            statement.setString(11, clan.getTag());
+            statement.setLong(12, clan.getCreatedOn());
+
+            statement.execute();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    //</editor-fold">
 }

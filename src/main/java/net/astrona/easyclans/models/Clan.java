@@ -1,5 +1,6 @@
 package net.astrona.easyclans.models;
 
+import net.astrona.easyclans.controller.PlayerController;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -20,23 +21,23 @@ import java.util.UUID;
 
 public class Clan {
     private int id;
-    private CPlayer owner;
+    private UUID owner;
     private String name;
     private String displayName;
     private int autoKickTime;
     private int joinPointsPrice;
-    private int joinMoneyPrice;
+    private double joinMoneyPrice;
     private int autoPayOutTime;
     private double autoPayOutPercentage;
     private ItemStack banner;
     private double bank;
     private String tag;
-    private List<CPlayer> members;
-    private boolean active;
+    private List<UUID> members;
+    private long createdOn;
 
-    public Clan(int id, CPlayer owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage, ItemStack banner, double bank,
-                String tag, List<CPlayer> members, boolean active) {
+    public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+                double joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage, ItemStack banner, double bank,
+                String tag, List<UUID> members, long createdOn) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -50,15 +51,15 @@ public class Clan {
         this.bank = bank;
         this.tag = tag;
         this.members = members;
-        this.active = active;
+        this.createdOn = createdOn;
     }
 
-    public boolean isActive() {
-        return active;
+    public long getCreatedOn() {
+        return createdOn;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setCreatedOn(long createdOn) {
+        this.createdOn = createdOn;
     }
 
     public int getId() {
@@ -69,11 +70,11 @@ public class Clan {
         this.id = id;
     }
 
-    public CPlayer getOwner() {
+    public UUID getOwner() {
         return owner;
     }
 
-    public void setOwner(CPlayer owner) {
+    public void setOwner(UUID owner) {
         this.owner = owner;
     }
 
@@ -109,11 +110,11 @@ public class Clan {
         this.joinPointsPrice = joinPointsPrice;
     }
 
-    public int getJoinMoneyPrice() {
+    public double getJoinMoneyPrice() {
         return joinMoneyPrice;
     }
 
-    public void setJoinMoneyPrice(int joinMoneyPrice) {
+    public void setJoinMoneyPrice(double joinMoneyPrice) {
         this.joinMoneyPrice = joinMoneyPrice;
     }
 
@@ -157,11 +158,11 @@ public class Clan {
         this.tag = tag;
     }
 
-    public List<CPlayer> getMembers() {
+    public List<UUID> getMembers() {
         return members;
     }
 
-    public void setMembers(List<CPlayer> members) {
+    public void setMembers(List<UUID> members) {
         this.members = members;
     }
 }

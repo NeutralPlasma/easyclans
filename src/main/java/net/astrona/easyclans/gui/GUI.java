@@ -92,7 +92,11 @@ public class GUI implements InventoryHolder {
         addIcon(17, icon2);
 
         int start = 20;
-        if(size < 45){
+        if(size < 27){
+            start = -100;
+        }else if(size < 36){
+            start = 20;
+        }else if(size < 45){
             start = 29;
         }else if(size < 53){
             start = 38;
@@ -169,12 +173,14 @@ public class GUI implements InventoryHolder {
         }
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, this.size, ClansPlugin.MM.deserialize(this.title));
-
-        setupIcons(player);
-
+        setupIcons(null);
         for (Map.Entry<Integer, Icon> entry : this.activeIcons.entrySet()) {
             if(entry.getValue() == null){
                 inventory.setItem(entry.getKey(), null);

@@ -1,0 +1,15 @@
+confirm: "<lime>Confirm"
+cancel: "<red>Cancel"
+active: "<lime>Active"
+inactive: "<red>Inactive"
+time_format: "dd. MMM yyyy HH:mm"
+
+clan:
+  member:
+    kick_menu: "<gray>Kick <red>{name}"
+    kick_success: "<lime>Successfully kicked <red>{name}"
+    kick_notification: "<red>You have been kicked from clan <gold>{clan}"
+    lore:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"

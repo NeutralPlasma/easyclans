@@ -1,5 +1,6 @@
 package net.astrona.easyclans.gui;
 
+import net.astrona.easyclans.ClansPlugin;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,80 +22,92 @@ public class Paginator {
     private final List<Icon> icons = new ArrayList<>();
 
 
-   public Paginator(Player player, List<Integer> valid_slots, String title, int size){
-       this.player = player;
+    public Paginator(Player player, List<Integer> valid_slots, String title, int size) {
+        this.player = player;
         this.size = size;
         this.title = title;
         this.valid_slots = valid_slots;
 
-        gui  = new GUI(size, title);
+        gui = new GUI(size, title);
 
         init();
         gui.fancyBackground();
         //open(0);
-   }
+    }
 
-   private void init(){
-       // sets up the prev and next page :O.
+    private void init() {
+        // sets up the prev and next page :O.
 
-       // next page
-       var nextPage = new Icon(
-               new ItemStack(Material.PAPER)
-       );
-       nextPage.setVisibilityCondition((player, it) -> (current_page*valid_slots.size() + valid_slots.size() < icons.size()));
+        var nextPageItem = new ItemStack(Material.PAPER);
+        var meta = nextPageItem.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize("<gold>Next page"));
+        nextPageItem.setItemMeta(meta);
+
+        // next page
+        var nextPage = new Icon(
+                nextPageItem
+        );
+        nextPage.setVisibilityCondition((player, it) -> (current_page * valid_slots.size() + valid_slots.size() < icons.size()));
         nextPage.addClickAction((player) -> {
             current_page++;
             open(current_page);
         });
 
-       gui.setIcon(size-2, nextPage);
+        gui.setIcon(size - 2, nextPage);
 
 
         // prev page
-       var prevPage = new Icon(
-            new ItemStack(Material.PAPER)
-       );
-       prevPage.setVisibilityCondition((player, it) -> {
-           if(current_page > 0) return true;
-           return false;
-       });
-       prevPage.addClickAction((player)-> {
-                current_page--;
-                open(current_page);
-           }
-       );
-       gui.setIcon(size-8, prevPage);
-   }
+        var prevPageItem = new ItemStack(Material.PAPER);
+        var prevPageItemMeta = nextPageItem.getItemMeta();
+        prevPageItemMeta.displayName(ClansPlugin.MM.deserialize("<gold>Next page"));
+        prevPageItem.setItemMeta(prevPageItemMeta);
 
-
-    public void addIcon(Icon icon){
-       this.icons.add(icon);
+        var prevPage = new Icon(
+                prevPageItem
+        );
+        prevPage.setVisibilityCondition((player, it) -> {
+            if (current_page > 0) return true;
+            return false;
+        });
+        prevPage.addClickAction((player) -> {
+                    current_page--;
+                    open(current_page);
+                }
+        );
+        gui.setIcon(size - 8, prevPage);
     }
 
 
+    public void addIcon(Icon icon) {
+        this.icons.add(icon);
+    }
 
-    public void open(int page){
+    public void open(){
+        open(current_page);
+    }
+
+    public void open(int page) {
         // setup icons per page
-        for(int i = 0; i < valid_slots.size(); i++){
+        for (int i = 0; i < valid_slots.size(); i++) {
             gui.setIcon(valid_slots.get(i), null);
         }
 
-        for(int i : fixedIcons.keySet()){
+        for (int i : fixedIcons.keySet()) {
             gui.setIcon(i, fixedIcons.get(i));
         }
 
 
-        for (int i = 0; i < valid_slots.size(); i++){
-            int index = page * valid_slots.size() + i ;
-            if(icons.size() > index) {
+        for (int i = 0; i < valid_slots.size(); i++) {
+            int index = page * valid_slots.size() + i;
+            if (icons.size() > index) {
                 int slot = valid_slots.get(i);
                 Icon icon = icons.get(index);
                 gui.setIcon(slot, icon);
-            }else{
+            } else {
                 break;
             }
         }
-
+        gui.setTitle(title.replace("{page}", String.valueOf(current_page)));
         gui.open(player);
 
     }

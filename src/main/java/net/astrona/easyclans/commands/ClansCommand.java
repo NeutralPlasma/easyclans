@@ -82,8 +82,14 @@ public class ClansCommand implements TabExecutor {
                     this.executeCreateSubCommand(playerSender);
                 }
                 case "test" -> {
-                    CPlayer test = new CPlayer(playerSender.getUniqueId(), 10, System.currentTimeMillis(), System.currentTimeMillis());
-                    new ClanGUI(playerSender, new Clan(
+
+                    CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
+
+                    if(cplayer == null){
+                        cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
+                    }
+                    UUID test = cplayer.getUuid();
+                    Clan clan = new Clan(
                             10,
                             test,
                             "Testing clan",
@@ -106,8 +112,11 @@ public class ClansCommand implements TabExecutor {
                                     test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
                                     test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
                                     test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test),
-                            true
-                    ), clansController);
+                            System.currentTimeMillis()
+                    );
+                    cplayer.setClanID(clan.getId());
+
+                    new ClanGUI(playerSender, clan, clansController, playerController);
                 }
             }
         } else if (args.length == 2) {
