@@ -5,13 +5,10 @@ import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.controller.RequestsController;
-import net.astrona.easyclans.gui.ui.ClanCreateGUI;
-import net.astrona.easyclans.gui.ui.ClanGUI;
-import net.astrona.easyclans.gui.ui.RequestsGUI;
+import net.astrona.easyclans.gui.ui.*;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -23,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,7 +122,7 @@ public class ClansCommand implements TabExecutor {
                     );
                     cplayer.setClanID(clan.getId());
 
-                    new ClanGUI(playerSender, clan, clansController, playerController, requestsController);
+                    new AdminClanGUI(playerSender, clan, clansController, playerController, requestsController);
                 }
                 case "chat" -> {
                     CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
@@ -171,8 +166,15 @@ public class ClansCommand implements TabExecutor {
     private void executeMenuSubCommand(Player sender) {
 
         // first check if player has clan, if has open clan menu, else open clans list to join or create.
+        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
 
-        // TODO: gasper implementaj menu
+        if (cPlayer.getClanID() == -1) {
+            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+            return;
+        }
+
+        Clan clan = clansController.getClan(cPlayer.getClanID());
+        new ClanGUI(sender, clan, clansController, playerController, requestsController);
     }
 
     private void executeBankSubCommand(Player sender) {
@@ -183,17 +185,22 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeMembersSubCommand(Player sender) {
+        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
 
-        // check if player is in clan
+        if (cPlayer.getClanID() == -1) {
+            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+            return;
+        }
 
-        // TODO: gasper implementaj od members menu
+        Clan clan = clansController.getClan(cPlayer.getClanID());
+        new MembersGUI(sender, clan, clansController, playerController, null);
     }
 
     private void executeListSubCommand(Player sender) {
+        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
+        Clan clan = clansController.getClan(cPlayer.getClanID());
 
-        // check if player is in clan
-
-        // TODO: gasper implementaj od clans list menu
+        new ClanListGUI(sender, clan, clansController, playerController, null);
     }
 
     private void executeCreateSubCommand(Player sender) {

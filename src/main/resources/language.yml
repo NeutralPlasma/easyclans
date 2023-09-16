@@ -49,6 +49,19 @@ clan:
       lore:
         - ""
         - "<gray>Click to see join requests</gray>"
+
+clan_list:
+  menu:
+    title: "<gold>Clan List [<white>{page}</white>]</gold>"
+
+    banner:
+      name: "{display_name}"
+      lore:
+        - ""
+        - "<gray>Members:<white> {members}"
+        - ""
+        - "<gold>Click to send a join request!"
+
 create:
   display_name:
     prompt: "<green>Enter a new clan display name:"

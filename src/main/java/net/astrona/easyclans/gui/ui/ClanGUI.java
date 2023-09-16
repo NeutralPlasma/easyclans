@@ -7,17 +7,10 @@ import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
-import net.astrona.easyclans.gui.actions.Action;
 import net.astrona.easyclans.models.Clan;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.List;
 
 import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
 
@@ -29,8 +22,8 @@ public class ClanGUI extends GUI {
 
 
     public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                   RequestsController requestsController) {
-        super(54, "Clan settings");
+                        RequestsController requestsController) {
+        super(54, clan.getName() + "Clan");
 
         this.clan = clan;
         this.clansController = clansController;
@@ -44,12 +37,7 @@ public class ClanGUI extends GUI {
 
 
     private void construct() {
-        setIcon(13, clanInfoIcon());
         setIcon(11, membersIcon());
-        setIcon(15, invitesIcon());
-        setIcon(29, bankIcon());
-        setIcon(31, clanSettingsIcon());
-        setIcon(33, requestsIcon());
         //  33, 31, 29
 
     }
@@ -60,7 +48,6 @@ public class ClanGUI extends GUI {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}",clan.getName())));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.clan.lore"));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
@@ -92,80 +79,4 @@ public class ClanGUI extends GUI {
         }));
         return icon;
     }
-
-    Icon invitesIcon(){
-        ItemStack itemStack = new ItemStack(Material.BOOK);
-        var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.invites.name")));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.invites.lore"));
-        itemStack.setItemMeta(meta);
-        Icon icon = new Icon(itemStack);
-        icon.addClickAction((player -> {
-            // open new menu
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
-        }));
-        return icon;
-    }
-
-
-
-    ItemStack bankIconItem(){
-        ItemStack itemStack = new ItemStack(Material.SUNFLOWER);
-        var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.bank.name")));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.bank.lore"));
-        itemStack.setItemMeta(meta);
-        return itemStack;
-    }
-    Icon bankIcon(){
-        Icon icon = new Icon(bankIconItem(), ((it, player) -> {
-            it.itemStack = bankIconItem();
-        }));
-
-        icon.addLeftClickAction((player)-> {
-            player.sendMessage("Okay withdrawn!");
-        });
-
-        icon.addRightClickAction((player)-> {
-            player.sendMessage("Okay deposited!");
-        });
-
-        return icon;
-    }
-
-    Icon clanSettingsIcon(){
-        ItemStack itemStack = new ItemStack(Material.ANVIL);
-        var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.settings.name")));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.settings.lore"));
-        itemStack.setItemMeta(meta);
-        Icon icon = new Icon(itemStack);
-        icon.addClickAction((player -> {
-            // open new menu
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
-        }));
-        return icon;
-    }
-
-
-    Icon requestsIcon(){
-        ItemStack itemStack = new ItemStack(Material.CHEST);
-        var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.requests.name")));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.requests.lore"));
-        itemStack.setItemMeta(meta);
-        Icon icon = new Icon(itemStack);
-        icon.addClickAction((player -> {
-            // open new menu
-
-            new RequestsGUI(player, clan, clansController, playerController, requestsController, this);
-
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
-        }));
-        return icon;
-    }
-
-
-
-
 }
