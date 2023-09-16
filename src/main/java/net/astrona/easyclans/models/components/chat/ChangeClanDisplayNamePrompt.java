@@ -4,6 +4,7 @@ import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.ui.ClanCreateGUI;
 import net.astrona.easyclans.models.components.chat.impl.ChatPrompt;
 import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
@@ -17,12 +18,17 @@ public class ChangeClanDisplayNamePrompt implements ChatPrompt {
     private final ItemStack banner;
     private PlayerController playerController;
     private ClansController clansController;
+    private RequestsController requestsController;
     private final PlayerChatComponent playerChatComponent;
 
-    public ChangeClanDisplayNamePrompt(ClansPlugin plugin, String name, ItemStack banner, PlayerChatComponent playerChatComponent) {
+    public ChangeClanDisplayNamePrompt(ClansPlugin plugin, String name, ItemStack banner, PlayerController playerController,
+                                       ClansController clansController, RequestsController requestsController, PlayerChatComponent playerChatComponent) {
         this.name = name;
         this.banner = banner;
         this.plugin = plugin;
+        this.playerController = playerController;
+        this.clansController = clansController;
+        this.requestsController = requestsController;
         this.playerChatComponent = playerChatComponent;
     }
 
@@ -44,7 +50,7 @@ public class ChangeClanDisplayNamePrompt implements ChatPrompt {
                     .replace("{display_name}", input)));
 
             Bukkit.getScheduler().runTask(plugin, () -> {
-                new ClanCreateGUI(name, input, banner, player, plugin, playerController, clansController, playerChatComponent);
+                new ClanCreateGUI(name, input, banner, player, plugin, playerController, clansController, requestsController, playerChatComponent);
             });
             return true;
         }

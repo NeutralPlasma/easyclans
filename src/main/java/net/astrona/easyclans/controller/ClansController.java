@@ -62,7 +62,7 @@ public class ClansController {
      * @param tag the tag associated with the clan.
      * @param members the list of UUIDs of clan members.
      */
-    public void createClan(UUID owner, String name, String displayName, int autoKickTime,
+    public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
                            int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
                            ItemStack banner, double bank, String tag, List<UUID> members){
 
@@ -79,7 +79,7 @@ public class ClansController {
 
 
         addClan(clan);
-
+        return clan;
     }
 
     /**

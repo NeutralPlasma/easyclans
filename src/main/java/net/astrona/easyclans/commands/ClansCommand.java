@@ -197,7 +197,7 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeCreateSubCommand(Player sender) {
-        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, playerChatComponent);
+        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController, playerChatComponent);
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {

@@ -4,8 +4,10 @@ import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
+import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.models.components.chat.ChangeClanDisplayNamePrompt;
 import net.astrona.easyclans.models.components.chat.ChangeClanNamePrompt;
 import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
@@ -15,6 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
+import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
@@ -24,22 +29,24 @@ public class ClanCreateGUI extends GUI {
     private int kickTime;
     private double moneyPrice, payoutPercentage;
     private String name, displayName, tag = "DEFAULT";
-    private Player player;
-    private ClansPlugin plugin;
-    private PlayerController playerController;
-    private ClansController clansController;
-    private PlayerChatComponent playerChatComponent;
+    private final ClansPlugin plugin;
+    private final PlayerController playerController;
+    private final ClansController clansController;
+    private final RequestsController requestsController;
+    private final PlayerChatComponent playerChatComponent;
 
 
-    public ClanCreateGUI(String name, String displayName, ItemStack banner, Player player, ClansPlugin plugin, PlayerController playerController, ClansController clansController, PlayerChatComponent playerChatComponent) {
+    public ClanCreateGUI(String name, String displayName, ItemStack banner, Player player, ClansPlugin plugin,
+                         PlayerController playerController, ClansController clansController, RequestsController requestsController,
+                         PlayerChatComponent playerChatComponent) {
         super(54, LanguageController.getLocalized("create.menu.title"));
         this.name = name;
         this.displayName = displayName;
         this.banner = banner;
-        this.player = player;
         this.plugin = plugin;
         this.playerController = playerController;
         this.clansController = clansController;
+        this.requestsController = requestsController;
         this.playerChatComponent = playerChatComponent;
         init();
         fancyBackground();
@@ -88,15 +95,67 @@ public class ClanCreateGUI extends GUI {
         }));
 
         icon.addLeftClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(plugin, displayName, banner, playerChatComponent));
+            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(
+                    plugin,
+                    displayName,
+                    banner,
+                    playerController,
+                    clansController,
+                    requestsController,
+                    playerChatComponent
+                    ));
             player.closeInventory();
         });
 
         icon.addRightClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(plugin, name, banner, playerChatComponent));
+            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(
+                    plugin,
+                    name,
+                    banner,
+                    playerController,
+                    clansController,
+                    requestsController,
+                    playerChatComponent
+                    ));
             player.closeInventory();
         });
 
+
+        return icon;
+    }
+
+    private Icon confirmButton() {
+        ItemStack itemStack = new ItemStack(Material.LIME_CONCRETE);
+        var meta = itemStack.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.name")));
+        meta.lore(getLocalizedDesiralizedList("create.menu.create.lore"));
+        itemStack.setItemMeta(meta);
+
+        Icon icon = new Icon(itemStack);
+        icon.addClickAction(player -> {
+            new ConfirmGUI(player, (confirmPlayer) -> {
+                Clan clan = clansController.createClan(
+                        confirmPlayer.getUniqueId(),
+                        name,
+                        displayName,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        banner,
+                        0.0,
+                        "",
+                        List.of(
+                                confirmPlayer.getUniqueId()
+                        )
+                );
+
+                new ClanGUI(player, clan, clansController, playerController, requestsController);
+            }, (cancelPlayer) -> {
+                cancelPlayer.openInventory(getInventory());
+            }, "Are you sure about creating the clan?");
+        });
 
         return icon;
     }
@@ -122,6 +181,7 @@ public class ClanCreateGUI extends GUI {
         }
 
         addIcon(13, clanBanner());
+        addIcon(40, confirmButton());
         /*addIcon(20, priceSettings());
         addIcon(31, kickSettings());
         addIcon(24, payoutSettings());*/
