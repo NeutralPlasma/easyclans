@@ -24,7 +24,6 @@ import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
 public class ClanCreateGUI extends GUI {
-
     private ItemStack banner;
     private int kickTime;
     private double moneyPrice, payoutPercentage;
@@ -53,28 +52,26 @@ public class ClanCreateGUI extends GUI {
         open(player);
     }
 
-
-    private void legalizeBanner(){
+    private void legalizeBanner() {
         var meta = banner.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.name")
-                .replace("{name}", name))
+                        .replace("{name}", name))
                 .decoration(TextDecoration.ITALIC, false)
         );
-        for(var enchant : meta.getEnchants().keySet()){
+        for (var enchant : meta.getEnchants().keySet()) {
             meta.removeEnchant(enchant);
         }
         var loreText = LanguageController.getLocalizedList("create.menu.banner.lore");
         meta.lore(loreText.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
-                        .replace("{name}", name)
-                        .replace("{display_name}", displayName))
+                                .replace("{name}", name)
+                                .replace("{display_name}", displayName))
                         .decoration(TextDecoration.ITALIC, false)
         ).toList());
         banner.setItemMeta(meta);
     }
 
-
-    private Icon clanBanner(){
+    private Icon clanBanner() {
         legalizeBanner();
 
         Icon icon = new Icon(banner, (self, player) -> {
@@ -83,12 +80,12 @@ public class ClanCreateGUI extends GUI {
 
         icon.addDragItemAction(((player, itemStack) -> {
             player.sendMessage(itemStack.getType().toString());
-            if(itemStack.getType().toString().endsWith("BANNER")) {
+            if (itemStack.getType().toString().endsWith("BANNER")) {
                 banner = itemStack.clone();
                 legalizeBanner();
                 this.update(player, 13);
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            }else{
+            } else {
                 player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
             }
 
@@ -103,7 +100,7 @@ public class ClanCreateGUI extends GUI {
                     clansController,
                     requestsController,
                     playerChatComponent
-                    ));
+            ));
             player.closeInventory();
         });
 
@@ -116,10 +113,9 @@ public class ClanCreateGUI extends GUI {
                     clansController,
                     requestsController,
                     playerChatComponent
-                    ));
+            ));
             player.closeInventory();
         });
-
 
         return icon;
     }
@@ -174,10 +170,9 @@ public class ClanCreateGUI extends GUI {
     }*/
 
 
-
-    private void init(){
+    private void init() {
         if (banner == null) {
-            banner = new ItemStack(Material.ORANGE_BANNER); // random generator maybe?
+            banner = new ItemStack(Material.ORANGE_BANNER); // TODO: generate a random colored banner maybe
         }
 
         addIcon(13, clanBanner());

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Paginator {
-
     private GUI gui;
     private final int size;
     private final String title;
@@ -21,7 +20,6 @@ public class Paginator {
     private final Map<Integer, Icon> fixedIcons = new HashMap<>();
     private final List<Integer> valid_slots;
     private final List<Icon> icons = new ArrayList<>();
-
 
     public Paginator(Player player, List<Integer> valid_slots, String title, int size) {
         this.player = player;
@@ -37,14 +35,13 @@ public class Paginator {
     }
 
     private void init() {
-        // sets up the prev and next page :O.
-
+        // Sets up the previous and next page
         var nextPageItem = new ItemStack(Material.PAPER);
         var meta = nextPageItem.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize("<gold>Next page"));
         nextPageItem.setItemMeta(meta);
 
-        // next page
+        // Next page
         var nextPage = new Icon(
                 nextPageItem
         );
@@ -56,8 +53,7 @@ public class Paginator {
 
         gui.setIcon(size - 2, nextPage);
 
-
-        // prev page
+        // Previous page
         var prevPageItem = new ItemStack(Material.PAPER);
         var prevPageItemMeta = nextPageItem.getItemMeta();
         prevPageItemMeta.displayName(ClansPlugin.MM.deserialize("<gold>Next page"));
@@ -78,23 +74,24 @@ public class Paginator {
         gui.setIcon(size - 8, prevPage);
     }
 
-    public void addCloseAction(Action action){
+    public void addCloseAction(Action action) {
         gui.addCloseAction(action);
     }
 
     public void addIcon(Icon icon) {
         this.icons.add(icon);
     }
-    public void removeIcon(Icon icon){
+
+    public void removeIcon(Icon icon) {
         this.icons.remove(icon);
     }
 
-    public void open(){
+    public void open() {
         open(current_page);
     }
 
     public void open(int page) {
-        // setup icons per page
+        // Setup icons per page
         for (int i = 0; i < valid_slots.size(); i++) {
             gui.setIcon(valid_slots.get(i), null);
         }
@@ -116,8 +113,5 @@ public class Paginator {
         }
         gui.setTitle(title.replace("{page}", String.valueOf(current_page)));
         gui.open(player);
-
     }
-
-
 }

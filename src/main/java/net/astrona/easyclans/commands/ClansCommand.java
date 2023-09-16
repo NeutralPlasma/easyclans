@@ -94,7 +94,7 @@ public class ClansCommand implements TabExecutor {
 
                     CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
 
-                    if(cplayer == null){
+                    if (cplayer == null) {
                         cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
                     }
                     UUID test = cplayer.getUuid();
@@ -130,7 +130,7 @@ public class ClansCommand implements TabExecutor {
                 case "chat" -> {
                     CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
 
-                    if(cplayer == null){
+                    if (cplayer == null) {
                         cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
                     }
 
@@ -206,8 +206,6 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeMenuSubCommand(Player sender) {
-
-        // first check if player has clan, if has open clan menu, else open clans list to join or create.
         CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
 
         if (cPlayer.getClanID() == -1) {
@@ -220,8 +218,6 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeBankSubCommand(Player sender) {
-
-        // check if player is in clan
         CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
 
         if (cPlayer.getClanID() == -1) {

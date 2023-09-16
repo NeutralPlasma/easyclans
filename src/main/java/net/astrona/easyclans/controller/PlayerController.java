@@ -20,9 +20,9 @@ public class PlayerController {
         init();
     }
 
-    private void init(){
+    private void init() {
         var lPlayers = sqlStorage.getAllPlayers();
-        for(CPlayer cplayer : lPlayers){
+        for (CPlayer cplayer : lPlayers) {
             players.put(cplayer.getUuid(), cplayer);
         }
     }
@@ -37,7 +37,7 @@ public class PlayerController {
     }
 
 
-    public CPlayer createPlayer(Player player){
+    public CPlayer createPlayer(Player player) {
         CPlayer cPlayer = new CPlayer(player.getUniqueId(),
                 -1,
                 System.currentTimeMillis(),
@@ -52,23 +52,23 @@ public class PlayerController {
         return cPlayer;
     }
 
-    public void loadPlayer(Player player){
-        if(!players.containsKey(player.getUniqueId())){
+    public void loadPlayer(Player player) {
+        if (!players.containsKey(player.getUniqueId())) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                CPlayer cplayer = sqlStorage.getPlayer(player.getUniqueId());
-                if(cplayer == null){
-                    cplayer = new CPlayer(player.getUniqueId(),
+                CPlayer cPlayer = sqlStorage.getPlayer(player.getUniqueId());
+                if (cPlayer == null) {
+                    cPlayer = new CPlayer(player.getUniqueId(),
                             -1,
                             System.currentTimeMillis(),
                             0,
                             player.getName()
                     );
-                    cplayer.setActive(true);
-                    sqlStorage.insertPlayer(cplayer);
+                    cPlayer.setActive(true);
+                    sqlStorage.insertPlayer(cPlayer);
                 }
-                addPlayer(cplayer);
+                addPlayer(cPlayer);
             });
-        }else{
+        } else {
             players.get(player.getUniqueId()).setActive(true);
         }
     }
@@ -96,9 +96,10 @@ public class PlayerController {
 
     /**
      * Updates player in database
-     * @param cPlayer the player :3
+     *
+     * @param cPlayer the clan player
      */
-    public void updatePlayer(CPlayer cPlayer){
+    public void updatePlayer(CPlayer cPlayer) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.updatePlayer(cPlayer);
         });
@@ -109,10 +110,10 @@ public class PlayerController {
     }
 
 
-    public List<CPlayer> getClanPlayers(int clan_id){
+    public List<CPlayer> getClanPlayers(int clan_id) {
         List<CPlayer> playerss = new ArrayList<>();
-        for(CPlayer player : players.values()){
-            if(player.getClanID() == clan_id){
+        for (CPlayer player : players.values()) {
+            if (player.getClanID() == clan_id) {
                 playerss.add(player);
             }
         }

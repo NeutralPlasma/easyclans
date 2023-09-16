@@ -13,13 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class GUI implements InventoryHolder {
-
     private List<Action> closeActions = new ArrayList<>();
 
     private final Map<Integer, Icon> activeIcons = new HashMap<>();
     private final Map<Integer, List<Icon>> actualIcons = new HashMap<>();
-
-
     private final int size;
     private String title;
     private List<Integer> noBackgroundSlots = new ArrayList<>();
@@ -35,11 +32,12 @@ public class GUI implements InventoryHolder {
         this.noBackgroundSlots = noBackgroundSlots;
     }
 
-    public void addIcon(int pos, Icon icon){
+    public void addIcon(int pos, Icon icon) {
         this.actualIcons.computeIfAbsent(pos, k -> new ArrayList<>());
         this.actualIcons.get(pos).add(icon);
     }
-    public void setIcon(int pos, Icon icon){
+
+    public void setIcon(int pos, Icon icon) {
         this.actualIcons.computeIfAbsent(pos, k -> new ArrayList<>());
         this.actualIcons.get(pos).clear();
         this.actualIcons.get(pos).add(icon);
@@ -52,9 +50,10 @@ public class GUI implements InventoryHolder {
         return this.activeIcons.get(pos);
     }
 
-    public void addCloseAction(Action action){
+    public void addCloseAction(Action action) {
         this.closeActions.add(action);
     }
+
     public List<Action> getCloseActions() {
         return closeActions;
     }
@@ -63,15 +62,14 @@ public class GUI implements InventoryHolder {
         player.openInventory(getInventory());
     }
 
-
-    public void setBackground(ItemStack itemStack){
+    public void setBackground(ItemStack itemStack) {
         Icon icon = new Icon(itemStack);
-        for(int x = 0; x < size; x++){
+        for (int x = 0; x < size; x++) {
             addIcon(x, icon);
         }
     }
 
-    public void fancyBackground(){
+    public void fancyBackground() {
         var stack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         var stack2 = new ItemStack(Material.PURPLE_STAINED_GLASS_PANE);
 
@@ -88,42 +86,41 @@ public class GUI implements InventoryHolder {
         addIcon(17, icon2);
 
         int start = 20;
-        if(size < 27){
+        if (size < 27) {
             start = -100;
-        }else if(size < 36){
+        } else if (size < 36) {
             start = 20;
-        }else if(size < 45){
+        } else if (size < 45) {
             start = 29;
-        }else if(size < 53){
+        } else if (size < 53) {
             start = 38;
-        }else {
+        } else {
             start = 47;
         }
 
-        for(int i = start; i < start+5; i++){
-            if(!noBackgroundSlots.contains(i)) {
+        for (int i = start; i < start + 5; i++) {
+            if (!noBackgroundSlots.contains(i)) {
                 addIcon(i, icon2);
             }
         }
 
-        for(int i = 0; i < size ; i++){
-            if(!noBackgroundSlots.contains(i)){
-                if(getIcon(i) == null) {
+        for (int i = 0; i < size; i++) {
+            if (!noBackgroundSlots.contains(i)) {
+                if (getIcon(i) == null) {
                     addIcon(i, icon1);
                 }
             }
         }
-
-
     }
 
     /**
      * Updates specific slot in inventory.
+     *
      * @param player to which it has to update
-     * @param index index of slot to update
+     * @param index  index of slot to update
      */
-    public void update(Player player, int index){
-        if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
+    public void update(Player player, int index) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI) {
             activeIcons.get(index).refresh(player);
             player.getOpenInventory().getTopInventory().setItem(index, activeIcons.get(index).itemStack);
         }
@@ -131,10 +128,11 @@ public class GUI implements InventoryHolder {
 
     /**
      * Refreshes all refreshable icons in the inventory
+     *
      * @param player to which it has to update
      */
-    public void refresh(Player player){
-        if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
+    public void refresh(Player player) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI) {
             setupIcons(player);
             var inv = player.getOpenInventory().getTopInventory();
             activeIcons.forEach((integer, icon) -> {
@@ -144,16 +142,15 @@ public class GUI implements InventoryHolder {
         }
     }
 
-    private void setupIcons(Player player){
+    private void setupIcons(Player player) {
         for (Map.Entry<Integer, List<Icon>> entry : this.actualIcons.entrySet()) {
             Collections.sort(entry.getValue());
-            for(Icon icon : entry.getValue()){
-                if(icon == null) continue;
-                if(icon.getVisibilityCondition() == null){
+            for (Icon icon : entry.getValue()) {
+                if (icon == null) continue;
+                if (icon.getVisibilityCondition() == null) {
                     activeIcons.put(entry.getKey(), icon);
                     break;
-                }
-                else if(icon.getVisibilityCondition().checkCondition(player, icon)){
+                } else if (icon.getVisibilityCondition().checkCondition(player, icon)) {
                     activeIcons.put(entry.getKey(), icon);
                     break;
                 }
@@ -170,9 +167,9 @@ public class GUI implements InventoryHolder {
         Inventory inventory = Bukkit.createInventory(this, this.size, ClansPlugin.MM.deserialize(this.title));
         setupIcons(null);
         for (Map.Entry<Integer, Icon> entry : this.activeIcons.entrySet()) {
-            if(entry.getValue() == null){
+            if (entry.getValue() == null) {
                 inventory.setItem(entry.getKey(), null);
-            }else{
+            } else {
                 inventory.setItem(entry.getKey(), entry.getValue().itemStack);
             }
         }

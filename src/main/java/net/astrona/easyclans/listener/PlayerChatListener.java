@@ -56,11 +56,9 @@ public class PlayerChatListener implements Listener {
             Player activePlayer = Bukkit.getPlayer(uuid);
             assert activePlayer != null;
             activePlayer.sendMessage(ClansPlugin.MM.deserialize(config.getString("chat-format")
-                    .replace("{player}", cPlayer.getName()))
-                    .replaceText(config -> {
-                        config.matchLiteral("{message}")
-                                .replacement(event.message());
-                    })
+                            .replace("{player}", cPlayer.getName())).replaceText(config -> {
+                                config.matchLiteral("{message}").replacement(event.message());
+                            })
             );
         }
     }

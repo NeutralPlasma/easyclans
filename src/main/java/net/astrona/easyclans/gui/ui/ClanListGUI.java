@@ -20,7 +20,6 @@ public class ClanListGUI extends Paginator {
     private PlayerController playerController;
     private GUI previousUI;
 
-
     public ClanListGUI(Player player, Clan clan,
                        ClansController clansController,
                        PlayerController playerController,
@@ -31,7 +30,6 @@ public class ClanListGUI extends Paginator {
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
         ), LanguageController.getLocalized("clan_list.menu.title"), 54);
-
 
         this.player = player;
         this.clan = clan;

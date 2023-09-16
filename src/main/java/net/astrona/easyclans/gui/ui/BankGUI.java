@@ -24,7 +24,7 @@ public class BankGUI extends GUI {
         this.open(player);
     }
 
-    private Icon depositMoney(){
+    private Icon depositMoney() {
         var item = new ItemStack(Material.CHEST);
         var meta = item.getItemMeta();
         var loreText = LanguageController.getLocalizedList("bank.menu.deposit.lore");
@@ -45,11 +45,10 @@ public class BankGUI extends GUI {
             player.sendMessage("deposit money");
         });
 
-
         return icon;
     }
 
-    private Icon withdrawMoney(){
+    private Icon withdrawMoney() {
         var item = new ItemStack(Material.DISPENSER);
         var meta = item.getItemMeta();
         var loreText = LanguageController.getLocalizedList("bank.menu.withdraw.lore");
@@ -70,7 +69,6 @@ public class BankGUI extends GUI {
             player.sendMessage("withdraw money");
         });
 
-
         return icon;
     }
 
@@ -78,7 +76,7 @@ public class BankGUI extends GUI {
         setIcon(15, depositMoney());
         setIcon(11, withdrawMoney());
 
-        if(previousUI != null){
+        if (previousUI != null) {
             addCloseAction((player) -> {
                 previousUI.open(player);
             });

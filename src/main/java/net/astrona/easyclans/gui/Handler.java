@@ -17,9 +17,8 @@ public class Handler {
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
     }
 
-
     public void addPlayer(UUID player) {
-        if(!openedInv.contains(player))
+        if (!openedInv.contains(player))
             this.openedInv.add(player);
     }
 

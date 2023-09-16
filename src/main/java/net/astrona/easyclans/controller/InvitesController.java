@@ -2,7 +2,6 @@ package net.astrona.easyclans.controller;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CInvite;
-import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.storage.SQLStorage;
 
 import java.util.HashMap;
@@ -24,9 +23,9 @@ public class InvitesController {
     /**
      * Adds a new invite to the invitation list.
      *
-     * @param clanId the ID of the clan associated with the invite.
-     * @param playerUuid the UUID of the player who is invited.
-     * @param expireTime the expiration time of the invite.
+     * @param clanId      the ID of the clan associated with the invite.
+     * @param playerUuid  the UUID of the player who is invited.
+     * @param expireTime  the expiration time of the invite.
      * @param createdTime the creation time of the invite.
      * @return the newly created invite object.
      */
@@ -37,7 +36,6 @@ public class InvitesController {
         invites.put(cInvite.inviteId(), cInvite);
         return cInvite;
     }
-
 
 
     /**

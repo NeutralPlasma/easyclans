@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Base64;
 
 public class Serialization {
-
     public static String encodeItemBase64(ItemStack itemStack) {
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
         yamlConfiguration.set("item", itemStack);

@@ -22,7 +22,7 @@ public class ClanGUI extends GUI {
 
 
     public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                        RequestsController requestsController) {
+                   RequestsController requestsController) {
         super(54, clan.getName() + "Clan");
 
         this.clan = clan;
@@ -35,23 +35,21 @@ public class ClanGUI extends GUI {
         open(player);
     }
 
-
     private void construct() {
         setIcon(11, membersIcon());
         //  33, 31, 29
 
     }
 
-
-
-    ItemStack clanInfoIconItem(){
+    ItemStack clanInfoIconItem() {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}",clan.getName())));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}", clan.getName())));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
-    Icon clanInfoIcon(){
+
+    Icon clanInfoIcon() {
         Icon icon = new Icon(clanInfoIconItem(), (it, player) -> {
             it.itemStack = clanInfoIconItem();
         });
@@ -59,10 +57,7 @@ public class ClanGUI extends GUI {
         return icon;
     }
 
-
-
-
-    Icon membersIcon(){
+    Icon membersIcon() {
         ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.members.name")));
@@ -70,12 +65,9 @@ public class ClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // open new menu
             player.closeInventory();
 
             new MembersGUI(player, clan, clansController, playerController, this);
-
-            //player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }

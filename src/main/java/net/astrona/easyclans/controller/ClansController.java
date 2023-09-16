@@ -20,23 +20,12 @@ public class ClansController {
         this.clans = new HashMap<>();
     }
 
-    private void loadClans(){
-
-
-        for(var clan : sqlStorage.getAllClans()){
-            // get clan members...
-
-
-
-
-            // add to cache
+    private void loadClans() {
+        for (var clan : sqlStorage.getAllClans()) {
+            // TODO: get clan members and add them to cache
             this.clans.put(clan.getId(), clan);
         }
-
-
-
     }
-
 
 
     private void addClan(Clan clan) {
@@ -46,31 +35,28 @@ public class ClansController {
     /**
      * Adds a new clan to the clan list.
      *
-     * @param owner the UUID of the player who owns the clan.
-     * @param name the name of the clan.
-     * @param displayName the display name of the clan.
-     * @param autoKickTime the auto-kick time for inactive members.
-     * @param joinPointsPrice the points price for joining the clan.
-     * @param joinMoneyPrice the money price for joining the clan.
-     * @param autoPayOutTime the auto-payout time for clan bank.
+     * @param owner                the UUID of the player who owns the clan.
+     * @param name                 the name of the clan.
+     * @param displayName          the display name of the clan.
+     * @param autoKickTime         the auto-kick time for inactive members.
+     * @param joinPointsPrice      the points price for joining the clan.
+     * @param joinMoneyPrice       the money price for joining the clan.
+     * @param autoPayOutTime       the auto-payout time for clan bank.
      * @param autoPayOutPercentage the auto-payout percentage for clan bank.
-     * @param banner the banner item for the clan.
-     * @param bank the initial bank balance of the clan.
-     * @param tag the tag associated with the clan.
-     * @param members the list of UUIDs of clan members.
+     * @param banner               the banner item for the clan.
+     * @param bank                 the initial bank balance of the clan.
+     * @param tag                  the tag associated with the clan.
+     * @param members              the list of UUIDs of clan members.
      */
     public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
                            int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
-                           ItemStack banner, double bank, String tag, List<UUID> members){
+                           ItemStack banner, double bank, String tag, List<UUID> members) {
 
-        Clan clan = new Clan(-1,owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
+        Clan clan = new Clan(-1, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
                 autoPayOutTime, autoPayOutPercentage, banner, bank, tag, members, System.currentTimeMillis());
 
-        // database insert and update id
+        // TODO: database insert and update id
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-
-
-
             clan.setId(-1);
         });
 
@@ -87,7 +73,7 @@ public class ClansController {
      *         no clan with the given id is found.
      */
     public Clan getClan(int id) {
-        if(clans.containsKey(id))
+        if (clans.containsKey(id))
             return clans.get(id);
         return null;
     }

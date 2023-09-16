@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Icon implements Comparable<Icon> {
-
     public ItemStack itemStack;
     private int priority;
     private final List<Action> clickActions = new ArrayList<>();
@@ -20,33 +19,34 @@ public class Icon implements Comparable<Icon> {
     private final List<Action> shiftLeftClickActions = new ArrayList<>();
     private final List<Action> shiftRightClickActions = new ArrayList<>();
     private final List<ItemAction> dragItemActions = new ArrayList<>();
-
     private final UpdateAction refreshAction;
     private Condition visibilityCondition;
-
 
     public Icon(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.refreshAction = null;
         this.priority = 1;
     }
+
     public Icon(ItemStack itemStack, int priority) {
         this.itemStack = itemStack;
         this.refreshAction = null;
         this.priority = priority;
     }
+
     public Icon(ItemStack itemStack, UpdateAction refreshAction) {
         this.itemStack = itemStack;
         this.refreshAction = refreshAction;
         this.priority = 1;
     }
+
     public Icon(ItemStack itemStack, UpdateAction refreshAction, int priority) {
         this.itemStack = itemStack;
         this.refreshAction = refreshAction;
         this.priority = priority;
     }
 
-    public void setVisibilityCondition(Condition visibilityCondition){
+    public void setVisibilityCondition(Condition visibilityCondition) {
         this.visibilityCondition = visibilityCondition;
     }
 
@@ -82,10 +82,11 @@ public class Icon implements Comparable<Icon> {
      * Refreshes the icon
      * DOES NOT UPDATE THE UI!
      * Action that specifies what happens when refresh on icon is called :)
-     * @param player which player so blabla
+     *
+     * @param player the player whose inventory icon is going to get refreshed
      */
-    public void refresh(Player player){
-        if(this.refreshAction != null)
+    public void refresh(Player player) {
+        if (this.refreshAction != null)
             this.refreshAction.execute(this, player);
     }
 

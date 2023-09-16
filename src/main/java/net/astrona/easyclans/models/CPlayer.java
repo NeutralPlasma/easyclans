@@ -9,14 +9,14 @@ import java.util.UUID;
 public class CPlayer {
     private String name;
     private UUID uuid;
-    private int clan_id;
+    private int clanId;
     private long lastActive, joinClanDate;
     private boolean isActive = false;
     private boolean inClubChat = false;
 
-    public CPlayer(UUID uuid, int clan_id, long lastActive, long joinClanDate, String name) {
+    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name) {
         this.uuid = uuid;
-        this.clan_id = clan_id;
+        this.clanId = clanId;
         this.lastActive = lastActive;
         this.joinClanDate = joinClanDate;
         this.name = name;
@@ -39,15 +39,15 @@ public class CPlayer {
     }
 
     public int getClanID() {
-        return clan_id;
+        return clanId;
     }
 
     public void setClanID(int clan_id) {
-        this.clan_id = clan_id;
+        this.clanId = clan_id;
     }
 
-    public void removeFromClan(){
-        this.clan_id = -1;
+    public void removeFromClan() {
+        this.clanId = -1;
     }
 
     public long getLastActive() {
@@ -66,7 +66,7 @@ public class CPlayer {
         this.joinClanDate = joinClanDate;
     }
 
-    public OfflinePlayer getOfflinePlayer(){
+    public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uuid);
     }
 
@@ -76,14 +76,6 @@ public class CPlayer {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getClan_id() {
-        return clan_id;
-    }
-
-    public void setClan_id(int clan_id) {
-        this.clan_id = clan_id;
     }
 
     public boolean isActive() {

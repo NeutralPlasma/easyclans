@@ -10,12 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ConfirmGUI extends GUI {
-
     private Action confirmAction;
     private Action cancelAction;
 
-
-    public ConfirmGUI(Player player, Action confirmAction, Action cancelAction, String title){
+    public ConfirmGUI(Player player, Action confirmAction, Action cancelAction, String title) {
         super(27, title);
         this.confirmAction = confirmAction;
         this.cancelAction = cancelAction;
@@ -24,9 +22,7 @@ public class ConfirmGUI extends GUI {
         this.open(player);
     }
 
-
-
-    private void init(){
+    private void init() {
         ItemStack confirm = new ItemStack(Material.LIME_CONCRETE);
         var meta1 = confirm.getItemMeta();
         meta1.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("confirm")));

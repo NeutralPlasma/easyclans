@@ -20,10 +20,10 @@ public class PlayerConnectionListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         CPlayer cPlayer = this.playerController.getPlayer(event.getPlayer().getUniqueId());
-        if(cPlayer == null){
+        if (cPlayer == null) {
             cPlayer = this.playerController.createPlayer(event.getPlayer());
             cPlayer.setActive(true);
-        }else{
+        } else {
             cPlayer.setActive(true);
         }
     }
@@ -36,6 +36,4 @@ public class PlayerConnectionListener implements Listener {
         this.playerController.updatePlayer(cPlayer);
         //this.playerController.removePlayer(event.getPlayer().getUniqueId());
     }
-
-
 }

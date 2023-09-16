@@ -41,10 +41,11 @@ public class ClansPlugin extends JavaPlugin {
         this.registerGUI();
         this.inited = true;
     }
+
     @Override
-    public void onDisable(){
-        if(inited){
-            // save data
+    public void onDisable() {
+        if (inited) {
+            // TODO: save the data
         }
     }
 
@@ -54,8 +55,7 @@ public class ClansPlugin extends JavaPlugin {
         pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController, playerChatComponent), this);
     }
 
-    private void registerCommands(){
-
+    private void registerCommands() {
         getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, playerChatComponent, this));
     }
 

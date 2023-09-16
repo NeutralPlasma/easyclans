@@ -33,7 +33,7 @@ public class SQLStorage {
 
         if (dbSection == null) {
             logger.severe("Database properties not found in 'config.yml'.");
-            // probably good to disable plugin?=
+            //plugin.getServer().getPluginManager().disablePlugin(plugin);
             return;
         }
 
@@ -78,7 +78,6 @@ public class SQLStorage {
     }
 
 
-
     // <editor-fold desc="Table creation">
     private void createPlayersTable() {
         try (Connection connection = dataSource.getConnection()) {
@@ -99,7 +98,6 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
-
 
     private void createClansTable() {
         try (Connection connection = dataSource.getConnection()) {
@@ -130,7 +128,6 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
-
 
     private void createClanInvitesTable() {
         try (Connection connection = dataSource.getConnection()) {
@@ -181,58 +178,58 @@ public class SQLStorage {
     //</editor-fold>
 
     //<editor-fold desc="player stuff">
-    public void insertPlayer(CPlayer cPlayer){
-        try(Connection connection = dataSource.getConnection()){
+    public void insertPlayer(CPlayer cPlayer) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            INSERT INTO ec_player_data
-            (uuid, clan, last_active, joined_clan, name)
-            VALUES
-            (?, ?, ?, ?, ?)
-            """);
+                    INSERT INTO ec_player_data
+                    (uuid, clan, last_active, joined_clan, name)
+                    VALUES
+                    (?, ?, ?, ?, ?)
+                    """);
             statement.setString(1, cPlayer.getUuid().toString());
             statement.setInt(2, cPlayer.getClanID());
             statement.setLong(3, cPlayer.getLastActive());
             statement.setLong(4, cPlayer.getJoinClanDate());
             statement.setString(5, cPlayer.getName());
             statement.execute();
-        }catch (SQLException e){
-            // ja jebi se logger neh mi tezit :)
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    public void updatePlayer(CPlayer cPlayer){
 
-        try(Connection connection = dataSource.getConnection()){
+    public void updatePlayer(CPlayer cPlayer) {
+
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            UPDATE ec_player_data
-            SET
-            clan = ?,
-            last_active = ?,
-            joined_clan = ?
-            """);
+                    UPDATE ec_player_data
+                    SET
+                    clan = ?,
+                    last_active = ?,
+                    joined_clan = ?
+                    """);
             statement.setInt(1, cPlayer.getClanID());
             statement.setLong(2, cPlayer.getLastActive());
             statement.setLong(3, cPlayer.getJoinClanDate());
             statement.execute();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             // ja jebi se logger neh mi tezit :)
             e.printStackTrace();
         }
     }
 
 
-    // todo: setup getting actual clan.
-    public CPlayer getPlayer(UUID uuid){
-        try(Connection connection = dataSource.getConnection()){
+    // TODO: setup getting the actual clan
+    public CPlayer getPlayer(UUID uuid) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            SELECT * FROM
-            ec_player_data
-            WHERE
-            uuid = ?
-            """);
+                    SELECT * FROM
+                    ec_player_data
+                    WHERE
+                    uuid = ?
+                    """);
             statement.setString(1, uuid.toString());
             var result = statement.executeQuery();
-            if(result.next()){
+            if (result.next()) {
                 return new CPlayer(
                         uuid,
                         result.getInt("clan"),
@@ -240,25 +237,25 @@ public class SQLStorage {
                         result.getLong("joined_clan"),
                         result.getString("name")
                 );
-            }else{
+            } else {
                 return null;
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             // ja jebi se logger neh mi tezit :)
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<CPlayer> getAllPlayers(){
+    public List<CPlayer> getAllPlayers() {
         List<CPlayer> players = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            SELECT * FROM
-            ec_player_data
-            """);
+                    SELECT * FROM
+                    ec_player_data
+                    """);
             var result = statement.executeQuery();
-            while(result.next()){
+            while (result.next()) {
                 players.add(new CPlayer(
                         UUID.fromString(result.getString("uuid")),
                         result.getInt("clan"),
@@ -267,7 +264,7 @@ public class SQLStorage {
                         result.getString("name")
                 ));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return players;
@@ -278,38 +275,38 @@ public class SQLStorage {
 
     //<editor-fold desc="clan stuff">
 
-    private List<UUID> getClanMembers(int clan_id){
+    private List<UUID> getClanMembers(int clan_id) {
         List<UUID> members = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            SELECT uuid FROM
-            ec_player_data
-            WHERE clan = ?
-            """);
+                    SELECT uuid FROM
+                    ec_player_data
+                    WHERE clan = ?
+                    """);
             statement.setInt(1, clan_id);
 
             var result = statement.executeQuery();
-            while(result.next()){
+            while (result.next()) {
                 members.add(
-                       UUID.fromString(result.getString("uuid"))
+                        UUID.fromString(result.getString("uuid"))
                 );
             }
 
-        }catch (SQLException e){
-           e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return members;
     }
 
-    public List<Clan> getAllClans(){
+    public List<Clan> getAllClans() {
         List<Clan> clans = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            SELECT * FROM
-            ec_clan_data
-            """);
+                    SELECT * FROM
+                    ec_clan_data
+                    """);
             var result = statement.executeQuery();
-            while(result.next()){
+            while (result.next()) {
                 var clan = new Clan(
                         result.getInt("id"),
                         null,
@@ -329,30 +326,30 @@ public class SQLStorage {
                 clan.setMembers(getClanMembers(clan.getId()));
                 clans.add(clan);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-    public void updateClan(Clan clan){
-        try(Connection connection = dataSource.getConnection()){
+    public void updateClan(Clan clan) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            UPDATE ec_clan_data
-            SET
-            owner = ?,
-            clan_name = ?,
-            display_name = ?,
-            autokick_time = ?,
-            join_points_price = ?,
-            join_money_price = ?,
-            auto_pay_out_time = ?,
-            auto_pay_out_percentage = ?,
-            banner = ?,
-            bank = ?,
-            tag = ?
-            """);
+                    UPDATE ec_clan_data
+                    SET
+                    owner = ?,
+                    clan_name = ?,
+                    display_name = ?,
+                    autokick_time = ?,
+                    join_points_price = ?,
+                    join_money_price = ?,
+                    auto_pay_out_time = ?,
+                    auto_pay_out_percentage = ?,
+                    banner = ?,
+                    bank = ?,
+                    tag = ?
+                    """);
             statement.setString(1, clan.getOwner().toString());
             statement.setString(2, clan.getName());
             statement.setString(3, clan.getDisplayName());
@@ -367,32 +364,32 @@ public class SQLStorage {
 
             statement.executeUpdate();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void saveClan(Clan clan){
-        try(Connection connection = dataSource.getConnection()){
+    public void saveClan(Clan clan) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            INSERT INTO ec_clan_data
-            (
-            owner,
-            clan_name,
-            display_name,
-            autokick_time,
-            join_points_price,
-            join_money_price,
-            auto_pay_out_time,
-            auto_pay_out_percentage,
-            banner,
-            bank,
-            tag,
-            created_on
-            )
-            VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """);
+                    INSERT INTO ec_clan_data
+                    (
+                    owner,
+                    clan_name,
+                    display_name,
+                    autokick_time,
+                    join_points_price,
+                    join_money_price,
+                    auto_pay_out_time,
+                    auto_pay_out_percentage,
+                    banner,
+                    bank,
+                    tag,
+                    created_on
+                    )
+                    VALUES
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """);
             statement.setString(1, clan.getOwner().toString());
             statement.setString(2, clan.getName());
             statement.setString(3, clan.getDisplayName());
@@ -408,7 +405,7 @@ public class SQLStorage {
 
             statement.execute();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -418,17 +415,17 @@ public class SQLStorage {
 
     //<editor-fold desc="requests stuff">
 
-    public List<CRequest> getAllRequests(){
+    public List<CRequest> getAllRequests() {
         List<CRequest> requests = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            SELECT * FROM
-            ec_clan_join_requests
-            """);
+                    SELECT * FROM
+                    ec_clan_join_requests
+                    """);
 
             var result = statement.executeQuery();
 
-            while(result.next()){
+            while (result.next()) {
                 requests.add(new CRequest(
                         result.getInt("id"),
                         result.getInt("clan"),
@@ -438,56 +435,56 @@ public class SQLStorage {
                 ));
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return requests;
     }
 
 
-    public CRequest insertRequest(CRequest request){
-        try(Connection connection = dataSource.getConnection()){
+    public CRequest insertRequest(CRequest request) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            INSERT INTO
-            ec_clan_join_requests
-            (clan, player_id, expire_date, created_on)
-            VALUES
-            (?, ?, ?, ?)
-            """, Statement.RETURN_GENERATED_KEYS);
+                    INSERT INTO
+                    ec_clan_join_requests
+                    (clan, player_id, expire_date, created_on)
+                    VALUES
+                    (?, ?, ?, ?)
+                    """, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, request.getClanId());
             statement.setString(2, request.getPlayerUuid().toString());
             statement.setLong(3, request.getExpireTime());
             statement.setLong(4, request.getCreatedTime());
             int rows = statement.executeUpdate();
-            if(rows == 0){
+            if (rows == 0) {
                 return null;
-            }else{
+            } else {
 
                 var result = statement.getGeneratedKeys();
-                if(result.next()){
+                if (result.next()) {
                     request.setRequestId(result.getInt(1));
                     return request;
-                }else{
+                } else {
                     return null;
                 }
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-    public void deleteRequest(CRequest cRequest){
-        try(Connection connection = dataSource.getConnection()){
+    public void deleteRequest(CRequest cRequest) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
-            DELETE FROM
-            ec_clan_join_requests
-            WHERE id = ?
-            """);
+                    DELETE FROM
+                    ec_clan_join_requests
+                    WHERE id = ?
+                    """);
             statement.setInt(1, cRequest.getRequestId());
             statement.execute();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

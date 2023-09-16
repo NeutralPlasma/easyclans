@@ -32,7 +32,6 @@ public class RequestsGUI extends Paginator {
     private RequestsController requestsController;
     private GUI previousUI;
 
-
     public RequestsGUI(Player player, Clan clan,
                        ClansController clansController,
                        PlayerController playerController,
@@ -40,11 +39,10 @@ public class RequestsGUI extends Paginator {
                        GUI previousUI) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
-                         19, 20, 21, 22, 23, 24, 25,
-                         28, 29, 30, 31, 32, 33, 34,
-                         37, 38, 39, 40, 41, 42, 43
+                19, 20, 21, 22, 23, 24, 25,
+                28, 29, 30, 31, 32, 33, 34,
+                37, 38, 39, 40, 41, 42, 43
         ), "<gold>Members <white>[<gold>{page}<white>]", 54);
-
 
         this.player = player;
         this.clan = clan;
@@ -57,10 +55,10 @@ public class RequestsGUI extends Paginator {
     }
 
 
-    private void init(){
+    private void init() {
         boolean isOwner = clan.getOwner() == player.getUniqueId();
 
-        for(CRequest cRequest : requestsController.getClanRequests(clan.getId())){
+        for (CRequest cRequest : requestsController.getClanRequests(clan.getId())) {
             var oPlayer = Bukkit.getOfflinePlayer(cRequest.getPlayerUuid());
             ItemStack item = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) item.getItemMeta();
@@ -73,47 +71,43 @@ public class RequestsGUI extends Paginator {
 
             Icon icon = new Icon(item);
 
-            //if(isOwner){
-                var cPlayer = playerController.getPlayer(cRequest.getPlayerUuid());
+            var cPlayer = playerController.getPlayer(cRequest.getPlayerUuid());
 
-                icon.addClickAction((player) -> {
-                    player.sendMessage("CLICEKD!");
-
-
-                    new ConfirmGUI(player, (ignored) -> {
-                        requestsController.deleteRequest(cRequest);
-                        cPlayer.setClanID(clan.getId());
-                        cPlayer.setJoinClanDate(System.currentTimeMillis());
-                        playerController.updatePlayer(cPlayer);
-                        player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.accepted")
-                                .formatted("{player}", cPlayer.getName())));
-                        removeIcon(icon);
-                        open();
-                    }, (ignored) -> {
-                        requestsController.deleteRequest(cRequest);
-                        player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.decline")
-                                .formatted("{player}", cPlayer.getName())));
-                        removeIcon(icon);
-                        open();
-                    }, LanguageController.getLocalized("requests.menu.invite.title").formatted("{player}", cPlayer.getName()));
-                });
+            icon.addClickAction((player) -> {
+                player.sendMessage("CLICKED!");
 
 
-            //}
+                new ConfirmGUI(player, (ignored) -> {
+                    requestsController.deleteRequest(cRequest);
+                    cPlayer.setClanID(clan.getId());
+                    cPlayer.setJoinClanDate(System.currentTimeMillis());
+                    playerController.updatePlayer(cPlayer);
+                    player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.accepted")
+                            .formatted("{player}", cPlayer.getName())));
+                    removeIcon(icon);
+                    open();
+                }, (ignored) -> {
+                    requestsController.deleteRequest(cRequest);
+                    player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.decline")
+                            .formatted("{player}", cPlayer.getName())));
+                    removeIcon(icon);
+                    open();
+                }, LanguageController.getLocalized("requests.menu.invite.title").formatted("{player}", cPlayer.getName()));
+            });
 
-            icon.addClickAction((player1 -> {}));
+            icon.addClickAction((player1 -> {
+            }));
 
             this.addIcon(icon);
         }
-        if(previousUI != null){
+        if (previousUI != null) {
             addCloseAction((player) -> {
                 previousUI.open(player);
             });
         }
     }
 
-
-    private List<Component> format(List<String> strings, CRequest cRequest){
+    private List<Component> format(List<String> strings, CRequest cRequest) {
         Locale loc = new Locale("sl", "SI");
 
         List<Component> newlist = new ArrayList<>();
@@ -122,7 +116,7 @@ public class RequestsGUI extends Paginator {
         var expireDate = new Date(cRequest.getExpireTime());
         SimpleDateFormat sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
 
-        for(String string : strings){
+        for (String string : strings) {
             newlist.add(
                     ClansPlugin.MM.deserialize(string
                             .replace("{requested}", sdf.format(createdDate))

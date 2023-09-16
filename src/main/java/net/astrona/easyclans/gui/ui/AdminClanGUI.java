@@ -23,7 +23,7 @@ public class AdminClanGUI extends GUI {
 
     public AdminClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
                         RequestsController requestsController) {
-        super(54, "Admin " +  clan.getName() + " Clan");
+        super(54, "Admin " + clan.getName() + " Clan");
 
         this.clan = clan;
         this.clansController = clansController;
@@ -35,7 +35,6 @@ public class AdminClanGUI extends GUI {
         open(player);
     }
 
-
     private void construct() {
         setIcon(13, clanInfoIcon());
         setIcon(11, membersIcon());
@@ -44,20 +43,18 @@ public class AdminClanGUI extends GUI {
         setIcon(31, clanSettingsIcon());
         setIcon(33, requestsIcon());
         //  33, 31, 29
-
     }
 
-
-
-    ItemStack clanInfoIconItem(){
+    ItemStack clanInfoIconItem() {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}",clan.getName())));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}", clan.getName())));
         meta.lore(getLocalizedDesiralizedList("clan.menu.clan.lore"));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
-    Icon clanInfoIcon(){
+
+    Icon clanInfoIcon() {
         Icon icon = new Icon(clanInfoIconItem(), (it, player) -> {
             it.itemStack = clanInfoIconItem();
         });
@@ -65,10 +62,7 @@ public class AdminClanGUI extends GUI {
         return icon;
     }
 
-
-
-
-    Icon membersIcon(){
+    Icon membersIcon() {
         ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.members.name")));
@@ -76,17 +70,14 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // open new menu
             player.closeInventory();
 
             new MembersGUI(player, clan, clansController, playerController, this);
-
-            //player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }
 
-    Icon invitesIcon(){
+    Icon invitesIcon() {
         ItemStack itemStack = new ItemStack(Material.BOOK);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.invites.name")));
@@ -94,15 +85,13 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // open new menu
+            // TODO: open the invites menu
             player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }
 
-
-
-    ItemStack bankIconItem(){
+    ItemStack bankIconItem() {
         ItemStack itemStack = new ItemStack(Material.SUNFLOWER);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.bank.name")));
@@ -110,7 +99,8 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         return itemStack;
     }
-    Icon bankIcon(){
+
+    Icon bankIcon() {
         Icon icon = new Icon(bankIconItem(), ((it, player) -> {
             it.itemStack = bankIconItem();
         }));
@@ -123,7 +113,7 @@ public class AdminClanGUI extends GUI {
         return icon;
     }
 
-    Icon clanSettingsIcon(){
+    Icon clanSettingsIcon() {
         ItemStack itemStack = new ItemStack(Material.ANVIL);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.settings.name")));
@@ -131,14 +121,13 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // open new menu
+            // TODO: open the settings menu
             player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }
 
-
-    Icon requestsIcon(){
+    Icon requestsIcon() {
         ItemStack itemStack = new ItemStack(Material.CHEST);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.requests.name")));
@@ -146,16 +135,9 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // open new menu
-
             new RequestsGUI(player, clan, clansController, playerController, requestsController, this);
-
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }
-
-
-
 
 }

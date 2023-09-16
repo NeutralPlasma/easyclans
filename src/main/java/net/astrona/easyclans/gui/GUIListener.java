@@ -18,7 +18,6 @@ public class GUIListener implements Listener {
     private final Handler handler;
     private final Plugin plugin;
 
-
     public GUIListener(Handler handler, Plugin plugin) {
         this.handler = handler;
         this.plugin = plugin;
@@ -67,7 +66,7 @@ public class GUIListener implements Listener {
         if (icon == null) return;
         event.setCancelled(true);
 
-        if(event.getCursor() != null && event.getCursor().getType() != Material.AIR){
+        if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
             icon.getDragItemActions().forEach(it -> it.execute(player, event.getCursor()));
             return;
         }
@@ -80,9 +79,6 @@ public class GUIListener implements Listener {
             icon.getShiftLeftClickActions().forEach(it -> it.execute(player));
         if (event.getClick() == ClickType.SHIFT_RIGHT)
             icon.getShiftRightClickActions().forEach(it -> it.execute(player));
-
-
-
 
         icon.getClickActions().forEach(it -> it.execute(player));
     }
