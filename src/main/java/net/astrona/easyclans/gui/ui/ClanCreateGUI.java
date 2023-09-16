@@ -154,7 +154,7 @@ public class ClanCreateGUI extends GUI {
                 new ClanGUI(player, clan, clansController, playerController, requestsController);
             }, (cancelPlayer) -> {
                 cancelPlayer.openInventory(getInventory());
-            }, "Are you sure about creating the clan?");
+            }, LanguageController.getLocalized("create.menu.create.confirm-title"));
         });
 
         return icon;

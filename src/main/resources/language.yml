@@ -70,6 +70,15 @@ create:
         - "<gray>L-Click to change name"
         - "<gray>R-Click to change display name"
         - "{display_name}"
+    create:
+      name: "<green>Create the clan"
+      lore:
+        - ""
+        - "<gray>Name: {name}"
+        - "<gray>Displayname: {display_name}"
+        - ""
+        - "<gold>Click to create"
+      confirm-title: "Create the clan?"
 
 
 requests:
