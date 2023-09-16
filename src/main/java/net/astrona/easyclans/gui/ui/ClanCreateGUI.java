@@ -31,10 +31,11 @@ public class ClanCreateGUI extends GUI {
     private PlayerChatComponent playerChatComponent;
 
 
-    public ClanCreateGUI(String name, String displayName, Player player, ClansPlugin plugin, PlayerController playerController, ClansController clansController, PlayerChatComponent playerChatComponent) {
+    public ClanCreateGUI(String name, String displayName, ItemStack banner, Player player, ClansPlugin plugin, PlayerController playerController, ClansController clansController, PlayerChatComponent playerChatComponent) {
         super(54, LanguageController.getLocalized("create.menu.title"));
         this.name = name;
         this.displayName = displayName;
+        this.banner = banner;
         this.player = player;
         this.plugin = plugin;
         this.playerController = playerController;
@@ -87,12 +88,12 @@ public class ClanCreateGUI extends GUI {
         }));
 
         icon.addLeftClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(plugin, displayName, playerChatComponent));
+            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(plugin, displayName, banner, playerChatComponent));
             player.closeInventory();
         });
 
         icon.addRightClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(plugin, name, playerChatComponent));
+            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(plugin, name, banner, playerChatComponent));
             player.closeInventory();
         });
 
@@ -116,7 +117,9 @@ public class ClanCreateGUI extends GUI {
 
 
     private void init(){
-        banner = new ItemStack(Material.ORANGE_BANNER); // random generator maybe?
+        if (banner == null) {
+            banner = new ItemStack(Material.ORANGE_BANNER); // random generator maybe?
+        }
 
         addIcon(13, clanBanner());
         /*addIcon(20, priceSettings());

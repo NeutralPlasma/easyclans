@@ -9,16 +9,19 @@ import net.astrona.easyclans.models.components.chat.impl.ChatPrompt;
 import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class ChangeClanDisplayNamePrompt implements ChatPrompt {
     private final ClansPlugin plugin;
     private final String name;
+    private final ItemStack banner;
     private PlayerController playerController;
     private ClansController clansController;
     private final PlayerChatComponent playerChatComponent;
 
-    public ChangeClanDisplayNamePrompt(ClansPlugin plugin, String name, PlayerChatComponent playerChatComponent) {
+    public ChangeClanDisplayNamePrompt(ClansPlugin plugin, String name, ItemStack banner, PlayerChatComponent playerChatComponent) {
         this.name = name;
+        this.banner = banner;
         this.plugin = plugin;
         this.playerChatComponent = playerChatComponent;
     }
@@ -41,7 +44,7 @@ public class ChangeClanDisplayNamePrompt implements ChatPrompt {
                     .replace("{display_name}", input)));
 
             Bukkit.getScheduler().runTask(plugin, () -> {
-                new ClanCreateGUI(name, input, player, plugin, playerController, clansController, playerChatComponent);
+                new ClanCreateGUI(name, input, banner, player, plugin, playerController, clansController, playerChatComponent);
             });
             return true;
         }
