@@ -222,8 +222,15 @@ public class ClansCommand implements TabExecutor {
     private void executeBankSubCommand(Player sender) {
 
         // check if player is in clan
+        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
 
-        // TODO: gasper implementaj od banke menu
+        if (cPlayer.getClanID() == -1) {
+            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+            return;
+        }
+
+        Clan clan = clansController.getClan(cPlayer.getClanID());
+        new BankGUI(sender, clan, null);
     }
 
     private void executeMembersSubCommand(Player sender) {
