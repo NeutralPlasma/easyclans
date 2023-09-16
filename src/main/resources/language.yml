@@ -13,6 +13,9 @@ clan:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+  chat:
+    join_chat: "<green>You are now talking in Clan chat."
+    leave_chat: "<red>You are no longer talking in Clan chat"
   menu:
     clan:
       name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"

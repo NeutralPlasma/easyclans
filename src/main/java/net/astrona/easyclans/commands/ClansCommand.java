@@ -2,6 +2,7 @@ package net.astrona.easyclans.commands;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
+import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.ui.ClanGUI;
@@ -41,7 +42,7 @@ import static net.astrona.easyclans.ClansPlugin.MM;
  */
 public class ClansCommand implements TabExecutor {
     private ClansPlugin plugin;
-    private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test");
+    private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test", "chat");
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
@@ -122,6 +123,20 @@ public class ClansCommand implements TabExecutor {
                     cplayer.setClanID(clan.getId());
 
                     new ClanGUI(playerSender, clan, clansController, playerController, requestsController);
+                }
+                case "chat" -> {
+                    CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
+
+                    if(cplayer == null){
+                        cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
+                    }
+
+                    if (cplayer.isInClubChat()) {
+                        playerSender.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
+                    } else {
+                        playerSender.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
+                    }
+                    cplayer.setInClubChat(!cplayer.isInClubChat());
                 }
             }
         } else if (args.length == 2) {

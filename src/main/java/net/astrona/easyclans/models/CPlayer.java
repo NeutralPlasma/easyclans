@@ -12,6 +12,7 @@ public class CPlayer {
     private int clan_id;
     private long lastActive, joinClanDate;
     private boolean isActive = false;
+    private boolean inClubChat = false;
 
     public CPlayer(UUID uuid, int clan_id, long lastActive, long joinClanDate, String name) {
         this.uuid = uuid;
@@ -19,6 +20,14 @@ public class CPlayer {
         this.lastActive = lastActive;
         this.joinClanDate = joinClanDate;
         this.name = name;
+    }
+
+    public boolean isInClubChat() {
+        return inClubChat;
+    }
+
+    public void setInClubChat(boolean inClubChat) {
+        this.inClubChat = inClubChat;
     }
 
     public UUID getUuid() {

@@ -6,6 +6,7 @@ import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.Handler;
+import net.astrona.easyclans.listener.PlayerChatListener;
 import net.astrona.easyclans.listener.PlayerConnectionListener;
 import net.astrona.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -47,6 +48,7 @@ public class ClansPlugin extends JavaPlugin {
     private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new PlayerConnectionListener(this, playerController), this);
+        pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController), this);
     }
 
     private void registerCommands(){
