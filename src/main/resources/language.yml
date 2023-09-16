@@ -50,17 +50,26 @@ clan:
         - ""
         - "<gray>Click to see join requests</gray>"
 create:
+  display_name:
+    prompt: "<green>Enter a new clan display name:"
+    invalid_prompt: "<red>Invalid input. Please enter a valid clan display name."
+    set: "<gray>Clan display name set to: <reset>{display_name}"
+  name:
+    prompt: "<green>Enter a new clan name:"
+    invalid_prompt: "<red>Invalid input. Please enter a valid clan name."
+    set: "<gray>Clan name set to: <reset>{name}"
+
   menu:
     title: "<gold>Clan creation"
 
     banner:
       name: "{name}"
       lore:
-        - "<gray>Drag and drop banner"
+        - "<gold>Drag and drop banner"
         - ""
-        - "L-Click to change name"
-        - "R-Click to change display name"
-        - "<reset>{display_name}"
+        - "<gray>L-Click to change name"
+        - "<gray>R-Click to change display name"
+        - "{display_name}"
 
 
 requests:

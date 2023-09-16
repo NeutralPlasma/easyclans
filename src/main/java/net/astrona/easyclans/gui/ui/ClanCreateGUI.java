@@ -6,8 +6,11 @@ import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
+import net.astrona.easyclans.models.components.chat.ChangeClanDisplayNamePrompt;
+import net.astrona.easyclans.models.components.chat.ChangeClanNamePrompt;
+import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,19 +23,23 @@ public class ClanCreateGUI extends GUI {
     private ItemStack banner;
     private int kickTime;
     private double moneyPrice, payoutPercentage;
-    private String name = "DEFAULT_NAME", displayName = "DEFAULT", tag = "DEFAULT";
+    private String name, displayName, tag = "DEFAULT";
     private Player player;
     private ClansPlugin plugin;
     private PlayerController playerController;
     private ClansController clansController;
+    private PlayerChatComponent playerChatComponent;
 
 
-    public ClanCreateGUI(Player player, ClansPlugin plugin, PlayerController playerController, ClansController clansController) {
+    public ClanCreateGUI(String name, String displayName, Player player, ClansPlugin plugin, PlayerController playerController, ClansController clansController, PlayerChatComponent playerChatComponent) {
         super(54, LanguageController.getLocalized("create.menu.title"));
+        this.name = name;
+        this.displayName = displayName;
         this.player = player;
         this.plugin = plugin;
         this.playerController = playerController;
         this.clansController = clansController;
+        this.playerChatComponent = playerChatComponent;
         init();
         fancyBackground();
         open(player);
@@ -41,7 +48,10 @@ public class ClanCreateGUI extends GUI {
 
     private void legalizeBanner(){
         var meta = banner.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.name").replace("{name}", name)));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.name")
+                .replace("{name}", name))
+                .decoration(TextDecoration.ITALIC, false)
+        );
         for(var enchant : meta.getEnchants().keySet()){
             meta.removeEnchant(enchant);
         }
@@ -50,15 +60,16 @@ public class ClanCreateGUI extends GUI {
                 ClansPlugin.MM.deserialize(it
                         .replace("{name}", name)
                         .replace("{display_name}", displayName))
+                        .decoration(TextDecoration.ITALIC, false)
         ).toList());
         banner.setItemMeta(meta);
-
     }
 
 
     private Icon clanBanner(){
+        legalizeBanner();
+
         Icon icon = new Icon(banner, (self, player) -> {
-            legalizeBanner();
             self.itemStack = banner;
         });
 
@@ -66,6 +77,7 @@ public class ClanCreateGUI extends GUI {
             player.sendMessage(itemStack.getType().toString());
             if(itemStack.getType().toString().endsWith("BANNER")) {
                 banner = itemStack.clone();
+                legalizeBanner();
                 this.update(player, 13);
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
             }else{
@@ -74,8 +86,14 @@ public class ClanCreateGUI extends GUI {
 
         }));
 
-        icon.addClickAction((player) -> {
+        icon.addLeftClickAction((player) -> {
+            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(plugin, displayName, playerChatComponent));
+            player.closeInventory();
+        });
 
+        icon.addRightClickAction((player) -> {
+            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(plugin, name, playerChatComponent));
+            player.closeInventory();
         });
 
 
@@ -104,5 +122,13 @@ public class ClanCreateGUI extends GUI {
         /*addIcon(20, priceSettings());
         addIcon(31, kickSettings());
         addIcon(24, payoutSettings());*/
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

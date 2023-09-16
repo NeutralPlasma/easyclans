@@ -10,6 +10,7 @@ import net.astrona.easyclans.gui.ui.ClanGUI;
 import net.astrona.easyclans.gui.ui.RequestsGUI;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -47,12 +48,15 @@ public class ClansCommand implements TabExecutor {
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
+    private final PlayerChatComponent playerChatComponent;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
-                        RequestsController requestsController, ClansPlugin plugin) {
+                        RequestsController requestsController, PlayerChatComponent playerChatComponent,
+                        ClansPlugin plugin) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
+        this.playerChatComponent = playerChatComponent;
         this.plugin = plugin;
     }
 
@@ -193,7 +197,7 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeCreateSubCommand(Player sender) {
-        new ClanCreateGUI(sender, plugin, playerController, clansController);
+        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", sender, plugin, playerController, clansController, playerChatComponent);
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {

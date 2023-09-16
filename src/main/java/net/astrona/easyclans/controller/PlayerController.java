@@ -20,8 +20,6 @@ public class PlayerController {
         init();
     }
 
-
-
     private void init(){
         var lPlayers = sqlStorage.getAllPlayers();
         for(CPlayer cplayer : lPlayers){
