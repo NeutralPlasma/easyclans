@@ -109,7 +109,7 @@ public class ClansCommand implements TabExecutor {
                             0,
                             10.0,
                             new ItemStack(Material.CYAN_BANNER),
-                            0,
+                            10000000,
                             "DD",
                             List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
                                     test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,

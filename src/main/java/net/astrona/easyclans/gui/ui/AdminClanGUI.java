@@ -115,12 +115,9 @@ public class AdminClanGUI extends GUI {
             it.itemStack = bankIconItem();
         }));
 
-        icon.addLeftClickAction((player)-> {
-            player.sendMessage("Okay withdrawn!");
-        });
-
-        icon.addRightClickAction((player)-> {
-            player.sendMessage("Okay deposited!");
+        icon.addClickAction(player -> {
+            player.closeInventory();
+            new BankGUI(player, clan, this);
         });
 
         return icon;

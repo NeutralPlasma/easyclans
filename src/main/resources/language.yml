@@ -37,8 +37,7 @@ clan:
       name: "<reset><#ffffff>[<gold>BANK</gold><#ffffff>]"
       lore:
         - ""
-        - "<gray>L-Click to withdraw"
-        - "<gray>R-Click to deposit"
+        - "<gold>Click to open!"
     settings:
       name: "<reset><#ffffff>[<red>Settings</red><#ffffff>]"
       lore:
@@ -49,11 +48,9 @@ clan:
       lore:
         - ""
         - "<gray>Click to see join requests</gray>"
-
 clan_list:
   menu:
     title: "<gold>Clan List [<white>{page}</white>]</gold>"
-
     banner:
       name: "{display_name}"
       lore:
@@ -61,7 +58,23 @@ clan_list:
         - "<gray>Members:<white> {members}"
         - ""
         - "<gold>Click to send a join request!"
-
+bank:
+  menu:
+    title: "<gold>Clan Bank"
+    deposit:
+      name: "<gold>Deposit Money"
+      lore:
+        - ""
+        - "<gray>Current balance:</gray> <gold>${money}"
+        - ""
+        - "<gold>Click to deposit!"
+    withdraw:
+      name: "<gold>Withdraw Money"
+      lore:
+        - ""
+        - "<gray>Current balance:</gray> <gold>${money}"
+        - ""
+        - "<gold>Click to withdraw!"
 create:
   display_name:
     prompt: "<green>Enter a new clan display name:"
@@ -71,10 +84,8 @@ create:
     prompt: "<green>Enter a new clan name:"
     invalid_prompt: "<red>Invalid input. Please enter a valid clan name."
     set: "<gray>Clan name set to: <reset>{name}"
-
   menu:
     title: "<gold>Clan creation"
-
     banner:
       name: "{name}"
       lore:
@@ -92,8 +103,6 @@ create:
         - ""
         - "<gold>Click to create"
       confirm-title: "Create the clan?"
-
-
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"
