@@ -26,19 +26,15 @@ public class GUIListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryOpen(InventoryOpenEvent event) {
-        if (event.getInventory() instanceof GUI) {
+        if (event.getInventory().getHolder() instanceof GUI) {
             handler.addPlayer(event.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getInventory() instanceof GUI)) return;
+        if (!(event.getInventory().getHolder() instanceof GUI)) return;
         if (!handler.hasPlayer(event.getPlayer().getUniqueId())) return;
-
-
-
-        //Get our CustomHolder
         GUI gui;
         if (event.getView().getTopInventory().getHolder() instanceof GUI) {
             gui = (GUI) event.getView().getTopInventory().getHolder();
@@ -67,9 +63,14 @@ public class GUIListener implements Listener {
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
         GUI gui = (GUI) event.getView().getTopInventory().getHolder();
         if (gui == null) return;
-        event.setCancelled(true);
         Icon icon = gui.getIcon(event.getRawSlot());
         if (icon == null) return;
+        event.setCancelled(true);
+
+        if(event.getCursor() != null && event.getCursor().getType() != Material.AIR){
+            icon.getDragItemActions().forEach(it -> it.execute(player, event.getCursor()));
+            return;
+        }
 
         if (event.getClick() == ClickType.LEFT)
             icon.getLeftClickActions().forEach(it -> it.execute(player));
@@ -80,9 +81,7 @@ public class GUIListener implements Listener {
         if (event.getClick() == ClickType.SHIFT_RIGHT)
             icon.getShiftRightClickActions().forEach(it -> it.execute(player));
 
-        // TODO
-        /*if(event.getClick() == ClickType.LEFT)
-            icon.getDragItemActions().forEach(it -> it.execute(player, itemStack));*/
+
 
 
         icon.getClickActions().forEach(it -> it.execute(player));

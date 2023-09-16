@@ -5,6 +5,7 @@ import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.gui.ui.ClanCreateGUI;
 import net.astrona.easyclans.gui.ui.ClanGUI;
 import net.astrona.easyclans.gui.ui.RequestsGUI;
 import net.astrona.easyclans.models.CPlayer;
@@ -192,7 +193,7 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeCreateSubCommand(Player sender) {
-
+        new ClanCreateGUI(sender, plugin, playerController, clansController);
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {

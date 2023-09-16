@@ -20,8 +20,6 @@ public class GUI implements InventoryHolder {
     private final Map<Integer, List<Icon>> actualIcons = new HashMap<>();
 
 
-    private final Map<Integer, Icon> icons = new HashMap<>();
-    private final Map<Integer, Icon> fallback = new HashMap<>();
     private final int size;
     private String title;
     private List<Integer> noBackgroundSlots = new ArrayList<>();
@@ -49,9 +47,6 @@ public class GUI implements InventoryHolder {
     /*public void setIcon(int pos, Icon icon) {
         this.icons.put(pos, icon);
     }*/
-    public void setFallback(int pos, Icon icon){
-        this.fallback.put(pos, icon);
-    }
 
     public Icon getIcon(int pos) {
         return this.activeIcons.get(pos);
@@ -72,9 +67,7 @@ public class GUI implements InventoryHolder {
     public void setBackground(ItemStack itemStack){
         Icon icon = new Icon(itemStack);
         for(int x = 0; x < size; x++){
-            if(!icons.containsKey(x)){
-                setIcon(x, icon);
-            }
+            addIcon(x, icon);
         }
     }
 
@@ -108,13 +101,13 @@ public class GUI implements InventoryHolder {
         }
 
         for(int i = start; i < start+5; i++){
-            if(!icons.containsKey(i) && !noBackgroundSlots.contains(i)) {
+            if(!noBackgroundSlots.contains(i)) {
                 addIcon(i, icon2);
             }
         }
 
         for(int i = 0; i < size ; i++){
-            if(!icons.containsKey(i) && !noBackgroundSlots.contains(i)){
+            if(!noBackgroundSlots.contains(i)){
                 if(getIcon(i) == null) {
                     addIcon(i, icon1);
                 }
@@ -131,8 +124,8 @@ public class GUI implements InventoryHolder {
      */
     public void update(Player player, int index){
         if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
-            icons.get(index).refresh(player);
-            player.getOpenInventory().getTopInventory().setItem(index, icons.get(index).itemStack);
+            activeIcons.get(index).refresh(player);
+            player.getOpenInventory().getTopInventory().setItem(index, activeIcons.get(index).itemStack);
         }
     }
 
@@ -142,19 +135,11 @@ public class GUI implements InventoryHolder {
      */
     public void refresh(Player player){
         if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUI){
+            setupIcons(player);
             var inv = player.getOpenInventory().getTopInventory();
-            icons.forEach((integer, icon) -> {
-                if(icon.getVisibilityCondition() != null){
-                    if(icon.getVisibilityCondition().checkCondition(player, icon)){
-                        inv.setItem(integer, icon.itemStack);
-                        icon.refresh(player);
-                    }else{
-                        inv.setItem(integer, fallback.get(integer).itemStack);
-                    }
-                }else{
-                    inv.setItem(integer, icon.itemStack);
-                    icon.refresh(player);
-                }
+            activeIcons.forEach((integer, icon) -> {
+                inv.setItem(integer, icon.itemStack);
+                icon.refresh(player);
             });
         }
     }

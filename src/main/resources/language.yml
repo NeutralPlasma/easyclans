@@ -49,6 +49,20 @@ clan:
       lore:
         - ""
         - "<gray>Click to see join requests</gray>"
+create:
+  menu:
+    title: "<gold>Clan creation"
+
+    banner:
+      name: "{name}"
+      lore:
+        - "<gray>Drag and drop banner"
+        - ""
+        - "L-Click to change name"
+        - "R-Click to change display name"
+        - "<reset>{display_name}"
+
+
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"

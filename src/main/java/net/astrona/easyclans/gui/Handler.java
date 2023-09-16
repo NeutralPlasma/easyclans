@@ -19,7 +19,8 @@ public class Handler {
 
 
     public void addPlayer(UUID player) {
-        this.openedInv.add(player);
+        if(!openedInv.contains(player))
+            this.openedInv.add(player);
     }
 
     public void removePlayer(UUID player) {

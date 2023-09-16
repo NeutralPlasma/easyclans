@@ -1,5 +1,4 @@
 db:
   mysql: false
-
 chat-format: "&6➜ {player}&8:&7 {message}"
-  
+language: "sl SI"
