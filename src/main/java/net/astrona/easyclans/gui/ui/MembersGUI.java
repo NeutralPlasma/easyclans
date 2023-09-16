@@ -25,11 +25,13 @@ public class MembersGUI extends Paginator {
     private Player player;
     private ClansController clansController;
     private PlayerController playerController;
+    private GUI previousUI;
 
 
     public MembersGUI(Player player, Clan clan,
                       ClansController clansController,
-                      PlayerController playerController) {
+                      PlayerController playerController,
+                      GUI previousUI) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                          19, 20, 21, 22, 23, 24, 25,
@@ -42,6 +44,7 @@ public class MembersGUI extends Paginator {
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
+        this.previousUI = previousUI;
         init();
         this.open(0);
     }
@@ -86,6 +89,12 @@ public class MembersGUI extends Paginator {
             icon.addClickAction((player1 -> {}));
 
             this.addIcon(icon);
+        }
+
+        if(previousUI != null){
+            addCloseAction((player) -> {
+                previousUI.open(player);
+            });
         }
     }
 

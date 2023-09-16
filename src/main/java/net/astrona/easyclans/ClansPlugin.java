@@ -4,6 +4,7 @@ import net.astrona.easyclans.commands.ClansCommand;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.Handler;
 import net.astrona.easyclans.listener.PlayerConnectionListener;
 import net.astrona.easyclans.storage.SQLStorage;
@@ -16,6 +17,7 @@ public class ClansPlugin extends JavaPlugin {
     private Handler guiHandler;
     private PlayerController playerController;
     private ClansController clansController;
+    private RequestsController requestsController;
     private SQLStorage sqlStorage;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
@@ -28,6 +30,7 @@ public class ClansPlugin extends JavaPlugin {
 
         playerController = new PlayerController(this, sqlStorage);
         clansController = new ClansController(this, sqlStorage);
+        requestsController = new RequestsController(this, sqlStorage);
 
         this.registerListeners();
         this.registerCommands();
@@ -48,7 +51,7 @@ public class ClansPlugin extends JavaPlugin {
 
     private void registerCommands(){
 
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, this));
+        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this));
     }
 
     private void registerGUI() {

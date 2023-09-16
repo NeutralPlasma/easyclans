@@ -57,6 +57,9 @@ public class GUI implements InventoryHolder {
         return this.activeIcons.get(pos);
     }
 
+    public void addCloseAction(Action action){
+        this.closeActions.add(action);
+    }
     public List<Action> getCloseActions() {
         return closeActions;
     }

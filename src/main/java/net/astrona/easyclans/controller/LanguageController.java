@@ -1,5 +1,7 @@
 package net.astrona.easyclans.controller;
 
+import net.astrona.easyclans.ClansPlugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +63,16 @@ public class LanguageController {
         return List.of(key);
     }
 
+
+
+    public static List<Component> getLocalizedDesiralizedList(String key){
+        var list = getLocalizedList(key);
+        List<Component> serialized = new ArrayList<>();
+        for(var line : list){
+            serialized.add(ClansPlugin.MM.deserialize(line));
+        }
+        return serialized;
+    }
 
 
 

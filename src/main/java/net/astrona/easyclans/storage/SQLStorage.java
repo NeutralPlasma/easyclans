@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
+import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.utils.Serialization;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -254,7 +256,6 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement("""
             SELECT * FROM
             ec_player_data
-            WHERE
             """);
             var result = statement.executeQuery();
             while(result.next()){
@@ -411,6 +412,86 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
+
+    //</editor-fold">
+
+
+    //<editor-fold desc="requests stuff">
+
+    public List<CRequest> getAllRequests(){
+        List<CRequest> requests = new ArrayList<>();
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            SELECT * FROM
+            ec_clan_join_requests
+            """);
+
+            var result = statement.executeQuery();
+
+            while(result.next()){
+                requests.add(new CRequest(
+                        result.getInt("id"),
+                        result.getInt("clan"),
+                        UUID.fromString(result.getString("player_id")),
+                        result.getLong("expire_date"),
+                        result.getLong("created_on")
+                ));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
+
+    public CRequest insertRequest(CRequest request){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            INSERT INTO
+            ec_clan_join_requests
+            (clan, player_id, expire_date, created_on)
+            VALUES
+            (?, ?, ?, ?)
+            """, Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, request.getClanId());
+            statement.setString(2, request.getPlayerUuid().toString());
+            statement.setLong(3, request.getExpireTime());
+            statement.setLong(4, request.getCreatedTime());
+            int rows = statement.executeUpdate();
+            if(rows == 0){
+                return null;
+            }else{
+
+                var result = statement.getGeneratedKeys();
+                if(result.next()){
+                    request.setRequestId(result.getInt(1));
+                    return request;
+                }else{
+                    return null;
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public void deleteRequest(CRequest cRequest){
+        try(Connection connection = dataSource.getConnection()){
+            PreparedStatement statement = connection.prepareStatement("""
+            DELETE FROM
+            ec_clan_join_requests
+            WHERE id = ?
+            """);
+            statement.setInt(1, cRequest.getRequestId());
+            statement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
 
     //</editor-fold">
 }

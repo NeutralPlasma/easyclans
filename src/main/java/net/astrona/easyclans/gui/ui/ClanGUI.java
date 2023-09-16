@@ -2,7 +2,9 @@ package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
+import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.actions.Action;
@@ -17,18 +19,23 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
+import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
+
 public class ClanGUI extends GUI {
     private Clan clan;
     private ClansController clansController;
     private PlayerController playerController;
+    private RequestsController requestsController;
 
 
-    public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController) {
+    public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
+                   RequestsController requestsController) {
         super(54, "Clan settings");
 
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
+        this.requestsController = requestsController;
 
         construct();
         fancyBackground();
@@ -52,12 +59,8 @@ public class ClanGUI extends GUI {
     ItemStack clanInfoIconItem(){
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<#08fcfc>%s<#ffffff>]".formatted(clan.getName())));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize(""),
-                ClansPlugin.MM.deserialize("<gray>L-Click to change name"),
-                ClansPlugin.MM.deserialize("<gray>R-Click to change display name")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}",clan.getName())));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.clan.lore"));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
@@ -75,17 +78,15 @@ public class ClanGUI extends GUI {
     Icon membersIcon(){
         ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<gold>Members</gold><#ffffff>]"));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize("<gray>Click to see members</gray>")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.members.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.members.lore"));
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             // open new menu
             player.closeInventory();
 
-            new MembersGUI(player, clan, clansController, playerController);
+            new MembersGUI(player, clan, clansController, playerController, this);
 
             //player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
@@ -95,10 +96,8 @@ public class ClanGUI extends GUI {
     Icon invitesIcon(){
         ItemStack itemStack = new ItemStack(Material.BOOK);
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<gold>Invites</gold><#ffffff>]"));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize("<gray>Click to invites</gray>")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.invites.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.invites.lore"));
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
@@ -113,12 +112,8 @@ public class ClanGUI extends GUI {
     ItemStack bankIconItem(){
         ItemStack itemStack = new ItemStack(Material.SUNFLOWER);
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<gold>BANK</gold><#ffffff>]"));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize(""),
-                ClansPlugin.MM.deserialize("L-Click to withdraw"),
-                ClansPlugin.MM.deserialize("R-Click to deposit")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.bank.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.bank.lore"));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
@@ -141,10 +136,8 @@ public class ClanGUI extends GUI {
     Icon clanSettingsIcon(){
         ItemStack itemStack = new ItemStack(Material.ANVIL);
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<red>Settings</red><#ffffff>]"));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize("<gray>Click to check clan settings</gray>")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.settings.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.settings.lore"));
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
@@ -158,14 +151,15 @@ public class ClanGUI extends GUI {
     Icon requestsIcon(){
         ItemStack itemStack = new ItemStack(Material.CHEST);
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize("<reset><#ffffff>[<red>Join requests</red><#ffffff>]"));
-        meta.lore(List.of(
-                ClansPlugin.MM.deserialize("<gray>Click to see join requests</gray>")
-        ));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.requests.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.requests.lore"));
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             // open new menu
+
+            new RequestsGUI(player, clan, clansController, playerController, requestsController, this);
+
             player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;

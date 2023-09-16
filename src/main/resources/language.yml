@@ -1,15 +1,61 @@
-confirm: "<lime>Confirm"
+confirm: "<green>Confirm"
 cancel: "<red>Cancel"
-active: "<lime>Active"
+active: "<green>Active"
 inactive: "<red>Inactive"
 time_format: "dd. MMM yyyy HH:mm"
 
 clan:
   member:
     kick_menu: "<gray>Kick <red>{name}"
-    kick_success: "<lime>Successfully kicked <red>{name}"
+    kick_success: "<green>Successfully kicked <red>{name}"
     kick_notification: "<red>You have been kicked from clan <gold>{clan}"
     lore:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+  menu:
+    clan:
+      name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"
+      lore:
+        - ""
+        - "<gray>L-Click to change name"
+        - "<gray>R-Click to change display name"
+    members:
+      name: "<reset><#ffffff>[<gold>Members</gold><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Click to see members</gray>"
+    invites:
+      name: "<reset><#ffffff>[<gold>Invites</gold><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Click to invites</gray>"
+    bank:
+      name: "<reset><#ffffff>[<gold>BANK</gold><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>L-Click to withdraw"
+        - "<gray>R-Click to deposit"
+    settings:
+      name: "<reset><#ffffff>[<red>Settings</red><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Click to check clan settings</gray>"
+    requests:
+      name: "<reset><#ffffff>[<red>Join requests</red><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Click to see join requests</gray>"
+requests:
+  decline: "<green>Declined request from: <red>{player}"
+  accepted: "<green>Accepted <red>{player} <green>into the clan!"
+  menu:
+    invite:
+      title: "<gray>Accept <red>{player}"
+      name: "<reset><#ffffff>[<red>{player}</red><#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Created on: <red>{requested}"
+        - "<gray>Expires: <red>{expires}"
+        - ""
+        - "<green>Click to accept request"

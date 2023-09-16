@@ -3,7 +3,9 @@ package net.astrona.easyclans.commands;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.ui.ClanGUI;
+import net.astrona.easyclans.gui.ui.RequestsGUI;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -42,10 +44,13 @@ public class ClansCommand implements TabExecutor {
     private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test");
     private final PlayerController playerController;
     private final ClansController clansController;
+    private final RequestsController requestsController;
 
-    public ClansCommand(PlayerController playerController, ClansController clansController, ClansPlugin plugin) {
+    public ClansCommand(PlayerController playerController, ClansController clansController,
+                        RequestsController requestsController, ClansPlugin plugin) {
         this.playerController = playerController;
         this.clansController = clansController;
+        this.requestsController = requestsController;
         this.plugin = plugin;
     }
 
@@ -116,7 +121,7 @@ public class ClansCommand implements TabExecutor {
                     );
                     cplayer.setClanID(clan.getId());
 
-                    new ClanGUI(playerSender, clan, clansController, playerController);
+                    new ClanGUI(playerSender, clan, clansController, playerController, requestsController);
                 }
             }
         } else if (args.length == 2) {

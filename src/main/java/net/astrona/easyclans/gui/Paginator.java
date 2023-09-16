@@ -1,6 +1,7 @@
 package net.astrona.easyclans.gui;
 
 import net.astrona.easyclans.ClansPlugin;
+import net.astrona.easyclans.gui.actions.Action;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -77,9 +78,15 @@ public class Paginator {
         gui.setIcon(size - 8, prevPage);
     }
 
+    public void addCloseAction(Action action){
+        gui.addCloseAction(action);
+    }
 
     public void addIcon(Icon icon) {
         this.icons.add(icon);
+    }
+    public void removeIcon(Icon icon){
+        this.icons.remove(icon);
     }
 
     public void open(){

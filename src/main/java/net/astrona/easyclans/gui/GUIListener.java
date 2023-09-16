@@ -35,7 +35,7 @@ public class GUIListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getInventory() instanceof GUI)) return;
         if (!handler.hasPlayer(event.getPlayer().getUniqueId())) return;
-        handler.removePlayer(event.getPlayer().getUniqueId());
+
 
 
         //Get our CustomHolder
@@ -53,6 +53,8 @@ public class GUIListener implements Listener {
                         gui.getCloseActions().forEach(it -> it.execute((Player) event.getPlayer()));
                 }
             }.runTaskLater(plugin, 2L);
+
+        handler.removePlayer(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

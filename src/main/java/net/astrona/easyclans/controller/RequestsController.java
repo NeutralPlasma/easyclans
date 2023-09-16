@@ -3,8 +3,10 @@ package net.astrona.easyclans.controller;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.storage.SQLStorage;
+import org.bukkit.Bukkit;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,7 +20,16 @@ public class RequestsController {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
         this.requests = new HashMap<>();
+        init();
     }
+
+
+    private void init(){
+        for(var request : sqlStorage.getAllRequests()){
+            requests.put(request.getRequestId(), request);
+        }
+    }
+
 
     /**
      * Adds a new request to the request list.
@@ -29,36 +40,30 @@ public class RequestsController {
      * @param createdTime the creation time of the request.
      * @return the newly created request object.
      */
-    public CRequest addRequest(int clanId, UUID playerUuid, long expireTime, long createdTime) {
+    public CRequest createRequest(int clanId, UUID playerUuid, long expireTime, long createdTime) {
         this.count = this.count + 1;
         CRequest cRequest = new CRequest(this.count, clanId, playerUuid, expireTime, createdTime);
 
-        requests.put(cRequest.requestId(), cRequest);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.insertRequest(cRequest); // check if it updates id or no :shrug:
+            requests.put(cRequest.getRequestId(), cRequest);
+        });
+
+
         return cRequest;
     }
 
-    /**
-     * Checks if a request with the given ID is currently active.
-     *
-     * @param requestId the ID of the request to check.
-     * @return {@code true} if the request is active (not expired), {@code false} otherwise.
-     */
-    public boolean isRequestActive(int requestId) {
-        CRequest cRequest = this.getRequest(requestId);
-        long currentTime = System.currentTimeMillis();
 
-        return currentTime >= cRequest.createdTime() && currentTime <= cRequest.expireTime();
+
+
+    public List<CRequest> getClanRequests(int clan_id){
+        return requests.values().stream().filter(cRequest -> cRequest.getClanId() == clan_id).toList();
     }
 
-    /**
-     * Retrieves a request object by its ID.
-     *
-     * @param id the ID of the request to retrieve.
-     * @return the request object associated with the provided ID, or {@code null} if no
-     *         request with the given ID is found.
-     */
-    public CRequest getRequest(int id) {
-        return this.requests.get(id);
+    public void deleteRequest(CRequest cRequest){
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.deleteRequest(cRequest);
+            requests.remove(cRequest.getRequestId());
+        });
     }
-
 }
