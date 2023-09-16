@@ -104,6 +104,10 @@ public class PlayerController {
         });
     }
 
+    public List<CPlayer> getPlayers() {
+        return players.values().stream().toList();
+    }
+
 
     public List<CPlayer> getClanPlayers(int clan_id){
         List<CPlayer> playerss = new ArrayList<>();

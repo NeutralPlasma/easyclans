@@ -20,8 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static net.astrona.easyclans.ClansPlugin.MM;
 
@@ -40,6 +42,7 @@ import static net.astrona.easyclans.ClansPlugin.MM;
 public class ClansCommand implements TabExecutor {
     private ClansPlugin plugin;
     private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test", "chat");
+    private final List<String> moreArgumentSubCommands = List.of("kick", "join", "invite");
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
@@ -160,7 +163,46 @@ public class ClansCommand implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        if (!(sender instanceof Player playerSender)) {
+            sender.sendMessage(MM.deserialize("<dark_red>Only a player can execute this command!</dark_red>"));
+            return List.of("");
+        }
+
+        if (args.length < 2) {
+            List<String> arguments = new ArrayList<>();
+            arguments.addAll(oneArgumentSubCommands);
+            arguments.addAll(moreArgumentSubCommands);
+            return arguments;
+        } else if (args.length == 2) {
+            switch (args[0]) {
+                case "kick" -> {
+                    CPlayer cPlayer = playerController.getPlayer(playerSender.getUniqueId());
+
+                    if (cPlayer.getClanID() == -1) {
+                        sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+                        return List.of("You are not in a clan!");
+                    }
+
+                    Clan clan = clansController.getClan(cPlayer.getClanID());
+
+                    return clan.getMembers().stream()
+                            .map(uuid -> playerController.getPlayer(uuid).getName())
+                            .collect(Collectors.toList());
+                }
+                case "join" -> {
+                    return clansController.getClans().stream()
+                            .map(Clan::getName)
+                            .collect(Collectors.toList());
+                }
+                case "invite" -> {
+                    return playerController.getPlayers().stream()
+                            .filter(CPlayer::isActive)
+                            .map(CPlayer::getName)
+                            .collect(Collectors.toList());
+                }
+            }
+        }
+        return List.of("");
     }
 
     private void executeMenuSubCommand(Player sender) {
