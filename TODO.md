@@ -1,10 +1,10 @@
 ## TODO
 
-- [x] <s>Player chat component</s>
-- [ ] Clan creating UI
+- [x] ~~Player chat component~~
+- [x] ~~Clan creating UI~~
 - [ ] Clan invites UI
 - [ ] Join clan request
-- [ ] Clans UI
-- [ ] Default user clan UI
+- [x] ~~Clans UI~~
+- [ ] ~~Default user clan UI~~
 - [ ] Clan settings menu
 - [ ] Clan bank

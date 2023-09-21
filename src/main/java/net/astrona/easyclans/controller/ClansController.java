@@ -57,6 +57,7 @@ public class ClansController {
 
         // TODO: database insert and update id
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.saveClan(clan);
             clan.setId(-1);
         });
 

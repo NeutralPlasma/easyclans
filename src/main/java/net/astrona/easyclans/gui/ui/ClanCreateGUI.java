@@ -11,12 +11,14 @@ import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.models.components.chat.ChangeClanDisplayNamePrompt;
 import net.astrona.easyclans.models.components.chat.ChangeClanNamePrompt;
 import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
+import net.astrona.easyclans.utils.AbstractChatUtil;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.AbstractCollection;
 import java.util.List;
 
 import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
@@ -75,6 +77,11 @@ public class ClanCreateGUI extends GUI {
         legalizeBanner();
 
         Icon icon = new Icon(banner, (self, player) -> {
+            var meta = banner.getItemMeta();
+            meta.displayName(ClansPlugin.MM.deserialize(name));
+            meta.lore(getLocalizedDesiralizedList("create.menu.create.lore"));
+            banner.setItemMeta(meta);
+
             self.itemStack = banner;
         });
 
@@ -92,28 +99,22 @@ public class ClanCreateGUI extends GUI {
         }));
 
         icon.addLeftClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanNamePrompt(
-                    plugin,
-                    displayName,
-                    banner,
-                    playerController,
-                    clansController,
-                    requestsController,
-                    playerChatComponent
-            ));
+            new AbstractChatUtil(player, (meow) -> {
+                name = meow.message();
+            }, plugin).setOnClose(() ->{
+                open(player);
+                refresh(player);
+            } );
             player.closeInventory();
         });
 
         icon.addRightClickAction((player) -> {
-            playerChatComponent.startChatPrompt(player, new ChangeClanDisplayNamePrompt(
-                    plugin,
-                    name,
-                    banner,
-                    playerController,
-                    clansController,
-                    requestsController,
-                    playerChatComponent
-            ));
+            new AbstractChatUtil(player, (meow) -> {
+                displayName = meow.message();
+            }, plugin).setOnClose(() -> {
+                open(player);
+                refresh(player);
+            });
             player.closeInventory();
         });
 
