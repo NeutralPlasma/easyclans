@@ -4,25 +4,32 @@ import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
+import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.Clan;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
+import static net.kyori.adventure.key.Key.key;
+import static net.kyori.adventure.sound.Sound.sound;
+
 public class ClanListGUI extends Paginator {
-    private Clan clan;
+
     private Player player;
     private ClansController clansController;
+    private RequestsController requestsController;
     private PlayerController playerController;
     private GUI previousUI;
 
-    public ClanListGUI(Player player, Clan clan,
-                       ClansController clansController,
+    public ClanListGUI(Player player, ClansController clansController,
                        PlayerController playerController,
+                       RequestsController requestsController,
                        GUI previousUI) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
@@ -32,9 +39,9 @@ public class ClanListGUI extends Paginator {
         ), LanguageController.getLocalized("clan_list.menu.title"), 54);
 
         this.player = player;
-        this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
+        this.requestsController = requestsController;
         this.previousUI = previousUI;
         init();
         this.open(0);
@@ -42,6 +49,7 @@ public class ClanListGUI extends Paginator {
 
 
     private void init() {
+        var cPlayer = playerController.getPlayer(player.getUniqueId());
         for (Clan c : clansController.getClans()) {
             var item = c.getBanner();
             var meta = item.getItemMeta();
@@ -65,7 +73,40 @@ public class ClanListGUI extends Paginator {
             Icon icon = new Icon(item);
 
             icon.addClickAction((player1 -> {
-                player1.sendMessage("Sent a join request!");
+
+                var owner = Bukkit.getPlayer(c.getOwner());
+
+
+                if(cPlayer.getClanID() == c.getId()){
+                    player1.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("invite.same_clan")));
+                    return;
+                }
+
+                if(requestsController.getClanRequests(c.getId()).stream().anyMatch((rq) -> rq.getPlayerUuid().equals(player1.getUniqueId()))){
+                    player1.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("invite.already_sent")));
+                    player1.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }else{
+                    requestsController.createRequest(
+                            c.getId(),
+                            player1.getUniqueId(),
+                            System.currentTimeMillis() + 100000,
+                            System.currentTimeMillis()
+                    );
+                    player1.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("invite.sent")));
+                    player1.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+
+                    if(owner != null){
+                        owner.sendMessage(
+                                ClansPlugin.MM.deserialize(LanguageController.getLocalized(
+                                        "invite.invite_received").replace("{player}", cPlayer.getName())
+                                ));
+                        owner.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    }
+                }
+
+
+
+
             }));
 
             this.addIcon(icon);

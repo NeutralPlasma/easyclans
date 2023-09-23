@@ -11,6 +11,7 @@ import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 
 public class MembersGUI extends Paginator {
@@ -36,7 +38,7 @@ public class MembersGUI extends Paginator {
                 19, 20, 21, 22, 23, 24, 25,
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
-        ), "<gold>Members <white>[<gold>{page}<white>]", 54);
+        ), LanguageController.getLocalized("members.menu.title"), 54);
 
         this.player = player;
         this.clan = clan;
@@ -48,7 +50,7 @@ public class MembersGUI extends Paginator {
     }
 
     private void init() {
-        boolean isOwner = clan.getOwner() == player.getUniqueId();
+        boolean isOwner = clan.getOwner().equals(player.getUniqueId());
 
         for (CPlayer cPlayer : playerController.getClanPlayers(clan.getId())) {
             ItemStack item = new ItemStack(Material.PLAYER_HEAD);
@@ -56,28 +58,45 @@ public class MembersGUI extends Paginator {
             meta.setOwningPlayer(Bukkit.getOfflinePlayer(cPlayer.getUuid()));
 
             meta.displayName(ClansPlugin.MM.deserialize(cPlayer.getName()));
-            meta.lore(format(LanguageController.getLocalizedList("clan.member.lore"), cPlayer));
+
+
+
+
+            if(cPlayer.getUuid().equals(clan.getOwner()))
+                meta.lore(format(LanguageController.getLocalizedList("members.menu.owner_lore"), cPlayer, clan.getAutoKickTime()));
+            else{
+                if(cPlayer.isActive()){
+                    meta.lore(format(LanguageController.getLocalizedList("members.menu.lore"), cPlayer, clan.getAutoKickTime()));
+                }else{
+                    meta.lore(format(LanguageController.getLocalizedList("members.menu.inactive_lore"), cPlayer, clan.getAutoKickTime()));
+                }
+            }
+
+
+
             item.setItemMeta(meta);
 
             Icon icon = new Icon(item);
 
-            if (isOwner) {
+            if (isOwner && !cPlayer.getUuid().equals(player.getUniqueId())) {
                 // TODO!
                 icon.addLeftClickAction((player) -> {
                     new ConfirmGUI(player, (ignored) -> {
                         cPlayer.removeFromClan();
+                        clan.getMembers().remove(cPlayer.getUuid());
                         playerController.updatePlayer(cPlayer);
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("members.kick.kick_success")
+                                        .replace("{player}", cPlayer.getName())
+                        ));
+                        var bplayer = Bukkit.getPlayer(cPlayer.getUuid());
+                        if(bplayer != null){
+                            bplayer.sendMessage(LanguageController.getLocalized("members.kick.kicked"));
+                        }
                         open();
                     }, (ignored) -> {
-                        player.sendMessage(ClansPlugin.MM.deserialize(
-                                LanguageController.getLocalized("clan.member.kick_success")
-                                        .formatted("{player}", cPlayer.getName())
-                        ));
-                        // TODO: add a kick notification
-
-
                         open();
-                    }, LanguageController.getLocalized("clan.member.kick_menu").formatted("{player}", cPlayer.getName()));
+                    }, LanguageController.getLocalized("members.kick.title").replace("{player}", cPlayer.getName()));
                 });
             }
 
@@ -94,13 +113,21 @@ public class MembersGUI extends Paginator {
         }
     }
 
-    private List<Component> format(List<String> strings, CPlayer cPlayer) {
+    private List<Component> format(List<String> strings, CPlayer cPlayer, int kickTime) {
         Locale loc = new Locale("sl", "SI");
 
         List<Component> newlist = new ArrayList<>();
 
         var activeDate = new Date(cPlayer.getLastActive());
         var joinDate = new Date(cPlayer.getJoinClanDate());
+
+        player.sendMessage("Time1: " + kickTime);
+        player.sendMessage("Time: " + (System.currentTimeMillis() - activeDate.getTime()));
+
+        var timeDiff = kickTime - (System.currentTimeMillis() - activeDate.getTime());
+
+
+
         SimpleDateFormat sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
 
         for (String string : strings) {
@@ -108,6 +135,7 @@ public class MembersGUI extends Paginator {
                     ClansPlugin.MM.deserialize(string
                             .replace("{active}", sdf.format(activeDate))
                             .replace("{joined}", sdf.format(joinDate))
+                            .replace("{time_remaining}", DurationFormatUtils.formatDurationWords(timeDiff, true,false))
                             .replace("{status}", cPlayer.isActive() ?
                                     LanguageController.getLocalized("active") : LanguageController.getLocalized("inactive"))
                     ));

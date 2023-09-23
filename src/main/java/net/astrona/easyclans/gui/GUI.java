@@ -136,8 +136,8 @@ public class GUI implements InventoryHolder {
             setupIcons(player);
             var inv = player.getOpenInventory().getTopInventory();
             activeIcons.forEach((integer, icon) -> {
-                inv.setItem(integer, icon.itemStack);
                 icon.refresh(player);
+                inv.setItem(integer, icon.itemStack);
             });
         }
     }

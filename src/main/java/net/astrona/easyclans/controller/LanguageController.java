@@ -53,6 +53,7 @@ public class LanguageController {
         return List.of(key);
     }
 
+
     public static List<Component> getLocalizedDesiralizedList(String key) {
         var list = getLocalizedList(key);
         List<Component> serialized = new ArrayList<>();

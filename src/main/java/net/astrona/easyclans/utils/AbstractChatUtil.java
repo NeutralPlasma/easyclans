@@ -5,6 +5,7 @@ import net.astrona.easyclans.ClansPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +41,7 @@ public class AbstractChatUtil implements Listener {
     public void initializeListeners(JavaPlugin plugin) {
 
         this.listener = new Listener() {
-            @EventHandler
+            @EventHandler(priority = EventPriority.LOW)
             public void onChat(AsyncChatEvent event) {
 
                 Player player = event.getPlayer();
@@ -55,7 +56,7 @@ public class AbstractChatUtil implements Listener {
 
                 if (onClose != null) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                            onClose.onClose(), 0L);
+                            onClose.onClose(), 1L);
                 }
                 HandlerList.unregisterAll(listener);
             }

@@ -11,6 +11,7 @@ import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static net.kyori.adventure.key.Key.key;
+import static net.kyori.adventure.sound.Sound.sound;
 
 public class RequestsGUI extends Paginator {
     private Clan clan;
@@ -74,22 +78,37 @@ public class RequestsGUI extends Paginator {
             var cPlayer = playerController.getPlayer(cRequest.getPlayerUuid());
 
             icon.addClickAction((player) -> {
-                player.sendMessage("CLICKED!");
-
+                var requester = Bukkit.getPlayer(cRequest.getPlayerUuid());
 
                 new ConfirmGUI(player, (ignored) -> {
+
+
                     requestsController.deleteRequest(cRequest);
                     cPlayer.setClanID(clan.getId());
                     cPlayer.setJoinClanDate(System.currentTimeMillis());
                     playerController.updatePlayer(cPlayer);
+                    clan.getMembers().add(cPlayer.getUuid());
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.accepted")
-                            .formatted("{player}", cPlayer.getName())));
+                            .replace("{player}", cPlayer.getName())));
+                    if(requester != null){
+                        requester.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                        requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.request_accepted")
+                                .replace("{clan}", clan.getName())));
+                    }
+
                     removeIcon(icon);
                     open();
                 }, (ignored) -> {
                     requestsController.deleteRequest(cRequest);
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.decline")
-                            .formatted("{player}", cPlayer.getName())));
+                            .replace("{player}", cPlayer.getName())));
+
+                    if(requester != null){
+                        requester.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                        requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.request_declined")
+                                .replace("{clan}", clan.getName())));
+                    }
+
                     removeIcon(icon);
                     open();
                 }, LanguageController.getLocalized("requests.menu.invite.title").formatted("{player}", cPlayer.getName()));

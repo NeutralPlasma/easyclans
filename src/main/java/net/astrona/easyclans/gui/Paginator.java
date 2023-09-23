@@ -92,6 +92,7 @@ public class Paginator {
 
     public void open(int page) {
         // Setup icons per page
+
         for (int i = 0; i < valid_slots.size(); i++) {
             gui.setIcon(valid_slots.get(i), null);
         }

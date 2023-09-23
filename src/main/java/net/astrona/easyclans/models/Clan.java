@@ -1,23 +1,9 @@
 package net.astrona.easyclans.models;
 
-import net.astrona.easyclans.controller.PlayerController;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
-
-/**
- * TODO:
- * bank (money)
- * owner (multiple owners? or is it transfer?)
- * auto money distribute (to members every week or set time...),
- * members (well its list of members and their last active times blabla)
- * rewards (like clan rewards for being best clan and so on)?
- * auto kick (kick members who haven't been active for some time...)
- * join price (price for member to join the clan)
- * clan symbol (character .... also changable)
- * customizable flag (that can be purchased to be changed, like an actuall flag)
- */
 
 public class Clan {
     private int id;
@@ -27,17 +13,14 @@ public class Clan {
     private int autoKickTime;
     private int joinPointsPrice;
     private double joinMoneyPrice;
-    private int autoPayOutTime;
-    private double autoPayOutPercentage;
     private ItemStack banner;
-    private double bank;
+    private double bank, interestRate;
     private String tag;
     private List<UUID> members;
     private long createdOn;
 
     public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage, ItemStack banner, double bank,
-                String tag, List<UUID> members, long createdOn) {
+                double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -45,8 +28,7 @@ public class Clan {
         this.autoKickTime = autoKickTime;
         this.joinPointsPrice = joinPointsPrice;
         this.joinMoneyPrice = joinMoneyPrice;
-        this.autoPayOutTime = autoPayOutTime;
-        this.autoPayOutPercentage = autoPayOutPercentage;
+        this.interestRate = interestRate;
         this.banner = banner;
         this.bank = bank;
         this.tag = tag;
@@ -118,22 +100,6 @@ public class Clan {
         this.joinMoneyPrice = joinMoneyPrice;
     }
 
-    public int getAutoPayOutTime() {
-        return autoPayOutTime;
-    }
-
-    public void setAutoPayOutTime(int autoPayOutTime) {
-        this.autoPayOutTime = autoPayOutTime;
-    }
-
-    public double getAutoPayOutPercentage() {
-        return autoPayOutPercentage;
-    }
-
-    public void setAutoPayOutPercentage(double autoPayOutPercentage) {
-        this.autoPayOutPercentage = autoPayOutPercentage;
-    }
-
     public ItemStack getBanner() {
         return banner;
     }
@@ -160,6 +126,14 @@ public class Clan {
 
     public List<UUID> getMembers() {
         return members;
+    }
+
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
     }
 
     public void setMembers(List<UUID> members) {

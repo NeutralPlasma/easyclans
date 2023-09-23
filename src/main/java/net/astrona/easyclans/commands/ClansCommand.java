@@ -8,7 +8,6 @@ import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.ui.*;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
-import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -46,15 +45,13 @@ public class ClansCommand implements TabExecutor {
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
-    private final PlayerChatComponent playerChatComponent;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
-                        RequestsController requestsController, PlayerChatComponent playerChatComponent,
+                        RequestsController requestsController,
                         ClansPlugin plugin) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
-        this.playerChatComponent = playerChatComponent;
         this.plugin = plugin;
     }
 
@@ -105,11 +102,10 @@ public class ClansCommand implements TabExecutor {
                             "DISPLAY!",
                             0,
                             0,
-                            0,
-                            0,
                             10.0,
                             new ItemStack(Material.CYAN_BANNER),
                             10000000,
+                            0,
                             "DD",
                             List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
                                     test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
@@ -207,14 +203,19 @@ public class ClansCommand implements TabExecutor {
 
     private void executeMenuSubCommand(Player sender) {
         CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-
-        if (cPlayer.getClanID() == -1) {
+        Clan clan = clansController.getClan(cPlayer.getClanID());
+        if (clan == null) {
             sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
             return;
         }
+        if(clan.getOwner().equals(sender.getUniqueId())){
+            sender.sendMessage("Admin menu "  + clan.getOwner());
+            new AdminClanGUI(sender, clan, clansController, playerController, requestsController);
+        }else{
+            sender.sendMessage("Non Admin menu " + clan.getOwner() + " " + sender.getUniqueId());
+            new ClanGUI(sender, clan, clansController, playerController, requestsController);
+        }
 
-        Clan clan = clansController.getClan(cPlayer.getClanID());
-        new ClanGUI(sender, clan, clansController, playerController, requestsController);
     }
 
     private void executeBankSubCommand(Player sender) {
@@ -243,13 +244,11 @@ public class ClansCommand implements TabExecutor {
 
     private void executeListSubCommand(Player sender) {
         CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-        Clan clan = clansController.getClan(cPlayer.getClanID());
-
-        new ClanListGUI(sender, clan, clansController, playerController, null);
+        new ClanListGUI(sender, clansController, playerController, requestsController, null);
     }
 
     private void executeCreateSubCommand(Player sender) {
-        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController, playerChatComponent);
+        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController);
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {

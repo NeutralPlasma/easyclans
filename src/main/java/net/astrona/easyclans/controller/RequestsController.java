@@ -43,7 +43,7 @@ public class RequestsController {
         CRequest cRequest = new CRequest(this.count, clanId, playerUuid, expireTime, createdTime);
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.insertRequest(cRequest); // TODO: check if it updates the id or not
+            sqlStorage.insertRequest(cRequest);
             requests.put(cRequest.getRequestId(), cRequest);
         });
 

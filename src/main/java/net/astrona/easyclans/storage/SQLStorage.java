@@ -111,8 +111,7 @@ public class SQLStorage {
                                 autokick_time INT,
                                 join_points_price INT,
                                 join_money_price DOUBLE,
-                                auto_pay_out_time INT,
-                                auto_pay_out_percentage DOUBLE,
+                                interest_rate DOUBLE,
                                 banner TEXT,
                                 bank DOUBLE,
                                 tag VARCHAR(16),
@@ -206,19 +205,17 @@ public class SQLStorage {
                     clan = ?,
                     last_active = ?,
                     joined_clan = ?
+                    WHERE uuid = ?
                     """);
             statement.setInt(1, cPlayer.getClanID());
             statement.setLong(2, cPlayer.getLastActive());
             statement.setLong(3, cPlayer.getJoinClanDate());
+            statement.setString(4, cPlayer.getUuid().toString());
             statement.execute();
         } catch (SQLException e) {
-            // ja jebi se logger neh mi tezit :)
             e.printStackTrace();
         }
     }
-
-
-    // TODO: setup getting the actual clan
     public CPlayer getPlayer(UUID uuid) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
@@ -309,18 +306,17 @@ public class SQLStorage {
             while (result.next()) {
                 var clan = new Clan(
                         result.getInt("id"),
-                        null,
+                        UUID.fromString(result.getString("owner")),
                         result.getString("clan_name"),
                         result.getString("display_name"),
                         result.getInt("autokick_time"),
                         result.getInt("join_points_price"),
                         result.getDouble("join_money_price"),
-                        result.getInt("auto_pay_out_time"),
-                        result.getDouble("auto_pay_out_percentage"),
                         Serialization.decodeItemBase64(result.getString("banner")),
+                        result.getDouble("interest_rate"),
                         result.getDouble("bank"),
                         result.getString("tag"),
-                        new ArrayList<>(),
+                        null,
                         result.getLong("created_on")
                 );
                 clan.setMembers(getClanMembers(clan.getId()));
@@ -329,7 +325,7 @@ public class SQLStorage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return clans;
     }
 
 
@@ -348,6 +344,7 @@ public class SQLStorage {
                     auto_pay_out_percentage = ?,
                     banner = ?,
                     bank = ?,
+                    interest_rate = ?
                     tag = ?
                     """);
             statement.setString(1, clan.getOwner().toString());
@@ -356,11 +353,10 @@ public class SQLStorage {
             statement.setInt(4, clan.getAutoKickTime());
             statement.setInt(5, clan.getJoinPointsPrice());
             statement.setDouble(6, clan.getJoinMoneyPrice());
-            statement.setInt(7, clan.getAutoPayOutTime());
-            statement.setDouble(8, clan.getAutoPayOutPercentage());
-            statement.setString(9, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(10, clan.getBank());
-            statement.setString(11, clan.getTag());
+            statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
+            statement.setDouble(8, clan.getBank());
+            statement.setDouble(9, clan.getInterestRate());
+            statement.setString(10, clan.getTag());
 
             statement.executeUpdate();
 
@@ -380,15 +376,14 @@ public class SQLStorage {
                     autokick_time,
                     join_points_price,
                     join_money_price,
-                    auto_pay_out_time,
-                    auto_pay_out_percentage,
                     banner,
                     bank,
+                    interest_rate,
                     tag,
                     created_on
                     )
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """);
             statement.setString(1, clan.getOwner().toString());
             statement.setString(2, clan.getName());
@@ -396,15 +391,19 @@ public class SQLStorage {
             statement.setInt(4, clan.getAutoKickTime());
             statement.setInt(5, clan.getJoinPointsPrice());
             statement.setDouble(6, clan.getJoinMoneyPrice());
-            statement.setInt(7, clan.getAutoPayOutTime());
-            statement.setDouble(8, clan.getAutoPayOutPercentage());
-            statement.setString(9, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(10, clan.getBank());
-            statement.setString(11, clan.getTag());
-            statement.setLong(12, clan.getCreatedOn());
+            statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
+            statement.setDouble(8, clan.getBank());
+            statement.setDouble(9, clan.getInterestRate());
+            statement.setString(10, clan.getTag());
+            statement.setLong(11, clan.getCreatedOn());
 
-            statement.execute();
-
+            int rows = statement.executeUpdate();
+            if(rows>0) {
+                var result = statement.getGeneratedKeys();
+                if (result.next()) {
+                    clan.setId(result.getInt(1));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

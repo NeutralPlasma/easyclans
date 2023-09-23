@@ -8,7 +8,6 @@ import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.Handler;
 import net.astrona.easyclans.listener.PlayerChatListener;
 import net.astrona.easyclans.listener.PlayerConnectionListener;
-import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import net.astrona.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.PluginManager;
@@ -20,7 +19,6 @@ public class ClansPlugin extends JavaPlugin {
     private PlayerController playerController;
     private ClansController clansController;
     private RequestsController requestsController;
-    private PlayerChatComponent playerChatComponent;
     private SQLStorage sqlStorage;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
@@ -32,9 +30,8 @@ public class ClansPlugin extends JavaPlugin {
         sqlStorage = new SQLStorage(this);
 
         playerController = new PlayerController(this, sqlStorage);
-        clansController = new ClansController(this, sqlStorage);
+        clansController = new ClansController(this, sqlStorage, playerController);
         requestsController = new RequestsController(this, sqlStorage);
-        playerChatComponent = new PlayerChatComponent();
 
         this.registerListeners();
         this.registerCommands();
@@ -52,11 +49,11 @@ public class ClansPlugin extends JavaPlugin {
     private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new PlayerConnectionListener(this, playerController), this);
-        pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController, playerChatComponent), this);
+        pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController), this);
     }
 
     private void registerCommands() {
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, playerChatComponent, this));
+        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this));
     }
 
     private void registerGUI() {

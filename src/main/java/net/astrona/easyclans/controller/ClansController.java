@@ -10,20 +10,24 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class ClansController {
+    private PlayerController playerController;
     private final Map<Integer, Clan> clans;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
-    public ClansController(ClansPlugin plugin, SQLStorage sqlStorage) {
+    public ClansController(ClansPlugin plugin, SQLStorage sqlStorage, PlayerController playerController) {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
+        this.playerController = playerController;
         this.clans = new HashMap<>();
+
+        loadClans();
     }
 
     private void loadClans() {
         for (var clan : sqlStorage.getAllClans()) {
-            // TODO: get clan members and add them to cache
             this.clans.put(clan.getId(), clan);
+
         }
     }
 
@@ -41,28 +45,27 @@ public class ClansController {
      * @param autoKickTime         the auto-kick time for inactive members.
      * @param joinPointsPrice      the points price for joining the clan.
      * @param joinMoneyPrice       the money price for joining the clan.
-     * @param autoPayOutTime       the auto-payout time for clan bank.
-     * @param autoPayOutPercentage the auto-payout percentage for clan bank.
      * @param banner               the banner item for the clan.
      * @param bank                 the initial bank balance of the clan.
+     * @param interestRate         the interest rate
      * @param tag                  the tag associated with the clan.
      * @param members              the list of UUIDs of clan members.
      */
     public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
-                           int joinPointsPrice, int joinMoneyPrice, int autoPayOutTime, double autoPayOutPercentage,
-                           ItemStack banner, double bank, String tag, List<UUID> members) {
+                           int joinPointsPrice, double joinMoneyPrice,
+                           ItemStack banner, double bank, double interestRate, String tag, List<UUID> members) {
 
         Clan clan = new Clan(-1, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
-                autoPayOutTime, autoPayOutPercentage, banner, bank, tag, members, System.currentTimeMillis());
+                banner, bank, interestRate, tag, members, System.currentTimeMillis());
 
-        // TODO: database insert and update id
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.saveClan(clan);
-            clan.setId(-1);
+            sqlStorage.saveClan(clan); // clan gets new ID when this is executed.
+            // TODO: update player sent new clan id.
+            var player = playerController.getPlayer(clan.getOwner());
+            player.setClanID(clan.getId());
+            playerController.updatePlayer(player);
+            addClan(clan);
         });
-
-
-        addClan(clan);
         return clan;
     }
 

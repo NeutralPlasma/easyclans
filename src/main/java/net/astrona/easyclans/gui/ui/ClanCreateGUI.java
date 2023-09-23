@@ -8,20 +8,18 @@ import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
-import net.astrona.easyclans.models.components.chat.ChangeClanDisplayNamePrompt;
-import net.astrona.easyclans.models.components.chat.ChangeClanNamePrompt;
-import net.astrona.easyclans.models.components.chat.impl.PlayerChatComponent;
 import net.astrona.easyclans.utils.AbstractChatUtil;
+import net.astrona.easyclans.utils.Formatter;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.AbstractCollection;
 import java.util.List;
 
-import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
+import static net.astrona.easyclans.controller.LanguageController.getLocalizedList;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
@@ -34,12 +32,10 @@ public class ClanCreateGUI extends GUI {
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
-    private final PlayerChatComponent playerChatComponent;
 
 
     public ClanCreateGUI(String name, String displayName, ItemStack banner, Player player, ClansPlugin plugin,
-                         PlayerController playerController, ClansController clansController, RequestsController requestsController,
-                         PlayerChatComponent playerChatComponent) {
+                         PlayerController playerController, ClansController clansController, RequestsController requestsController) {
         super(54, LanguageController.getLocalized("create.menu.title"));
         this.name = name;
         this.displayName = displayName;
@@ -48,7 +44,6 @@ public class ClanCreateGUI extends GUI {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
-        this.playerChatComponent = playerChatComponent;
         init();
         fancyBackground();
         open(player);
@@ -57,8 +52,8 @@ public class ClanCreateGUI extends GUI {
     private void legalizeBanner() {
         var meta = banner.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.name")
-                        .replace("{name}", name))
-                .decoration(TextDecoration.ITALIC, false)
+                        .replace("{name}", name)
+                    ).decoration(TextDecoration.ITALIC, false)
         );
         for (var enchant : meta.getEnchants().keySet()) {
             meta.removeEnchant(enchant);
@@ -67,21 +62,16 @@ public class ClanCreateGUI extends GUI {
         meta.lore(loreText.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
                                 .replace("{name}", name)
-                                .replace("{display_name}", displayName))
-                        .decoration(TextDecoration.ITALIC, false)
+                                .replace("{display_name}", displayName)
+                        ).decoration(TextDecoration.ITALIC, false)
         ).toList());
         banner.setItemMeta(meta);
     }
 
     private Icon clanBanner() {
         legalizeBanner();
-
         Icon icon = new Icon(banner, (self, player) -> {
-            var meta = banner.getItemMeta();
-            meta.displayName(ClansPlugin.MM.deserialize(name));
-            meta.lore(getLocalizedDesiralizedList("create.menu.create.lore"));
-            banner.setItemMeta(meta);
-
+            legalizeBanner();
             self.itemStack = banner;
         });
 
@@ -101,10 +91,14 @@ public class ClanCreateGUI extends GUI {
         icon.addLeftClickAction((player) -> {
             new AbstractChatUtil(player, (meow) -> {
                 name = meow.message();
-            }, plugin).setOnClose(() ->{
+            }, plugin).setOnClose(() -> {
+                legalizeBanner();
+                icon.itemStack = banner;
                 open(player);
-                refresh(player);
-            } );
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    refresh(player);
+                }, 5L);
+            });
             player.closeInventory();
         });
 
@@ -112,8 +106,13 @@ public class ClanCreateGUI extends GUI {
             new AbstractChatUtil(player, (meow) -> {
                 displayName = meow.message();
             }, plugin).setOnClose(() -> {
+                legalizeBanner();
+                icon.itemStack = banner;
                 open(player);
-                refresh(player);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    refresh(player);
+                }, 5L);
+
             });
             player.closeInventory();
         });
@@ -121,26 +120,39 @@ public class ClanCreateGUI extends GUI {
         return icon;
     }
 
-    private Icon confirmButton() {
+    private ItemStack confirmButtonItem(){
         ItemStack itemStack = new ItemStack(Material.LIME_CONCRETE);
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.name")));
-        meta.lore(getLocalizedDesiralizedList("create.menu.create.lore"));
+        var loreText = getLocalizedList("create.menu.create.lore");
+
+        meta.lore(loreText.stream().map(it ->
+                ClansPlugin.MM.deserialize(it
+                        .replace("{name}", name)
+                        .replace("{display_name}", displayName)
+                ).decoration(TextDecoration.ITALIC, false)
+        ).toList());
+
         itemStack.setItemMeta(meta);
 
-        Icon icon = new Icon(itemStack);
+        return itemStack;
+    }
+
+    private Icon confirmButton() {
+        Icon icon = new Icon(confirmButtonItem(), (self, player) -> {
+            self.itemStack = confirmButtonItem();
+        });
         icon.addClickAction(player -> {
             new ConfirmGUI(player, (confirmPlayer) -> {
                 Clan clan = clansController.createClan(
                         confirmPlayer.getUniqueId(),
                         name,
                         displayName,
+                        kickTime,
                         0,
-                        0,
-                        0,
-                        0,
-                        0,
+                        moneyPrice,
                         banner,
+                        0.0,
                         0.0,
                         "",
                         List.of(
@@ -157,17 +169,109 @@ public class ClanCreateGUI extends GUI {
         return icon;
     }
 
-    /*private Icon priceSettings(){
 
+    private ItemStack priceSettingsItem() {
+        var item = new ItemStack(Material.SUNFLOWER);
+        var meta = item.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.money_price.name"))
+                //.decoration(TextDecoration.ITALIC, false)
+        );
+        var loreStrings = LanguageController.getLocalizedList("create.menu.money_price.lore");
+        var moneyString = Formatter.formatMoney(moneyPrice);
+        meta.lore(loreStrings.stream().map(it ->
+                ClansPlugin.MM.deserialize(it
+                                .replace("{price}", moneyString))
+                        //.decoration(TextDecoration.ITALIC, false)
+        ).toList());
+        item.setItemMeta(meta);
+        return item;
+    }
+    private Icon priceSettings(){
+        Icon icon = new Icon(priceSettingsItem(), (self, player) -> {
+            self.itemStack = priceSettingsItem();
+        });
+
+        icon.addLeftClickAction((player) -> {
+            new AbstractChatUtil(player, (meow) -> {
+                try{
+                    double price = Double.parseDouble(meow.message());
+                    if(price < 0){
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    }else{
+                        moneyPrice = price;
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    }
+                }catch (NumberFormatException e){
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }
+            }, plugin).setOnClose(() -> {
+                icon.itemStack = priceSettingsItem();
+                open(player);
+            });
+        });
+        icon.addRightClickAction((player) -> {
+            moneyPrice = 1000;
+            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+        });
+
+
+        return icon;
     }
 
+
+    private ItemStack kickSettingsItem(){
+        var item = new ItemStack(Material.ANVIL);
+        var meta = item.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.kick_time.name"))
+                //.decoration(TextDecoration.ITALIC, false)
+        );
+        var loreStrings = LanguageController.getLocalizedList("create.menu.kick_time.lore");
+        var kickString = String.format("%s", kickTime);
+        meta.lore(loreStrings.stream().map(it ->
+                ClansPlugin.MM.deserialize(it
+                                .replace("{time}", kickString))
+                        //.decoration(TextDecoration.ITALIC, false)
+        ).toList());
+        item.setItemMeta(meta);
+        return item;
+    }
 
     private Icon kickSettings(){
+        Icon icon = new Icon(kickSettingsItem(), (self, player) -> self.itemStack = kickSettingsItem());
 
+        icon.addRightClickAction((player) -> {
+            kickTime = -1;
+            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+        });
+
+        icon.addLeftClickAction((player) -> {
+            new AbstractChatUtil(player, (meow) -> {
+                try{
+                    int lkickTime = Integer.parseInt(meow.message());
+                    if(lkickTime < -1){
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    }else{
+                        player.sendMessage(" " +lkickTime);
+                        kickTime = lkickTime;
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    }
+                }catch (NumberFormatException e){
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }
+            }, plugin).setOnClose(() -> {
+                icon.itemStack = kickSettingsItem();
+                open(player);
+            });
+        });
+
+
+        return icon;
     }
 
-    private Icon payoutSettings(){
 
+
+    /*private Icon payoutSettings(){
+        moneyPrice = 1000;
     }*/
 
 
@@ -178,9 +282,9 @@ public class ClanCreateGUI extends GUI {
 
         addIcon(13, clanBanner());
         addIcon(40, confirmButton());
-        /*addIcon(20, priceSettings());
-        addIcon(31, kickSettings());
-        addIcon(24, payoutSettings());*/
+        addIcon(20, priceSettings());
+        addIcon(24, kickSettings());
+        /*addIcon(31, payoutSettings());*/
     }
 
     public void setName(String name) {

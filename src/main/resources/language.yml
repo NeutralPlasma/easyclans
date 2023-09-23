@@ -5,14 +5,6 @@ inactive: "<red>Inactive"
 time_format: "dd. MMM yyyy HH:mm"
 
 clan:
-  member:
-    kick_menu: "<gray>Kick <red>{name}"
-    kick_success: "<green>Successfully kicked <red>{name}"
-    kick_notification: "<red>You have been kicked from clan <gold>{clan}"
-    lore:
-      - "<gray>Last active: <gold>{active}"
-      - "<gray>Joined clan on: <gold>{joined}"
-      - "<gray>Currently: {status}"
   chat:
     join_chat: "<green>You are now talking in Clan chat."
     leave_chat: "<red>You are no longer talking in Clan chat"
@@ -58,6 +50,15 @@ clan_list:
         - "<gray>Members:<white> {members}"
         - ""
         - "<gold>Click to send a join request!"
+
+invite:
+  sent: "<green>Successfully sent join request!"
+  already_sent: "<red>You already have pending join request for that clan!"
+  same_clan: "<red>You can't send join request to clan you're already in!"
+  invite_received: "<green>You received new join request from: <red>{player}"
+  request_accepted: "<green>Your join request for clan: <red>{clan} <green>has been accepted!"
+  request_declined: "<red>Your join request for clan: <green>{clan} <red>has been declined!"
+
 bank:
   menu:
     title: "<gold>Clan Bank"
@@ -86,6 +87,16 @@ create:
     set: "<gray>Clan name set to: <reset>{name}"
   menu:
     title: "<gold>Clan creation"
+    money_price:
+      name: "<white>[<red>Money price<white>]"
+      lore:
+        - ""
+        - "<gray>Current price: <red>{price}"
+    kick_time:
+      name: "<white>[<red>Kick time<white>]"
+      lore:
+        - ""
+        - "<gray>Current kick time: <red>{time}"
     banner:
       name: "{name}"
       lore:
@@ -103,6 +114,29 @@ create:
         - ""
         - "<gold>Click to create"
       confirm-title: "Create the clan?"
+members:
+  menu:
+    title: "<gold>Members <white>[<gold>{page}<white>]"
+    lore:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+    inactive_lore:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Time remaining util kick:"
+      - "<gray>- <red>{time_remaining}"
+    owner_lore:
+        - "<red>Clan owner"
+        - "<gray>Last active: <gold>{active}"
+        - "<gray>Joined clan on: <gold>{joined}"
+        - "<gray>Currently: {status}"
+  kick:
+    title: "<gray>Kick <red>{name}"
+    kick_success: "<green>Successfully kicked <red>{name}"
+    kicked: "<red>You have been kicked from the clan!"
+
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"
