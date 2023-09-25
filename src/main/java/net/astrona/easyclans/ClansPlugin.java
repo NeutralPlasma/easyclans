@@ -10,7 +10,9 @@ import net.astrona.easyclans.listener.PlayerChatListener;
 import net.astrona.easyclans.listener.PlayerConnectionListener;
 import net.astrona.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Language;
 
@@ -22,12 +24,14 @@ public class ClansPlugin extends JavaPlugin {
     private SQLStorage sqlStorage;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
+    public static Economy Economy = null;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
+        setupEconomy();
 
         playerController = new PlayerController(this, sqlStorage);
         clansController = new ClansController(this, sqlStorage, playerController);
@@ -42,7 +46,7 @@ public class ClansPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (inited) {
-            // TODO: save the data
+
         }
     }
 
@@ -59,4 +63,18 @@ public class ClansPlugin extends JavaPlugin {
     private void registerGUI() {
         guiHandler = new Handler(this);
     }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        Economy = rsp.getProvider();
+        return Economy != null;
+    }
+
+
 }

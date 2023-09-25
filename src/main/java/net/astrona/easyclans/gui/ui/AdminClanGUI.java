@@ -19,16 +19,18 @@ public class AdminClanGUI extends GUI {
     private ClansController clansController;
     private PlayerController playerController;
     private RequestsController requestsController;
+    private ClansPlugin plugin;
 
 
     public AdminClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                        RequestsController requestsController) {
+                        RequestsController requestsController, ClansPlugin plugin) {
         super(54, "Admin " + clan.getName() + " Clan");
 
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
         this.requestsController = requestsController;
+        this.plugin = plugin;
 
         construct();
         fancyBackground();
@@ -48,8 +50,16 @@ public class AdminClanGUI extends GUI {
     ItemStack clanInfoIconItem() {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}", clan.getName())));
-        meta.lore(getLocalizedDesiralizedList("clan.menu.clan.lore"));
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan_admin.name").replace("{clan}", clan.getName())));
+        var loreStrings = LanguageController.getLocalizedList("clan.menu.clan_admin.lore");
+
+        meta.lore(loreStrings.stream().map(it ->
+                ClansPlugin.MM.deserialize(it
+                                .replace("{clan}", String.valueOf(clan.getName()))
+                                .replace("{clan_name}", String.valueOf(clan.getDisplayName()))
+                                .replace("{interest_rate}", String.valueOf(clan.getInterestRate()))
+        )).toList());
+
         itemStack.setItemMeta(meta);
         return itemStack;
     }
@@ -121,8 +131,7 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            // TODO: open the settings menu
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
+            new ClanSettingsGUI(player, clan, clansController, this, plugin);
         }));
         return icon;
     }

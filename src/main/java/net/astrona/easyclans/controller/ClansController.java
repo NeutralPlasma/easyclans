@@ -82,6 +82,13 @@ public class ClansController {
         return null;
     }
 
+    public void updateClan(Clan clan){
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            sqlStorage.updateClan(clan);
+        });
+
+    }
+
     public List<Clan> getClans() {
         return clans.values().stream().toList();
     }

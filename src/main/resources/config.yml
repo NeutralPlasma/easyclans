@@ -1,4 +1,38 @@
+# database settings
 db:
   mysql: false
+
+
+# clan pricing
+clan:
+  create:
+    price:
+      money: 100000.0
+  banner:
+    buy_price:
+      money: 100000.0
+    change_price:
+      money: 100000.0
+
+# clan chat
 chat-format: "<gold>➜</gold> {player}<dark_gray>:</dark_gray><gray> {message}</gray>"
+
+# language localization for date formatting
 language: "sl SI"
+
+
+# random names for clans
+random_clan_names:
+  - "Soul Thieves"
+  - "Amber Ghosts"
+  - "Space Knives"
+  - "Armed Tribe"
+  - "Alien Amigos"
+  - "Wild Jets"
+  - "Exiled Bunch"
+  - "Rebel Orcs"
+  - "Bros n Pros"
+  - "Fear United"
+  - "Fangs Inc"
+  - "Tasty Trash"
+  - "Dark Rifles"

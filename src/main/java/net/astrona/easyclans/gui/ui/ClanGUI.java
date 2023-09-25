@@ -8,6 +8,7 @@ import net.astrona.easyclans.controller.RequestsController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.utils.Formatter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,7 @@ public class ClanGUI extends GUI {
 
     public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
                    RequestsController requestsController) {
-        super(54, clan.getName() + "Clan");
+        super(27, clan.getDisplayName());
 
         this.clan = clan;
         this.clansController = clansController;
@@ -37,6 +38,7 @@ public class ClanGUI extends GUI {
 
     private void construct() {
         setIcon(11, membersIcon());
+        setIcon(13, clanInfoIcon());
         //  33, 31, 29
 
     }
@@ -45,6 +47,18 @@ public class ClanGUI extends GUI {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan.name").replace("{clan}", clan.getName())));
+
+        var loreStrings = LanguageController.getLocalizedList("clan.menu.clan.lore");
+
+        meta.lore(loreStrings.stream().map(it ->
+                        ClansPlugin.MM.deserialize(it
+                                .replace("{clan}", String.valueOf(clan.getName()))
+                                .replace("{clan_name}", String.valueOf(clan.getDisplayName()))
+                                .replace("{interest_rate}", String.valueOf(clan.getInterestRate()))
+
+        )).toList());
+
+
         itemStack.setItemMeta(meta);
         return itemStack;
     }

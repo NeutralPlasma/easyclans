@@ -45,7 +45,8 @@ public class GUIListener implements Listener {
                 @Override
                 public void run() {
                     if (!handler.hasPlayer(event.getPlayer().getUniqueId()))
-                        gui.getCloseActions().forEach(it -> it.execute((Player) event.getPlayer()));
+                        if(!gui.isForceClose())
+                            gui.getCloseActions().forEach(it -> it.execute((Player) event.getPlayer()));
                 }
             }.runTaskLater(plugin, 2L);
 

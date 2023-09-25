@@ -9,12 +9,20 @@ clan:
     join_chat: "<green>You are now talking in Clan chat."
     leave_chat: "<red>You are no longer talking in Clan chat"
   menu:
+    clan_admin:
+      name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"
+      lore:
+        - ""
+        - "<gray>Interest rate: <gold>{interest_rate}<gray>%"
+        - "<gray>-----------------------"
+        - "<gray>L-Click to change name"
+        - "<gray>R-Click to change display name"
     clan:
       name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"
       lore:
         - ""
-        - "<gray>L-Click to change name"
-        - "<gray>R-Click to change display name"
+        - "<gray>Interest rate: <gold>{interest_rate}<gray>%"
+        - "<gray>-----------------------"
     members:
       name: "<reset><#ffffff>[<gold>Members</gold><#ffffff>]"
       lore:
@@ -50,7 +58,6 @@ clan_list:
         - "<gray>Members:<white> {members}"
         - ""
         - "<gold>Click to send a join request!"
-
 invite:
   sent: "<green>Successfully sent join request!"
   already_sent: "<red>You already have pending join request for that clan!"
@@ -58,7 +65,6 @@ invite:
   invite_received: "<green>You received new join request from: <red>{player}"
   request_accepted: "<green>Your join request for clan: <red>{clan} <green>has been accepted!"
   request_declined: "<red>Your join request for clan: <green>{clan} <red>has been declined!"
-
 bank:
   menu:
     title: "<gold>Clan Bank"
@@ -77,6 +83,7 @@ bank:
         - ""
         - "<gold>Click to withdraw!"
 create:
+  not_enough_money: "<red>You don't have enough money to create clan!"
   display_name:
     prompt: "<green>Enter a new clan display name:"
     invalid_prompt: "<red>Invalid input. Please enter a valid clan display name."
@@ -136,7 +143,32 @@ members:
     title: "<gray>Kick <red>{name}"
     kick_success: "<green>Successfully kicked <red>{name}"
     kicked: "<red>You have been kicked from the clan!"
-
+settings:
+  menu:
+    kickIcon:
+      title: "<white>[<red>Kick time<white>]"
+      lore:
+        - ""
+        - "<gray>Left click to change"
+        - "<gray>Right click to reset"
+        - "<gray>--------------------------"
+        - "<gray>Current: <red>{time}"
+    priceIcon:
+      title: "<white>[<red>Join price<white>]"
+      lore:
+        - ""
+        - "<gray>Left click to change"
+        - "<gray>Right click to reset"
+        - "<gray>--------------------------"
+        - "<gray>Current: <red>{price:money}"
+    nameIcon:
+      title: "<white>[<red>Name<white>]"
+      lore:
+        - ""
+        - "<gray>Left click to change"
+        - "<gray>Right click to reset"
+        - "<gray>--------------------------"
+        - "<gray>Current: <red>{name}"
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"

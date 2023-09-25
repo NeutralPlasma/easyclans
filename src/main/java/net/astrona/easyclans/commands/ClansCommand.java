@@ -66,8 +66,8 @@ public class ClansCommand implements TabExecutor {
             if (!oneArgumentSubCommands.contains(args[0])) {
                 sender.sendMessage(MM.deserialize(
                         """
-                                <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Too many arguments.</dark_red>
-                                """.formatted(args[0])
+                        <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Not enough arguments.</dark_red>
+                        """.formatted(args[0])
                 ));
                 return true;
             }
@@ -88,48 +88,13 @@ public class ClansCommand implements TabExecutor {
                     this.executeCreateSubCommand(playerSender);
                 }
                 case "test" -> {
-
-                    CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
-
-                    if (cplayer == null) {
-                        cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
-                    }
-                    UUID test = cplayer.getUuid();
-                    Clan clan = new Clan(
-                            10,
-                            test,
-                            "Testing clan",
-                            "DISPLAY!",
-                            0,
-                            0,
-                            10.0,
-                            new ItemStack(Material.CYAN_BANNER),
-                            10000000,
-                            0,
-                            "DD",
-                            List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                                    test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test),
-                            System.currentTimeMillis()
-                    );
-                    cplayer.setClanID(clan.getId());
-
-                    new AdminClanGUI(playerSender, clan, clansController, playerController, requestsController);
+                    var cplayer = playerController.getPlayer(playerSender.getUniqueId());
+                    var clan = createTestClan(cplayer);
+                    new AdminClanGUI(playerSender, clan, clansController, playerController,
+                            requestsController, plugin);
                 }
                 case "chat" -> {
-                    CPlayer cplayer = playerController.getPlayer(playerSender.getUniqueId());
-
-                    if (cplayer == null) {
-                        cplayer = new CPlayer(playerSender.getUniqueId(), -1, System.currentTimeMillis(), System.currentTimeMillis(), playerSender.getName());
-                    }
-
+                    var cplayer = playerController.getPlayer(playerSender.getUniqueId());
                     if (cplayer.isInClubChat()) {
                         playerSender.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
                     } else {
@@ -210,7 +175,8 @@ public class ClansCommand implements TabExecutor {
         }
         if(clan.getOwner().equals(sender.getUniqueId())){
             sender.sendMessage("Admin menu "  + clan.getOwner());
-            new AdminClanGUI(sender, clan, clansController, playerController, requestsController);
+            new AdminClanGUI(sender, clan, clansController, playerController,
+                    requestsController, plugin);
         }else{
             sender.sendMessage("Non Admin menu " + clan.getOwner() + " " + sender.getUniqueId());
             new ClanGUI(sender, clan, clansController, playerController, requestsController);
@@ -261,5 +227,40 @@ public class ClansCommand implements TabExecutor {
 
     private void executeInviteSubCommand(Player sender, OfflinePlayer receiver) {
 
+    }
+
+
+
+
+    private Clan createTestClan(CPlayer cPlayer){
+
+        UUID test = cPlayer.getUuid();
+        Clan clan = new Clan(
+                10,
+                test,
+                "Testing clan",
+                "DISPLAY!",
+                0,
+                0,
+                10.0,
+                new ItemStack(Material.CYAN_BANNER),
+                10000000,
+                0,
+                "DD",
+                List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
+                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test),
+                System.currentTimeMillis()
+        );
+        //cPlayer.setClanID(clan.getId());
+
+        return clan;
     }
 }

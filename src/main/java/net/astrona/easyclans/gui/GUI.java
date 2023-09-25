@@ -19,6 +19,7 @@ public class GUI implements InventoryHolder {
     private final Map<Integer, List<Icon>> actualIcons = new HashMap<>();
     private final int size;
     private String title;
+    private boolean forceClose = false;
     private List<Integer> noBackgroundSlots = new ArrayList<>();
 
     public GUI(int size, String title) {
@@ -174,5 +175,13 @@ public class GUI implements InventoryHolder {
             }
         }
         return inventory;
+    }
+
+    public boolean isForceClose() {
+        return forceClose;
+    }
+
+    public void setForceClose(boolean forceClose) {
+        this.forceClose = forceClose;
     }
 }

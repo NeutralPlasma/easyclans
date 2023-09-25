@@ -144,23 +144,25 @@ public class ClanCreateGUI extends GUI {
         });
         icon.addClickAction(player -> {
             new ConfirmGUI(player, (confirmPlayer) -> {
-                Clan clan = clansController.createClan(
-                        confirmPlayer.getUniqueId(),
-                        name,
-                        displayName,
-                        kickTime,
-                        0,
-                        moneyPrice,
-                        banner,
-                        0.0,
-                        0.0,
-                        "",
-                        List.of(
-                                confirmPlayer.getUniqueId()
-                        )
-                );
-
-                new AdminClanGUI(player, clan, clansController, playerController, requestsController);
+                if(ClansPlugin.Economy.getBalance(player) < plugin.getConfig().getDouble("") ){
+                    player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.not_enough_money")));
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }else{
+                    Clan clan = clansController.createClan(
+                            confirmPlayer.getUniqueId(),
+                            name,
+                            displayName,
+                            kickTime,
+                            0,
+                            moneyPrice,
+                            banner,
+                            0.0,
+                            0.0,
+                            "",
+                            List.of(confirmPlayer.getUniqueId())
+                    );
+                    new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin);
+                }
             }, (cancelPlayer) -> {
                 cancelPlayer.openInventory(getInventory());
             }, LanguageController.getLocalized("create.menu.create.confirm-title"));

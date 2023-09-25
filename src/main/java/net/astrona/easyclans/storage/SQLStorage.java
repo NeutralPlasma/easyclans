@@ -7,10 +7,7 @@ import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.utils.Serialization;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +18,7 @@ import java.util.logging.Logger;
 
 public class SQLStorage {
 
-    private Logger logger;
+    private final Logger logger;
     private HikariDataSource dataSource;
 
     private boolean isMysql;
@@ -95,6 +92,7 @@ public class SQLStorage {
             statement.execute();
         } catch (SQLException e) {
             logger.severe("Could not initialize the sql tables!");
+            //logger.severe(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -238,7 +236,6 @@ public class SQLStorage {
                 return null;
             }
         } catch (SQLException e) {
-            // ja jebi se logger neh mi tezit :)
             e.printStackTrace();
         }
         return null;
@@ -340,11 +337,9 @@ public class SQLStorage {
                     autokick_time = ?,
                     join_points_price = ?,
                     join_money_price = ?,
-                    auto_pay_out_time = ?,
-                    auto_pay_out_percentage = ?,
                     banner = ?,
                     bank = ?,
-                    interest_rate = ?
+                    interest_rate = ?,
                     tag = ?
                     """);
             statement.setString(1, clan.getOwner().toString());
