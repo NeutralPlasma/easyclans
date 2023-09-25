@@ -3,9 +3,12 @@ package net.astrona.easyclans.gui.ui;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
+import net.astrona.easyclans.controller.LogController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.utils.AbstractChatUtil;
 import net.astrona.easyclans.utils.Formatter;
 import net.kyori.adventure.sound.Sound;
@@ -26,14 +29,16 @@ public class ClanSettingsGUI extends GUI {
     private ClansController clansController;
     private GUI previous;
     private ClansPlugin plugin;
+    private LogController logController;
     public ClanSettingsGUI(Player player, Clan clan, ClansController clansController,
-                           GUI previous, ClansPlugin plugin) {
+                           GUI previous, ClansPlugin plugin, LogController logController) {
         super(45, "title");
         this.player = player;
         this.clan = clan;
         this.clansController = clansController;
         this.previous = previous;
         this.plugin = plugin;
+        this.logController = logController;
 
         addCloseAction((ignored) -> {
             clansController.updateClan(clan);
@@ -89,6 +94,8 @@ public class ClanSettingsGUI extends GUI {
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                         return;
                     }
+                    logController.addLog(new Log( "kickTime:" + value, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
+
                     clan.setAutoKickTime(value);
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
                 }catch (NumberFormatException e){
@@ -147,6 +154,7 @@ public class ClanSettingsGUI extends GUI {
                     }
                     clan.setJoinMoneyPrice(value);
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    logController.addLog(new Log( "joinPrice:" + value, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 }catch (NumberFormatException e){
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
@@ -202,6 +210,7 @@ public class ClanSettingsGUI extends GUI {
                 }
                 clan.setName(event.message().trim().replace(" ", "_"));
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                logController.addLog(new Log( "name:" + clan.getName(), player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
                 open(player);

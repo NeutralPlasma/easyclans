@@ -1,16 +1,11 @@
 package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
-import net.astrona.easyclans.controller.ClansController;
-import net.astrona.easyclans.controller.LanguageController;
-import net.astrona.easyclans.controller.PlayerController;
-import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.Paginator;
-import net.astrona.easyclans.models.CPlayer;
-import net.astrona.easyclans.models.CRequest;
-import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.*;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -35,12 +30,13 @@ public class RequestsGUI extends Paginator {
     private PlayerController playerController;
     private RequestsController requestsController;
     private GUI previousUI;
+    private LogController logController;
 
     public RequestsGUI(Player player, Clan clan,
                        ClansController clansController,
                        PlayerController playerController,
                        RequestsController requestsController,
-                       GUI previousUI) {
+                       GUI previousUI, LogController logController) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -54,6 +50,7 @@ public class RequestsGUI extends Paginator {
         this.playerController = playerController;
         this.requestsController = requestsController;
         this.previousUI = previousUI;
+        this.logController = logController;
         init();
         this.open(0);
     }
@@ -95,7 +92,7 @@ public class RequestsGUI extends Paginator {
                         requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.request_accepted")
                                 .replace("{clan}", clan.getName())));
                     }
-
+                    logController.addLog(new Log( cPlayer.getUuid().toString(), player.getUniqueId(), clan.getId(), LogType.REQUEST_ACCEPTED));
                     removeIcon(icon);
                     open();
                 }, (ignored) -> {
@@ -108,7 +105,7 @@ public class RequestsGUI extends Paginator {
                         requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.request_declined")
                                 .replace("{clan}", clan.getName())));
                     }
-
+                    logController.addLog(new Log( cPlayer.getUuid().toString(), player.getUniqueId(), clan.getId(), LogType.REQUEST_DECLINED));
                     removeIcon(icon);
                     open();
                 }, LanguageController.getLocalized("requests.menu.invite.title").formatted("{player}", cPlayer.getName()));

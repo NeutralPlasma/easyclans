@@ -3,6 +3,7 @@ package net.astrona.easyclans.listener;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
+import net.astrona.easyclans.controller.LanguageController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
@@ -32,10 +33,16 @@ public class PlayerChatListener implements Listener {
         CPlayer cPlayer = playerController.getPlayer(player.getUniqueId());
         Clan clan = clansController.getClan(cPlayer.getClanID());
 
+//        if(clan == null && cPlayer.isInClubChat()){
+//            player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_chat.invalid_clan")));
+//            event.setCancelled(true);
+//            return;
+//        }
 
         if (!cPlayer.isInClubChat() || clan == null) {
             return;
         }
+
 
         event.setCancelled(true);
 

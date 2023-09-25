@@ -6,6 +6,7 @@ import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
 import net.astrona.easyclans.utils.Serialization;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -72,6 +73,7 @@ public class SQLStorage {
         this.createClansTable();
         this.createClanInvitesTable();
         this.createClanJoinRequestsTable();
+        this.createLogsTable();
     }
 
 
@@ -141,6 +143,29 @@ public class SQLStorage {
                                 FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
                             );
                             """
+            );
+            statement.execute();
+        } catch (SQLException e) {
+            logger.severe("Could not initialize the sql tables!");
+            e.printStackTrace();
+        }
+    }
+
+    private void createLogsTable(){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                        CREATE TABLE IF NOT EXISTS ec_logs (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            message TEXT,
+                            clan_id INTEGER,
+                            player_id VARCHAR(36),
+                            log_type VARCHAR(25),
+                            created_on BIGINT,
+                            FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
+                            FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                        );
+                        """
             );
             statement.execute();
         } catch (SQLException e) {
@@ -310,8 +335,8 @@ public class SQLStorage {
                         result.getInt("join_points_price"),
                         result.getDouble("join_money_price"),
                         Serialization.decodeItemBase64(result.getString("banner")),
-                        result.getDouble("interest_rate"),
                         result.getDouble("bank"),
+                        result.getDouble("interest_rate"),
                         result.getString("tag"),
                         null,
                         result.getLong("created_on")
@@ -482,6 +507,41 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
+
+
+    //</editor-fold">
+
+    //<editor-fold desc="logs
+
+    public void addLog(Log log){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO
+                    ec_logs
+                    (message, player_id, clan_id, log_type, created_on)
+                    VALUES
+                    (?, ?, ?, ?, ?)
+                    """);
+            statement.setString(1, log.log());
+            statement.setString(2, log.player() != null ? log.player().toString() : "");
+            statement.setInt(3, log.clan());
+            statement.setString(4, log.type().toString());
+            statement.setLong(5, System.currentTimeMillis());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    //</editor-fold">
+
+
+    //<editor-fold desc="notifications">
+
+
+
 
 
     //</editor-fold">

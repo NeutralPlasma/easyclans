@@ -44,6 +44,9 @@ public class CPlayer {
 
     public void setClanID(int clan_id) {
         this.clanId = clan_id;
+        if(clan_id == -1){
+            inClubChat = false;
+        }
     }
 
     public void removeFromClan() {

@@ -2,6 +2,8 @@ package net.astrona.easyclans.controller;
 
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CRequest;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.storage.SQLStorage;
 import org.bukkit.Bukkit;
 
@@ -59,5 +61,17 @@ public class RequestsController {
             sqlStorage.deleteRequest(cRequest);
             requests.remove(cRequest.getRequestId());
         });
+    }
+
+
+    public void cleanExpired(){
+        for(var request : requests.values()){
+            if(request.getExpireTime() < System.currentTimeMillis()){
+                sqlStorage.deleteRequest(request);
+                // todo: make notification
+                sqlStorage.addLog(new Log(String.valueOf(request.getExpireTime()), request.getPlayerUuid(), request.getClanId(), LogType.REQUEST_EXPIRED));
+                requests.remove(request.getRequestId());
+            }
+        }
     }
 }

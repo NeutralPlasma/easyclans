@@ -5,6 +5,8 @@ db:
 
 # clan pricing
 clan:
+  interest_rate_increase: 0.00001 # by how much interest increases every minute
+  max_interest_rate: 7.0 # Maximum interest rate for the clan
   create:
     price:
       money: 100000.0

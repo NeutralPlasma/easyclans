@@ -1,13 +1,12 @@
 package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
-import net.astrona.easyclans.controller.ClansController;
-import net.astrona.easyclans.controller.LanguageController;
-import net.astrona.easyclans.controller.PlayerController;
-import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.utils.AbstractChatUtil;
 import net.astrona.easyclans.utils.Formatter;
 import net.kyori.adventure.sound.Sound;
@@ -32,10 +31,12 @@ public class ClanCreateGUI extends GUI {
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
+    private final LogController logController;
 
 
     public ClanCreateGUI(String name, String displayName, ItemStack banner, Player player, ClansPlugin plugin,
-                         PlayerController playerController, ClansController clansController, RequestsController requestsController) {
+                         PlayerController playerController, ClansController clansController,
+                         RequestsController requestsController, LogController logController) {
         super(54, LanguageController.getLocalized("create.menu.title"));
         this.name = name;
         this.displayName = displayName;
@@ -44,6 +45,7 @@ public class ClanCreateGUI extends GUI {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
+        this.logController = logController;
         init();
         fancyBackground();
         open(player);
@@ -144,7 +146,8 @@ public class ClanCreateGUI extends GUI {
         });
         icon.addClickAction(player -> {
             new ConfirmGUI(player, (confirmPlayer) -> {
-                if(ClansPlugin.Economy.getBalance(player) < plugin.getConfig().getDouble("") ){
+                // TODO: add multi currency support
+                if(ClansPlugin.Economy.getBalance(player) < plugin.getConfig().getDouble("clan.create.price.money") ){
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.not_enough_money")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }else{
@@ -161,7 +164,9 @@ public class ClanCreateGUI extends GUI {
                             "",
                             List.of(confirmPlayer.getUniqueId())
                     );
-                    new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin);
+                    new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin, logController);
+                    logController.addLog(new Log(name, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
+
                 }
             }, (cancelPlayer) -> {
                 cancelPlayer.openInventory(getInventory());

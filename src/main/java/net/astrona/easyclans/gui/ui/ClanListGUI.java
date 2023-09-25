@@ -1,14 +1,13 @@
 package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
-import net.astrona.easyclans.controller.ClansController;
-import net.astrona.easyclans.controller.LanguageController;
-import net.astrona.easyclans.controller.PlayerController;
-import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -26,11 +25,12 @@ public class ClanListGUI extends Paginator {
     private RequestsController requestsController;
     private PlayerController playerController;
     private GUI previousUI;
+    private LogController logController;
 
     public ClanListGUI(Player player, ClansController clansController,
                        PlayerController playerController,
                        RequestsController requestsController,
-                       GUI previousUI) {
+                       GUI previousUI, LogController logController) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -43,6 +43,7 @@ public class ClanListGUI extends Paginator {
         this.playerController = playerController;
         this.requestsController = requestsController;
         this.previousUI = previousUI;
+        this.logController = logController;
         init();
         this.open(0);
     }
@@ -94,6 +95,7 @@ public class ClanListGUI extends Paginator {
                     );
                     player1.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("invite.sent")));
                     player1.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    logController.addLog(new Log(c.getName(), player.getUniqueId(), c.getId(), LogType.REQUEST_SENT));
 
                     if(owner != null){
                         owner.sendMessage(

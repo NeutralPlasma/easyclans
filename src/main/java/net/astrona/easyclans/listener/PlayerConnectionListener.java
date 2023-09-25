@@ -23,8 +23,11 @@ public class PlayerConnectionListener implements Listener {
         if (cPlayer == null) {
             cPlayer = this.playerController.createPlayer(event.getPlayer());
             cPlayer.setActive(true);
+            cPlayer.setLastActive(System.currentTimeMillis());
         } else {
             cPlayer.setActive(true);
+            cPlayer.setLastActive(System.currentTimeMillis());
+            playerController.updatePlayer(cPlayer);
         }
     }
 

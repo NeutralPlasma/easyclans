@@ -1,30 +1,46 @@
 package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
+import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
+import net.astrona.easyclans.controller.LogController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
+import net.astrona.easyclans.utils.AbstractChatUtil;
 import net.astrona.easyclans.utils.Formatter;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static net.kyori.adventure.key.Key.key;
+import static net.kyori.adventure.sound.Sound.sound;
+
 public class BankGUI extends GUI {
+    private ClansPlugin plugin;
+    private ClansController clansController;
     private final Clan clan;
     private GUI previousUI;
+    private LogController logController;
 
-    public BankGUI(Player player, Clan clan, GUI previousUI) {
+    public BankGUI(Player player, Clan clan, GUI previousUI, ClansPlugin plugin,
+                   ClansController clansController, LogController logController) {
         super(27, LanguageController.getLocalized("bank.menu.title"));
         this.clan = clan;
         this.previousUI = previousUI;
+        this.plugin = plugin;
+        this.clansController = clansController;
+        this.logController = logController;
         init();
         fancyBackground();
         this.open(player);
     }
 
-    private Icon depositMoney() {
+    private ItemStack depositMoneyItem(){
         var item = new ItemStack(Material.CHEST);
         var meta = item.getItemMeta();
         var loreText = LanguageController.getLocalizedList("bank.menu.deposit.lore");
@@ -40,15 +56,50 @@ public class BankGUI extends GUI {
 
         item.setItemMeta(meta);
 
-        Icon icon = new Icon(item);
+        return item;
+    }
+
+    private Icon depositMoney() {
+        Icon icon = new Icon(depositMoneyItem(), (self, player) -> {
+            self.itemStack = depositMoneyItem();
+        });
+
         icon.addClickAction(player -> {
-            player.sendMessage("deposit money");
+            this.setForceClose(true);
+            new AbstractChatUtil(player, (event) -> {
+                try{
+                    double value = Double.parseDouble(event.message());
+                    if(value <= 0){
+                        // FUCK THE PLAYER :)
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                        return;
+                    }
+                    if(ClansPlugin.Economy.getBalance(player) >= value){
+                        ClansPlugin.Economy.withdrawPlayer(player, value);
+                        clan.setBank(clan.getBank() + value);
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                        logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.DEPOSIT));
+                    }else{
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+
+                        // JEBI SE NIMAS DNARA
+                    }
+
+                }catch (NumberFormatException e){
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }
+            }, plugin).setOnClose(() ->{
+                clansController.updateClan(clan);
+                this.setForceClose(false);
+                open(player);
+                refresh(player);
+            });
         });
 
         return icon;
     }
 
-    private Icon withdrawMoney() {
+    private ItemStack withdrawMoneyItem(){
         var item = new ItemStack(Material.DISPENSER);
         var meta = item.getItemMeta();
         var loreText = LanguageController.getLocalizedList("bank.menu.withdraw.lore");
@@ -63,10 +114,45 @@ public class BankGUI extends GUI {
         ).toList());
 
         item.setItemMeta(meta);
+        return item;
+    }
 
-        Icon icon = new Icon(item);
+    private Icon withdrawMoney() {
+        Icon icon = new Icon(withdrawMoneyItem(), (self, player) -> {
+            self.itemStack = withdrawMoneyItem();
+        });
+
         icon.addClickAction(player -> {
-            player.sendMessage("withdraw money");
+            this.setForceClose(true);
+            new AbstractChatUtil(player, (event) -> {
+                try{
+                    double value = Double.parseDouble(event.message());
+                    if(value <= 0){
+                        // FUCK THE PLAYER :)
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                        return;
+                    }
+                    if(clan.getBank() >= value){
+                        ClansPlugin.Economy.depositPlayer(player, value);
+                        clan.setBank(clan.getBank() - value);
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                        logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
+
+                    }else{
+                        player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+
+                        // JEBI SE NIMAS DNARA
+                    }
+
+                }catch (NumberFormatException e){
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }
+            }, plugin).setOnClose(() ->{
+                clansController.updateClan(clan);
+                this.setForceClose(false);
+                open(player);
+                refresh(player);
+            });
         });
 
         return icon;

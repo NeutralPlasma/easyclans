@@ -1,13 +1,11 @@
 package net.astrona.easyclans.gui.ui;
 
 import net.astrona.easyclans.ClansPlugin;
-import net.astrona.easyclans.controller.ClansController;
-import net.astrona.easyclans.controller.LanguageController;
-import net.astrona.easyclans.controller.PlayerController;
-import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,11 +17,12 @@ public class AdminClanGUI extends GUI {
     private ClansController clansController;
     private PlayerController playerController;
     private RequestsController requestsController;
+    private LogController logController;
     private ClansPlugin plugin;
 
 
     public AdminClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                        RequestsController requestsController, ClansPlugin plugin) {
+                        RequestsController requestsController, ClansPlugin plugin, LogController logController) {
         super(54, "Admin " + clan.getName() + " Clan");
 
         this.clan = clan;
@@ -31,6 +30,7 @@ public class AdminClanGUI extends GUI {
         this.playerController = playerController;
         this.requestsController = requestsController;
         this.plugin = plugin;
+        this.logController = logController;
 
         construct();
         fancyBackground();
@@ -82,7 +82,7 @@ public class AdminClanGUI extends GUI {
         icon.addClickAction((player -> {
             player.closeInventory();
 
-            new MembersGUI(player, clan, clansController, playerController, this);
+            new MembersGUI(player, clan, clansController, playerController, this, logController);
         }));
         return icon;
     }
@@ -117,7 +117,7 @@ public class AdminClanGUI extends GUI {
 
         icon.addClickAction(player -> {
             player.closeInventory();
-            new BankGUI(player, clan, this);
+            new BankGUI(player, clan, this, plugin, clansController, logController);
         });
 
         return icon;
@@ -131,7 +131,7 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            new ClanSettingsGUI(player, clan, clansController, this, plugin);
+            new ClanSettingsGUI(player, clan, clansController, this, plugin, logController);
         }));
         return icon;
     }
@@ -144,7 +144,8 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            new RequestsGUI(player, clan, clansController, playerController, requestsController, this);
+            new RequestsGUI(player, clan, clansController,
+                    playerController, requestsController, this, logController);
         }));
         return icon;
     }

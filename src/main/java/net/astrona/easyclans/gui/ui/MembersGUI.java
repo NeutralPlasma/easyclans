@@ -4,12 +4,15 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.ClansController;
 import net.astrona.easyclans.controller.LanguageController;
+import net.astrona.easyclans.controller.LogController;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.gui.GUI;
 import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
@@ -27,12 +30,13 @@ public class MembersGUI extends Paginator {
     private Player player;
     private ClansController clansController;
     private PlayerController playerController;
+    private LogController logController;
     private GUI previousUI;
 
     public MembersGUI(Player player, Clan clan,
                       ClansController clansController,
                       PlayerController playerController,
-                      GUI previousUI) {
+                      GUI previousUI, LogController logController) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -45,6 +49,7 @@ public class MembersGUI extends Paginator {
         this.clansController = clansController;
         this.playerController = playerController;
         this.previousUI = previousUI;
+        this.logController = logController;
         init();
         this.open(0);
     }
@@ -79,7 +84,6 @@ public class MembersGUI extends Paginator {
             Icon icon = new Icon(item);
 
             if (isOwner && !cPlayer.getUuid().equals(player.getUniqueId())) {
-                // TODO!
                 icon.addLeftClickAction((player) -> {
                     new ConfirmGUI(player, (ignored) -> {
                         cPlayer.removeFromClan();
@@ -93,6 +97,7 @@ public class MembersGUI extends Paginator {
                         if(bplayer != null){
                             bplayer.sendMessage(LanguageController.getLocalized("members.kick.kicked"));
                         }
+                        logController.addLog(new Log( cPlayer.getUuid().toString(), player.getUniqueId(), clan.getId(), LogType.MEMBER_KICK));
                         open();
                     }, (ignored) -> {
                         open();
@@ -124,7 +129,7 @@ public class MembersGUI extends Paginator {
         player.sendMessage("Time1: " + kickTime);
         player.sendMessage("Time: " + (System.currentTimeMillis() - activeDate.getTime()));
 
-        var timeDiff = kickTime - (System.currentTimeMillis() - activeDate.getTime());
+        var timeDiff = Math.abs(kickTime - (System.currentTimeMillis() - activeDate.getTime()));
 
 
 

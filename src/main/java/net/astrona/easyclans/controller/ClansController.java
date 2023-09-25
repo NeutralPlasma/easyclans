@@ -3,6 +3,8 @@ package net.astrona.easyclans.controller;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Log;
+import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.storage.SQLStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -91,5 +93,47 @@ public class ClansController {
 
     public List<Clan> getClans() {
         return clans.values().stream().toList();
+    }
+
+
+    public void processClans(){
+        // kicks inactive users, resets interest rate if owner offline
+        for(var clan : clans.values()){
+            var cOwner = playerController.getPlayer(clan.getOwner());
+            if(System.currentTimeMillis() - cOwner.getLastActive() > 7 * 24 * 60 * 60 * 1000){
+                sqlStorage.addLog(new Log(String.valueOf(clan.getInterestRate()), null, clan.getId(), LogType.INTEREST_RESET));
+                clan.setInterestRate(0);
+            }else{
+                var currentInterestRate = clan.getInterestRate();
+                currentInterestRate += plugin.getConfig().getDouble("clan.interest_rate_increase");
+
+                if(currentInterestRate > plugin.getConfig().getDouble("clan.max_interest_rate"))
+                    currentInterestRate = plugin.getConfig().getDouble("clan.max_interest_rate");
+
+                sqlStorage.addLog(new Log(String.valueOf(currentInterestRate), null, clan.getId(), LogType.INTEREST_ADD));
+                clan.setInterestRate(currentInterestRate);
+            }
+            if(clan.getBank() != 0 && clan.getInterestRate() != 0){
+                var addMoney = clan.getBank() * clan.getInterestRate();
+                clan.setBank(clan.getBank() + addMoney);
+                sqlStorage.addLog(new Log(String.valueOf(addMoney), null, clan.getId(), LogType.MONEY_ADD));
+            }
+
+
+
+            sqlStorage.updateClan(clan);
+        }
+
+        for(var player : playerController.getPlayers()){
+            if(player.getClanID() == -1) continue;
+            var clan = clans.get(player.getClanID());
+            if(clan.getOwner().equals(player.getUuid())) continue;
+            if(System.currentTimeMillis() - player.getLastActive() > clan.getAutoKickTime()){
+                player.setClanID(-1);
+                // TODO: send kick notification
+                sqlStorage.addLog(new Log("", player.getUuid(), clan.getId(), LogType.AUTO_KICK));
+                sqlStorage.updatePlayer(player);
+            }
+        }
     }
 }

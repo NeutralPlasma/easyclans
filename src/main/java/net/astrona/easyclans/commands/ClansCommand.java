@@ -1,10 +1,7 @@
 package net.astrona.easyclans.commands;
 
 import net.astrona.easyclans.ClansPlugin;
-import net.astrona.easyclans.controller.ClansController;
-import net.astrona.easyclans.controller.LanguageController;
-import net.astrona.easyclans.controller.PlayerController;
-import net.astrona.easyclans.controller.RequestsController;
+import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.ui.*;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
@@ -45,14 +42,16 @@ public class ClansCommand implements TabExecutor {
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
+    private final LogController logController;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
                         RequestsController requestsController,
-                        ClansPlugin plugin) {
+                        ClansPlugin plugin, LogController logController) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
         this.plugin = plugin;
+        this.logController = logController;
     }
 
     @Override
@@ -91,7 +90,7 @@ public class ClansCommand implements TabExecutor {
                     var cplayer = playerController.getPlayer(playerSender.getUniqueId());
                     var clan = createTestClan(cplayer);
                     new AdminClanGUI(playerSender, clan, clansController, playerController,
-                            requestsController, plugin);
+                            requestsController, plugin, logController);
                 }
                 case "chat" -> {
                     var cplayer = playerController.getPlayer(playerSender.getUniqueId());
@@ -176,10 +175,10 @@ public class ClansCommand implements TabExecutor {
         if(clan.getOwner().equals(sender.getUniqueId())){
             sender.sendMessage("Admin menu "  + clan.getOwner());
             new AdminClanGUI(sender, clan, clansController, playerController,
-                    requestsController, plugin);
+                    requestsController, plugin, logController);
         }else{
             sender.sendMessage("Non Admin menu " + clan.getOwner() + " " + sender.getUniqueId());
-            new ClanGUI(sender, clan, clansController, playerController, requestsController);
+            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController);
         }
 
     }
@@ -193,7 +192,7 @@ public class ClansCommand implements TabExecutor {
         }
 
         Clan clan = clansController.getClan(cPlayer.getClanID());
-        new BankGUI(sender, clan, null);
+        new BankGUI(sender, clan, null, plugin, clansController, logController);
     }
 
     private void executeMembersSubCommand(Player sender) {
@@ -205,16 +204,16 @@ public class ClansCommand implements TabExecutor {
         }
 
         Clan clan = clansController.getClan(cPlayer.getClanID());
-        new MembersGUI(sender, clan, clansController, playerController, null);
+        new MembersGUI(sender, clan, clansController, playerController, null, logController);
     }
 
     private void executeListSubCommand(Player sender) {
         CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-        new ClanListGUI(sender, clansController, playerController, requestsController, null);
+        new ClanListGUI(sender, clansController, playerController, requestsController, null, logController);
     }
 
     private void executeCreateSubCommand(Player sender) {
-        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController);
+        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController, logController);
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {
