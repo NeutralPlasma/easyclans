@@ -7,6 +7,7 @@ import net.astrona.easyclans.listener.PlayerChatListener;
 import net.astrona.easyclans.listener.PlayerConnectionListener;
 import net.astrona.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -26,6 +27,7 @@ public class ClansPlugin extends JavaPlugin {
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
     public static Economy Economy = null;
+    public static LuckPerms Ranks = null;
 
     @Override
     public void onEnable() {
@@ -33,6 +35,7 @@ public class ClansPlugin extends JavaPlugin {
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
         setupEconomy();
+        setupLuckPerms();
         logController = new LogController(sqlStorage, this);
 
         playerController = new PlayerController(this, sqlStorage);
@@ -84,6 +87,12 @@ public class ClansPlugin extends JavaPlugin {
         }
         Economy = rsp.getProvider();
         return Economy != null;
+    }
+
+    private boolean setupLuckPerms(){
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        Ranks = provider.getProvider();
+        return Ranks != null;
     }
 
 

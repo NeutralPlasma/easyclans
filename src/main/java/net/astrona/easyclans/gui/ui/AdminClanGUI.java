@@ -57,7 +57,7 @@ public class AdminClanGUI extends GUI {
                 ClansPlugin.MM.deserialize(it
                                 .replace("{clan}", String.valueOf(clan.getName()))
                                 .replace("{clan_name}", String.valueOf(clan.getDisplayName()))
-                                .replace("{interest_rate}", String.valueOf(clan.getInterestRate()))
+                                .replace("{interest_rate}", String.format("%.5f", clan.getInterestRate()))
         )).toList());
 
         itemStack.setItemMeta(meta);

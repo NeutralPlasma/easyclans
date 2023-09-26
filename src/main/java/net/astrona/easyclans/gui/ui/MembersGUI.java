@@ -70,7 +70,7 @@ public class MembersGUI extends Paginator {
             if(cPlayer.getUuid().equals(clan.getOwner()))
                 meta.lore(format(LanguageController.getLocalizedList("members.menu.owner_lore"), cPlayer, clan.getAutoKickTime()));
             else{
-                if(cPlayer.isActive()){
+                if(cPlayer.isActive() || clan.getAutoKickTime() == -1){
                     meta.lore(format(LanguageController.getLocalizedList("members.menu.lore"), cPlayer, clan.getAutoKickTime()));
                 }else{
                     meta.lore(format(LanguageController.getLocalizedList("members.menu.inactive_lore"), cPlayer, clan.getAutoKickTime()));
@@ -126,11 +126,7 @@ public class MembersGUI extends Paginator {
         var activeDate = new Date(cPlayer.getLastActive());
         var joinDate = new Date(cPlayer.getJoinClanDate());
 
-        player.sendMessage("Time1: " + kickTime);
-        player.sendMessage("Time: " + (System.currentTimeMillis() - activeDate.getTime()));
-
         var timeDiff = Math.abs(kickTime - (System.currentTimeMillis() - activeDate.getTime()));
-
 
 
         SimpleDateFormat sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);

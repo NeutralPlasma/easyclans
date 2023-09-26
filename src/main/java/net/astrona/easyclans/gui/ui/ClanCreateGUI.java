@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 import static net.astrona.easyclans.controller.LanguageController.getLocalizedList;
@@ -49,6 +50,16 @@ public class ClanCreateGUI extends GUI {
         init();
         fancyBackground();
         open(player);
+    }
+
+
+    private ItemStack strip(ItemStack itemStack){
+        var item = itemStack.clone();
+        var meta = item.getItemMeta();
+        meta.lore(null);
+        meta.displayName(null);
+        item.setItemMeta(meta);
+        return item;
     }
 
     private void legalizeBanner() {
@@ -92,7 +103,13 @@ public class ClanCreateGUI extends GUI {
 
         icon.addLeftClickAction((player) -> {
             new AbstractChatUtil(player, (meow) -> {
-                name = meow.message();
+                var stripped = meow.message().replace("", "_").strip().trim();
+                if(stripped.length() < 3){
+                    // not good
+                    return;
+                }
+
+                name = stripped;
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
                 icon.itemStack = banner;
@@ -106,6 +123,10 @@ public class ClanCreateGUI extends GUI {
 
         icon.addRightClickAction((player) -> {
             new AbstractChatUtil(player, (meow) -> {
+                if(meow.message().isEmpty() || meow.message().isBlank() || meow.message().length() < 3){
+                    // not good
+                    return;
+                }
                 displayName = meow.message();
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
@@ -150,6 +171,10 @@ public class ClanCreateGUI extends GUI {
                 if(ClansPlugin.Economy.getBalance(player) < plugin.getConfig().getDouble("clan.create.price.money") ){
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.not_enough_money")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    player.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("not_enough_money")
+                                    .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.create.price.money")))
+                    ));
                 }else{
                     Clan clan = clansController.createClan(
                             confirmPlayer.getUniqueId(),
@@ -158,10 +183,10 @@ public class ClanCreateGUI extends GUI {
                             kickTime,
                             0,
                             moneyPrice,
-                            banner,
+                            strip(banner),
                             0.0,
                             0.0,
-                            "",
+                            "" + name.charAt(0) + name.charAt(1),
                             List.of(confirmPlayer.getUniqueId())
                     );
                     new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin, logController);

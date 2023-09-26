@@ -2,6 +2,9 @@ confirm: "<green>Confirm"
 cancel: "<red>Cancel"
 active: "<green>Active"
 inactive: "<red>Inactive"
+disabled: "<red>Disabled"
+invalid_amount: "<red>Invalid amount!"
+not_enough_money: "<red>Sorry but you don't have enough money! <gray>(<red>{price}<white>$<gray>)"
 time_format: "dd. MMM yyyy HH:mm"
 
 clan:
@@ -140,8 +143,8 @@ members:
         - "<gray>Joined clan on: <gold>{joined}"
         - "<gray>Currently: {status}"
   kick:
-    title: "<gray>Kick <red>{name}"
-    kick_success: "<green>Successfully kicked <red>{name}"
+    title: "<gray>Kick <red>{player}"
+    kick_success: "<green>Successfully kicked <red>{player}"
     kicked: "<red>You have been kicked from the clan!"
 settings:
   menu:
@@ -169,6 +172,15 @@ settings:
         - "<gray>Right click to reset"
         - "<gray>--------------------------"
         - "<gray>Current: <red>{name}"
+    bannerIcon:
+      title: "<white>[<red>Banner<white>]"
+      lore:
+        - ""
+        - "<gray>Left click to buy"
+        - "<gray>Right click to change"
+        - "<gray>--------------------------"
+        - "<gray>Buy price: <red>{buy_price}<gray>$"
+        - "<gray>Change price: <red>{change_price}<gray>$"
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"

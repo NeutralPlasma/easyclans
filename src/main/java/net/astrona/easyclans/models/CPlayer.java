@@ -2,24 +2,24 @@ package net.astrona.easyclans.models;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.UUID;
 
 public class CPlayer {
-    private String name;
+    private String name, rank;
     private UUID uuid;
     private int clanId;
     private long lastActive, joinClanDate;
     private boolean isActive = false;
     private boolean inClubChat = false;
 
-    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name) {
+    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name, String rank) {
         this.uuid = uuid;
         this.clanId = clanId;
         this.lastActive = lastActive;
         this.joinClanDate = joinClanDate;
         this.name = name;
+        this.rank = rank;
     }
 
     public boolean isInClubChat() {
@@ -87,5 +87,13 @@ public class CPlayer {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 }

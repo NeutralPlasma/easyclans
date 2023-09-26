@@ -33,12 +33,6 @@ public class PlayerChatListener implements Listener {
         CPlayer cPlayer = playerController.getPlayer(player.getUniqueId());
         Clan clan = clansController.getClan(cPlayer.getClanID());
 
-//        if(clan == null && cPlayer.isInClubChat()){
-//            player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_chat.invalid_clan")));
-//            event.setCancelled(true);
-//            return;
-//        }
-
         if (!cPlayer.isInClubChat() || clan == null) {
             return;
         }

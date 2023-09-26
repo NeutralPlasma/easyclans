@@ -3,6 +3,8 @@ package net.astrona.easyclans.listener;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.PlayerController;
 import net.astrona.easyclans.models.CPlayer;
+import net.luckperms.api.model.user.User;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -27,8 +29,13 @@ public class PlayerConnectionListener implements Listener {
         } else {
             cPlayer.setActive(true);
             cPlayer.setLastActive(System.currentTimeMillis());
+            User user = ClansPlugin.Ranks.getPlayerAdapter(Player.class).getUser(event.getPlayer());
+            cPlayer.setRank(user.getPrimaryGroup());
             playerController.updatePlayer(cPlayer);
         }
+
+
+
     }
 
     @EventHandler

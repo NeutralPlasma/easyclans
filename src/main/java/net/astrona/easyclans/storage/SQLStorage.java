@@ -87,7 +87,8 @@ public class SQLStorage {
                                 clan INT,
                                 last_active BIGINT,
                                 joined_clan BIGINT,
-                                name TEXT
+                                name TEXT,
+                                rank TEXT
                             );
                             """
             );
@@ -204,15 +205,16 @@ public class SQLStorage {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO ec_player_data
-                    (uuid, clan, last_active, joined_clan, name)
+                    (uuid, clan, last_active, joined_clan, name, rank)
                     VALUES
-                    (?, ?, ?, ?, ?)
+                    (?, ?, ?, ?, ?, ?)
                     """);
             statement.setString(1, cPlayer.getUuid().toString());
             statement.setInt(2, cPlayer.getClanID());
             statement.setLong(3, cPlayer.getLastActive());
             statement.setLong(4, cPlayer.getJoinClanDate());
             statement.setString(5, cPlayer.getName());
+            statement.setString(6, cPlayer.getRank());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -227,13 +229,15 @@ public class SQLStorage {
                     SET
                     clan = ?,
                     last_active = ?,
-                    joined_clan = ?
+                    joined_clan = ?,
+                    rank = ?
                     WHERE uuid = ?
                     """);
             statement.setInt(1, cPlayer.getClanID());
             statement.setLong(2, cPlayer.getLastActive());
             statement.setLong(3, cPlayer.getJoinClanDate());
-            statement.setString(4, cPlayer.getUuid().toString());
+            statement.setString(5, cPlayer.getUuid().toString());
+            statement.setString(4, cPlayer.getRank());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -255,7 +259,8 @@ public class SQLStorage {
                         result.getInt("clan"),
                         result.getLong("last_active"),
                         result.getLong("joined_clan"),
-                        result.getString("name")
+                        result.getString("name"),
+                        result.getString("rank")
                 );
             } else {
                 return null;
@@ -280,7 +285,8 @@ public class SQLStorage {
                         result.getInt("clan"),
                         result.getLong("last_active"),
                         result.getLong("joined_clan"),
-                        result.getString("name")
+                        result.getString("name"),
+                        result.getString("rank")
                 ));
             }
         } catch (SQLException e) {

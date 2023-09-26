@@ -11,6 +11,7 @@ import net.astrona.easyclans.models.Log;
 import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.utils.AbstractChatUtil;
 import net.astrona.easyclans.utils.Formatter;
+import net.astrona.easyclans.utils.PlayerUtils;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -59,6 +60,7 @@ public class ClanSettingsGUI extends GUI {
         setIcon(11, kickTimeIcon());
         setIcon(13, nameIcon());
         setIcon(15, joinPriceIcon());
+        setIcon(31, bannerIcon());
     }
 
 
@@ -68,11 +70,11 @@ public class ClanSettingsGUI extends GUI {
         var item = new ItemStack(Material.BOOK);
         var meta = item.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.kickIcon.title")));
-
         var loreText = getLocalizedList("settings.menu.kickIcon.lore");
+        var kickText = clan.getAutoKickTime() == -1 ? LanguageController.getLocalized("disabled") : DurationFormatUtils.formatDurationWords(clan.getAutoKickTime(), true,false);
         meta.lore(loreText.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
-                        .replace("{time}", DurationFormatUtils.formatDurationWords(clan.getAutoKickTime(), true,false))
+                        .replace("{time}", kickText)
                 )
         ).toList());
 
@@ -156,6 +158,9 @@ public class ClanSettingsGUI extends GUI {
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
                     logController.addLog(new Log( "joinPrice:" + value, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 }catch (NumberFormatException e){
+                    player.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("invalid_amount")
+                    ));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
             }, plugin).setOnClose(() -> {
@@ -188,6 +193,7 @@ public class ClanSettingsGUI extends GUI {
         meta.lore(loreText.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
                         .replace("{name}", clan.getName())
+                        .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.name.change_price.money")))
                 )
         ).toList());
         item.setItemMeta(meta);
@@ -204,13 +210,23 @@ public class ClanSettingsGUI extends GUI {
         icon.addLeftClickAction((player1 -> {
             setForceClose(true);
             new AbstractChatUtil(player, (event) ->  {
-                if(event.message().isBlank() || event.message().isEmpty()){
+                if(event.message().isBlank() || event.message().isEmpty() || event.message().length() < 3){
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                     return;
                 }
-                clan.setName(event.message().trim().replace(" ", "_"));
-                player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                logController.addLog(new Log( "name:" + clan.getName(), player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
+                if(ClansPlugin.Economy.getBalance(player) >= plugin.getConfig().getDouble("clan.name.change_price.money")){
+
+                    ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.name.change_price.money"));
+                    clan.setName(event.message().trim().replace(" ", "_"));
+                    player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                    logController.addLog(new Log( "name:" + clan.getName(), player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
+                }else{
+                    player.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("not_enough_money")
+                                    .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.name.change_price.money")))
+                    ));
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                }
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
                 open(player);
@@ -220,7 +236,8 @@ public class ClanSettingsGUI extends GUI {
 
 
         icon.addRightClickAction(player1 -> {
-            clan.setName("RANDOM_NAME_GENERATOR!");
+            // add money check maybe?
+            clan.setName("CLAN_" + clan.getId());
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
             refresh(player);
         });
@@ -235,8 +252,55 @@ public class ClanSettingsGUI extends GUI {
 
 
     // banner
+    private ItemStack bannerItem(){
+        var item = clan.getBanner().clone();
+        var meta = item.getItemMeta();
+
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.bannerIcon.title")));
+
+        var loreText = getLocalizedList("settings.menu.bannerIcon.lore");
+        meta.lore(loreText.stream().map(it ->
+                ClansPlugin.MM.deserialize(it
+                        .replace("{buy_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner.buy_price.money")))
+                        .replace("{change_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner.change_price.money")))
+
+                )
+        ).toList());
+        item.setItemMeta(meta);
+
+        return item;
+    }
 
 
+
+    private Icon bannerIcon(){
+        var icon = new Icon(bannerItem(), (self, player) -> {
+            self.itemStack = bannerItem();
+        });
+
+        icon.addLeftClickAction((player1 -> {
+
+            if(ClansPlugin.Economy.getBalance(player) >= plugin.getConfig().getDouble("clan.banner.buy_price.money")){
+                ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.banner.buy_price.money"));
+                PlayerUtils.giveItem(player, clan.getBanner().clone(), true);
+            }else{
+                player.sendMessage(ClansPlugin.MM.deserialize(
+                        LanguageController.getLocalized("not_enough_money")
+                                .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner.buy_price.money")))
+                ));
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+            }
+
+        }));
+
+
+        icon.addRightClickAction(player1 -> {
+
+        });
+
+
+        return icon;
+    }
 
 
 }

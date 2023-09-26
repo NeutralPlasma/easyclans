@@ -2,6 +2,11 @@ name: EasyClans
 main: net.astrona.easyclans.ClansPlugin
 api-version: 1.19
 version: @version@
+
+depend:
+  - LuckPerms
+  - Vault
+
 commands:
   clans:
     permission: clans.command.main

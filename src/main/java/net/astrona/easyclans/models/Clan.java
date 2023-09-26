@@ -65,7 +65,8 @@ public class Clan {
     }
 
     public void setName(String name) {
-        this.name = name;
+
+        this.name = name.replace("\\<", "<");
     }
 
     public String getDisplayName() {
@@ -73,7 +74,7 @@ public class Clan {
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.displayName = displayName.replace("\\<", "<");
     }
 
     public int getAutoKickTime() {

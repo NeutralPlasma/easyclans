@@ -71,6 +71,9 @@ public class BankGUI extends GUI {
                     double value = Double.parseDouble(event.message());
                     if(value <= 0){
                         // FUCK THE PLAYER :)
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("invalid_amount")
+                        ));
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                         return;
                     }
@@ -81,8 +84,10 @@ public class BankGUI extends GUI {
                         logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.DEPOSIT));
                     }else{
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
-
-                        // JEBI SE NIMAS DNARA
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("not_enough_money")
+                                        .replace("{price}", Formatter.formatMoney(value))
+                        ));
                     }
 
                 }catch (NumberFormatException e){
@@ -128,7 +133,9 @@ public class BankGUI extends GUI {
                 try{
                     double value = Double.parseDouble(event.message());
                     if(value <= 0){
-                        // FUCK THE PLAYER :)
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("invalid_amount")
+                        ));
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                         return;
                     }
@@ -139,9 +146,12 @@ public class BankGUI extends GUI {
                         logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
 
                     }else{
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("not_enough_money")
+                                        .replace("{price}", Formatter.formatMoney(value))
+                        ));
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
 
-                        // JEBI SE NIMAS DNARA
                     }
 
                 }catch (NumberFormatException e){

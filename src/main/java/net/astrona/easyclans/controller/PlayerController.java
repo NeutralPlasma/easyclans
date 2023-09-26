@@ -3,6 +3,7 @@ package net.astrona.easyclans.controller;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.storage.SQLStorage;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,13 +39,14 @@ public class PlayerController {
 
 
     public CPlayer createPlayer(Player player) {
+        User user = ClansPlugin.Ranks.getPlayerAdapter(Player.class).getUser(player);
         CPlayer cPlayer = new CPlayer(player.getUniqueId(),
                 -1,
                 System.currentTimeMillis(),
                 0,
-                player.getName()
+                player.getName(),
+                user.getPrimaryGroup()
         );
-
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.insertPlayer(cPlayer);
         });
@@ -52,26 +54,6 @@ public class PlayerController {
         return cPlayer;
     }
 
-    public void loadPlayer(Player player) {
-        if (!players.containsKey(player.getUniqueId())) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                CPlayer cPlayer = sqlStorage.getPlayer(player.getUniqueId());
-                if (cPlayer == null) {
-                    cPlayer = new CPlayer(player.getUniqueId(),
-                            -1,
-                            System.currentTimeMillis(),
-                            0,
-                            player.getName()
-                    );
-                    cPlayer.setActive(true);
-                    sqlStorage.insertPlayer(cPlayer);
-                }
-                addPlayer(cPlayer);
-            });
-        } else {
-            players.get(player.getUniqueId()).setActive(true);
-        }
-    }
 
     /**
      * Removes a player from the player cache.
