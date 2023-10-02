@@ -8,6 +8,7 @@ import net.astrona.easyclans.gui.Paginator;
 import net.astrona.easyclans.models.*;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
 public class RequestsGUI extends Paginator {
+    private ClansPlugin plugin;
     private Clan clan;
     private Player player;
     private ClansController clansController;
@@ -31,12 +33,14 @@ public class RequestsGUI extends Paginator {
     private RequestsController requestsController;
     private GUI previousUI;
     private LogController logController;
+    private SimpleDateFormat sdf;
 
     public RequestsGUI(Player player, Clan clan,
                        ClansController clansController,
                        PlayerController playerController,
                        RequestsController requestsController,
-                       GUI previousUI, LogController logController) {
+                       GUI previousUI, LogController logController,
+                       ClansPlugin plugin) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -44,6 +48,7 @@ public class RequestsGUI extends Paginator {
                 37, 38, 39, 40, 41, 42, 43
         ), "<gold>Members <white>[<gold>{page}<white>]", 54);
 
+        this.plugin = plugin;
         this.player = player;
         this.clan = clan;
         this.clansController = clansController;
@@ -51,6 +56,8 @@ public class RequestsGUI extends Paginator {
         this.requestsController = requestsController;
         this.previousUI = previousUI;
         this.logController = logController;
+        Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
+        sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
         init();
         this.open(0);
     }
@@ -65,8 +72,14 @@ public class RequestsGUI extends Paginator {
             SkullMeta meta = (SkullMeta) item.getItemMeta();
             meta.setOwningPlayer(oPlayer);
 
+            var expireDate = Math.abs((System.currentTimeMillis() - cRequest.getExpireTime()));
+
+            meta.lore(LanguageController.getLocalizedList("requests.menu.invite.lore").stream().map(it -> ClansPlugin.MM.deserialize(it
+                    .replace("{requested}", sdf.format(cRequest.getCreatedTime()))
+                    .replace("{time}", DurationFormatUtils.formatDurationWords(expireDate, true,true))
+            )).toList());
+
             meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.menu.invite.name").replace("{player}", playerController.getPlayer(cRequest.getPlayerUuid()).getName())));
-            meta.lore(format(LanguageController.getLocalizedList("requests.menu.invite.lore"), cRequest));
 
             item.setItemMeta(meta);
 
@@ -79,7 +92,22 @@ public class RequestsGUI extends Paginator {
 
                 new ConfirmGUI(player, (ignored) -> {
 
+                    // check if sender has money
+                    if(ClansPlugin.Economy.getBalance(Bukkit.getOfflinePlayer(cPlayer.getUuid())) < clan.getJoinMoneyPrice()){
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("requests.not_enough_money_accepter")
+                                .replace("{player}", cPlayer.getName())));
+                        if(requester != null){
+                            requester.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                            requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.not_enough_money_sender")
+                                    .replace("{clan}", clan.getName())));
+                        }
+                        open();
+                        return;
+                    }
 
+
+                    ClansPlugin.Economy.withdrawPlayer(Bukkit.getOfflinePlayer(cPlayer.getUuid()), clan.getJoinMoneyPrice());
                     requestsController.deleteRequest(cRequest);
                     cPlayer.setClanID(clan.getId());
                     cPlayer.setJoinClanDate(System.currentTimeMillis());
@@ -122,24 +150,4 @@ public class RequestsGUI extends Paginator {
             });
         }
     }
-
-    private List<Component> format(List<String> strings, CRequest cRequest) {
-        Locale loc = new Locale("sl", "SI");
-
-        List<Component> newlist = new ArrayList<>();
-
-        var createdDate = new Date(cRequest.getCreatedTime());
-        var expireDate = new Date(cRequest.getExpireTime());
-        SimpleDateFormat sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
-
-        for (String string : strings) {
-            newlist.add(
-                    ClansPlugin.MM.deserialize(string
-                            .replace("{requested}", sdf.format(createdDate))
-                            .replace("{expires}", sdf.format(expireDate))
-                    ));
-        }
-        return newlist;
-    }
-
 }

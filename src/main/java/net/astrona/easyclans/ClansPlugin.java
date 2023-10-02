@@ -1,5 +1,6 @@
 package net.astrona.easyclans;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.astrona.easyclans.commands.ClansCommand;
 import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.Handler;
@@ -51,7 +52,12 @@ public class ClansPlugin extends JavaPlugin {
             requestsController.cleanExpired();
             clansController.processClans();
 
-        }, 100L, 1200);
+        }, 100L, getConfig().getLong("clan.update_interval"));
+
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
+            PlaceholderAPI.registerExpansion(new PlaceholderController(
+                    this, playerController, clansController, requestsController));
+        }
 
         this.inited = true;
     }
@@ -77,6 +83,15 @@ public class ClansPlugin extends JavaPlugin {
         guiHandler = new Handler(this);
     }
 
+    public String getVersion(){
+        return getPluginMeta().getVersion();
+    }
+
+    public void reload(){
+        reloadConfig();
+        LanguageController.reload(this);
+    }
+
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
@@ -94,6 +109,8 @@ public class ClansPlugin extends JavaPlugin {
         Ranks = provider.getProvider();
         return Ranks != null;
     }
+
+
 
 
 }

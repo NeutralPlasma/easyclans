@@ -8,6 +8,7 @@ import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.models.Log;
 import net.astrona.easyclans.utils.Serialization;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
@@ -391,7 +392,7 @@ public class SQLStorage {
         }
     }
 
-    public void saveClan(Clan clan) {
+    public Clan saveClan(Clan clan) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO ec_clan_data
@@ -427,9 +428,27 @@ public class SQLStorage {
             if(rows>0) {
                 var result = statement.getGeneratedKeys();
                 if (result.next()) {
+                    Bukkit.getConsoleSender().sendMessage("Updated index of the clan: " + result.getInt(1) + " " + clan.getName());
                     clan.setId(result.getInt(1));
+                    return clan;
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return clan;
+    }
+
+    public void deleteClan(Clan clan){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+            DELETE FROM
+            ec_clan_data
+            WHERE id = ?
+            """);
+
+            statement.setInt(1, clan.getId());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

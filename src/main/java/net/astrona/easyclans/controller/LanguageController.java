@@ -39,6 +39,11 @@ public class LanguageController {
     }
 
 
+    public static void reload(Plugin plugin){
+        locals = null;
+        loadLocals(plugin);
+    }
+
     public static String getLocalized(String key) {
         if (locals.contains(key)) {
             return locals.getString(key);

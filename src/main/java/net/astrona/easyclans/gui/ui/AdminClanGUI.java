@@ -8,6 +8,7 @@ import net.astrona.easyclans.models.Clan;
 import net.astrona.easyclans.models.Log;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import static net.astrona.easyclans.controller.LanguageController.getLocalizedDesiralizedList;
@@ -40,16 +41,16 @@ public class AdminClanGUI extends GUI {
     private void construct() {
         setIcon(13, clanInfoIcon());
         setIcon(11, membersIcon());
-        setIcon(15, invitesIcon());
+        // setIcon(15, invitesIcon()); TODO
         setIcon(29, bankIcon());
         setIcon(31, clanSettingsIcon());
         setIcon(33, requestsIcon());
-        //  33, 31, 29
     }
 
     ItemStack clanInfoIconItem() {
         ItemStack itemStack = clan.getBanner().clone();
         var meta = itemStack.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.clan_admin.name").replace("{clan}", clan.getName())));
         var loreStrings = LanguageController.getLocalizedList("clan.menu.clan_admin.lore");
 
@@ -82,7 +83,7 @@ public class AdminClanGUI extends GUI {
         icon.addClickAction((player -> {
             player.closeInventory();
 
-            new MembersGUI(player, clan, clansController, playerController, this, logController);
+            new MembersGUI(player, clan, clansController, playerController, this, logController, plugin);
         }));
         return icon;
     }
@@ -96,7 +97,6 @@ public class AdminClanGUI extends GUI {
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             // TODO: open the invites menu
-            player.sendMessage(ClansPlugin.MM.deserialize("Okay clicked!"));
         }));
         return icon;
     }
@@ -145,7 +145,7 @@ public class AdminClanGUI extends GUI {
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             new RequestsGUI(player, clan, clansController,
-                    playerController, requestsController, this, logController);
+                    playerController, requestsController, this, logController, plugin);
         }));
         return icon;
     }

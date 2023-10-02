@@ -5,6 +5,9 @@ db:
 
 # clan pricing
 clan:
+  max_bank_deposit_cap: 1000000
+  update_interval: 1200 # in ticks 1 sec => 20 ticks
+  default_join_price: 10000
   interest_rate_increase: 0.00001 # by how much interest increases every minute
   max_interest_rate: 7.0 # Maximum interest rate for the clan
   create:
@@ -18,11 +21,14 @@ clan:
   name:
     change_price:
       money: 100000.0
+
 # clan chat
 chat-format: "<gold>➜</gold> {player}<dark_gray>:</dark_gray><gray> {message}</gray>"
 
 # language localization for date formatting
-language: "sl SI"
+language:
+  language: "sl"
+  country: "SI"
 
 
 rank_interest_value:

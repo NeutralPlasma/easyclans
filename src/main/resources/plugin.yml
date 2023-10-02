@@ -6,7 +6,9 @@ version: @version@
 depend:
   - LuckPerms
   - Vault
+  - PlaceholderAPI
 
 commands:
   clans:
     permission: clans.command.main
+    aliases: ["clan"]

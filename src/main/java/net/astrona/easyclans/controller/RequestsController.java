@@ -56,6 +56,10 @@ public class RequestsController {
         return requests.values().stream().filter(cRequest -> cRequest.getClanId() == clanId).toList();
     }
 
+    public List<CRequest> getPlayerRequests(UUID player) {
+        return requests.values().stream().filter(cRequest -> cRequest.getPlayerUuid() == player).toList();
+    }
+
     public void deleteRequest(CRequest cRequest) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.deleteRequest(cRequest);

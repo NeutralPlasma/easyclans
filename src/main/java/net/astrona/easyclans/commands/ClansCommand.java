@@ -5,6 +5,7 @@ import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.ui.*;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -17,27 +18,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static net.astrona.easyclans.ClansPlugin.MM;
+import static net.kyori.adventure.key.Key.key;
+import static net.kyori.adventure.sound.Sound.sound;
 
-/*
-- Kick
-- Join
-- Invite
-- Disband
-- Bank
-- Members
-- List
-- Create
-- Menu / Settings
-
- */
 public class ClansCommand implements TabExecutor {
     private ClansPlugin plugin;
-    private final List<String> oneArgumentSubCommands = List.of("menu", "bank", "members", "list", "create", "test", "chat");
+    private final List<String> oneArgumentSubCommands = List.of(
+            "menu", "bank", "members", "list", "create",
+            "chat", "leave", "delete", "leave");
     private final List<String> moreArgumentSubCommands = List.of("kick", "join", "invite");
     private final PlayerController playerController;
     private final ClansController clansController;
@@ -56,67 +50,83 @@ public class ClansCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player playerSender)) {
+        if(args.length > 0 && args[0].equalsIgnoreCase("reload")){
+            if(sender.hasPermission("easyclans.command.reload")){
+                plugin.reload();
+                plugin.getLogger().info("Reloaded configuration files.");
+                sender.sendMessage(MM.deserialize("<green>Reloaded..."));
+            }else{
+                sender.sendMessage(MM.deserialize(LanguageController.getLocalized("no_permission")));
+            }
+            return true;
+        }
+
+
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(MM.deserialize("<dark_red>Only a player can execute this command!</dark_red>"));
             return false;
         }
 
-        if (args.length < 2) {
-            if (!oneArgumentSubCommands.contains(args[0])) {
-                sender.sendMessage(MM.deserialize(
-                        """
-                        <hover:show_text:"<red>%s -> ... [HERE]"><dark_red>Not enough arguments.</dark_red>
-                        """.formatted(args[0])
-                ));
-                return true;
-            }
-            switch (args[0]) {
-                case "menu" -> {
-                    this.executeMenuSubCommand(playerSender);
-                }
+        CPlayer cPlayer = playerController.getPlayer(player.getUniqueId());
+        Clan clan = clansController.getClan(cPlayer.getClanID());
+        if(args.length == 0){
+            this.executeMenuSubCommand(player, cPlayer, clan);
+            return true;
+        }
+
+        if(oneArgumentSubCommands.contains(args[0].toLowerCase())){
+            switch(args[0].toLowerCase()){
                 case "bank" -> {
-                    this.executeBankSubCommand(playerSender);
+                    this.executeBankSubCommand(player, cPlayer, clan);
                 }
                 case "members" -> {
-                    this.executeMembersSubCommand(playerSender);
+                    this.executeMembersSubCommand(player, cPlayer, clan);
                 }
                 case "list" -> {
-                    this.executeListSubCommand(playerSender);
+                    this.executeListSubCommand(player, cPlayer, clan);
                 }
                 case "create" -> {
-                    this.executeCreateSubCommand(playerSender);
-                }
-                case "test" -> {
-                    var cplayer = playerController.getPlayer(playerSender.getUniqueId());
-                    var clan = createTestClan(cplayer);
-                    new AdminClanGUI(playerSender, clan, clansController, playerController,
-                            requestsController, plugin, logController);
+                    this.executeCreateSubCommand(player, cPlayer, clan);
                 }
                 case "chat" -> {
-                    var cplayer = playerController.getPlayer(playerSender.getUniqueId());
+                    var cplayer = playerController.getPlayer(player.getUniqueId());
                     if (cplayer.isInClubChat()) {
-                        playerSender.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
+                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
                     } else {
-                        playerSender.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
+                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
                     }
                     cplayer.setInClubChat(!cplayer.isInClubChat());
                 }
-            }
-        } else if (args.length == 2) {
-            switch (args[0]) {
-                case "kick" -> {
-                    OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                    this.executeKickSubCommand(playerSender, player);
+                case "delete" -> {
+                    this.executeDeleteClanSubCommand(player, cPlayer, clan);
                 }
-                case "join" -> {
-                    this.executeJoinSubCommand(playerSender, args[1]);
-                }
-                case "invite" -> {
-                    OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                    this.executeInviteSubCommand(playerSender, player);
+                case "leave" -> {
+                    this.executeLeaveClanSubCommand(player, cPlayer, clan);
                 }
             }
         }
+
+        if(moreArgumentSubCommands.contains(args[0].toLowerCase())){
+            if(args.length < 2){
+                player.sendMessage("Invalid arguments count for command....");
+                return true;
+            }
+
+            switch(args[0].toLowerCase()){
+                case "kick" -> {
+                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+                    this.executeKickSubCommand(player, player);
+                }
+                case "join" -> {
+                    this.executeJoinSubCommand(player, args[1]);
+                }
+                case "invite" -> {
+                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+                    this.executeInviteSubCommand(player, player);
+                }
+            }
+        }
+
 
         return true;
     }
@@ -124,7 +134,7 @@ public class ClansCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player playerSender)) {
-            sender.sendMessage(MM.deserialize("<dark_red>Only a player can execute this command!</dark_red>"));
+            //sender.sendMessage(MM.deserialize("<dark_red>Only a player can execute this command!</dark_red>"));
             return List.of("");
         }
 
@@ -139,8 +149,7 @@ public class ClansCommand implements TabExecutor {
                     CPlayer cPlayer = playerController.getPlayer(playerSender.getUniqueId());
 
                     if (cPlayer.getClanID() == -1) {
-                        sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
-                        return List.of("You are not in a clan!");
+                        return Collections.emptyList();
                     }
 
                     Clan clan = clansController.getClan(cPlayer.getClanID());
@@ -165,55 +174,85 @@ public class ClansCommand implements TabExecutor {
         return List.of("");
     }
 
-    private void executeMenuSubCommand(Player sender) {
-        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-        Clan clan = clansController.getClan(cPlayer.getClanID());
+    private void executeMenuSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
         if (clan == null) {
-            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+            new ClanListGUI(sender, clansController, playerController, requestsController, null, logController);
             return;
         }
         if(clan.getOwner().equals(sender.getUniqueId())){
-            sender.sendMessage("Admin menu "  + clan.getOwner());
             new AdminClanGUI(sender, clan, clansController, playerController,
                     requestsController, plugin, logController);
         }else{
-            sender.sendMessage("Non Admin menu " + clan.getOwner() + " " + sender.getUniqueId());
-            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController);
+            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController, plugin);
         }
 
     }
 
-    private void executeBankSubCommand(Player sender) {
-        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-
-        if (cPlayer.getClanID() == -1) {
-            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+    private void executeBankSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
+        if (clan == null) {
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_in_clan")));
             return;
         }
-
-        Clan clan = clansController.getClan(cPlayer.getClanID());
         new BankGUI(sender, clan, null, plugin, clansController, logController);
     }
 
-    private void executeMembersSubCommand(Player sender) {
-        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
-
-        if (cPlayer.getClanID() == -1) {
-            sender.sendMessage(MM.deserialize("<red>You are not in a clan."));
+    private void executeMembersSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
+        if (clan == null) {
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_in_clan")));
             return;
         }
-
-        Clan clan = clansController.getClan(cPlayer.getClanID());
-        new MembersGUI(sender, clan, clansController, playerController, null, logController);
+        new MembersGUI(sender, clan, clansController, playerController, null, logController, plugin);
     }
 
-    private void executeListSubCommand(Player sender) {
-        CPlayer cPlayer = playerController.getPlayer(sender.getUniqueId());
+    private void executeListSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
         new ClanListGUI(sender, clansController, playerController, requestsController, null, logController);
     }
 
-    private void executeCreateSubCommand(Player sender) {
-        new ClanCreateGUI("DEFAULT_NAME", "DEFAULT", null, sender, plugin, playerController, clansController, requestsController, logController);
+    private void executeCreateSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
+        if(clan != null){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("already_in_clan")));
+            return;
+        }
+        new ClanCreateGUI( sender, plugin, playerController, clansController, requestsController, logController);
+    }
+
+    private void executeDeleteClanSubCommand(Player sender, CPlayer cPlayer, Clan clan){
+        if(!clan.getOwner().equals(sender.getUniqueId())){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_owner")));
+            return;
+        }
+        new ConfirmGUI(sender, (player) -> {
+            // confirm
+            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+            clansController.deleteClan(clan.getId());
+            player.closeInventory();
+
+        }, (player) -> {
+            // decline
+            player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+            player.closeInventory();
+
+        }, LanguageController.getLocalized("delete_clan.title"));
+    }
+
+    private void executeLeaveClanSubCommand(Player sender, CPlayer cPlayer, Clan clan){
+        if(clan.getOwner().equals(sender.getUniqueId())){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("cant_leave")));
+            return;
+        }
+        new ConfirmGUI(sender, (player) -> {
+            // confirm
+            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+            cPlayer.setClanID(-1);
+            playerController.updatePlayer(cPlayer);
+            player.closeInventory();
+
+        }, (player) -> {
+            // decline
+            player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+            player.closeInventory();
+
+        }, LanguageController.getLocalized("leave_confirm.title"));
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {
@@ -226,40 +265,5 @@ public class ClansCommand implements TabExecutor {
 
     private void executeInviteSubCommand(Player sender, OfflinePlayer receiver) {
 
-    }
-
-
-
-
-    private Clan createTestClan(CPlayer cPlayer){
-
-        UUID test = cPlayer.getUuid();
-        Clan clan = new Clan(
-                10,
-                test,
-                "Testing clan",
-                "DISPLAY!",
-                0,
-                0,
-                10.0,
-                new ItemStack(Material.CYAN_BANNER),
-                10000000,
-                0,
-                "DD",
-                List.of(test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test,
-                        test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test, test),
-                System.currentTimeMillis()
-        );
-        //cPlayer.setClanID(clan.getId());
-
-        return clan;
     }
 }

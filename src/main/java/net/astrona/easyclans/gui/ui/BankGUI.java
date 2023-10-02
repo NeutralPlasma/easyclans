@@ -78,6 +78,14 @@ public class BankGUI extends GUI {
                         return;
                     }
                     if(ClansPlugin.Economy.getBalance(player) >= value){
+                        if(clan.getBank() + value > plugin.getConfig().getDouble("clan.max_bank_deposit_cap")){
+                            player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                            player.sendMessage(ClansPlugin.MM.deserialize(
+                                    LanguageController.getLocalized("max_money")
+                                            .replace("{price}", Formatter.formatMoney(value))
+                            ));
+                            return;
+                        }
                         ClansPlugin.Economy.withdrawPlayer(player, value);
                         clan.setBank(clan.getBank() + value);
                         player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));

@@ -1,5 +1,6 @@
 package net.astrona.easyclans.gui.ui;
 
+import com.google.common.collect.Multimap;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
@@ -11,9 +12,14 @@ import net.astrona.easyclans.models.LogType;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
@@ -66,9 +72,11 @@ public class ClanListGUI extends Paginator {
                                     .replace("{name}", c.getName())
                                     .replace("{display_name}", c.getDisplayName())
                                     .replace("{tag}", c.getTag())
+                                    .replace("{interest_rate}", String.format("%.5f", c.getInterestRate()))
                                     .replace("{members}", String.valueOf(c.getMembers().size())))
                             .decoration(TextDecoration.ITALIC, false)
             ).toList());
+            meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
             item.setItemMeta(meta);
 
             Icon icon = new Icon(item);

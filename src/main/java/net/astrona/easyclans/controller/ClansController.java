@@ -62,13 +62,28 @@ public class ClansController {
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.saveClan(clan); // clan gets new ID when this is executed.
-            // TODO: update player sent new clan id.
             var player = playerController.getPlayer(clan.getOwner());
             player.setClanID(clan.getId());
+            player.setJoinClanDate(System.currentTimeMillis());
             playerController.updatePlayer(player);
             addClan(clan);
         });
         return clan;
+    }
+
+    public void deleteClan(int id){
+        if(!clans.containsKey(id)) return;
+        Clan clan = clans.get(id);
+        clans.remove(id);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            for(var uuid : clan.getMembers()){
+                var player = playerController.getPlayer(uuid);
+                player.setClanID(-1);
+                playerController.updatePlayer(player);
+            }
+            sqlStorage.deleteClan(clan);
+        });
+
     }
 
     /**
@@ -79,6 +94,7 @@ public class ClansController {
      *         no clan with the given id is found.
      */
     public Clan getClan(int id) {
+        if(id == -1) return null;
         if (clans.containsKey(id))
             return clans.get(id);
         return null;
@@ -97,11 +113,14 @@ public class ClansController {
 
 
     public void processClans(){
-
-
         for(var player : playerController.getPlayers()){
             if(player.getClanID() == -1) continue;
             var clan = clans.get(player.getClanID());
+            if(clan == null){
+                player.setClanID(-1);
+                playerController.updatePlayer(player);
+                return;
+            }
 
             // add interest rate based on players rank.
             double interestToAdd = plugin.getConfig().getDouble("rank_interest_value." + player.getRank());
@@ -149,9 +168,9 @@ public class ClansController {
                 sqlStorage.addLog(new Log(String.valueOf(addMoney), null, clan.getId(), LogType.MONEY_ADD));
             }*/
 
-
-
             sqlStorage.updateClan(clan);
         }
+
+
     }
 }

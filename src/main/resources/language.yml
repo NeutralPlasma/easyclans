@@ -3,9 +3,17 @@ cancel: "<red>Cancel"
 active: "<green>Active"
 inactive: "<red>Inactive"
 disabled: "<red>Disabled"
+next_page: "<gold>Next page"
+previous_page: "<gold>Previous page"
 invalid_amount: "<red>Invalid amount!"
 not_enough_money: "<red>Sorry but you don't have enough money! <gray>(<red>{price}<white>$<gray>)"
 time_format: "dd. MMM yyyy HH:mm"
+not_in_clan: "<red>You are not in a clan."
+already_in_clan: "<red>You have to first leave or delete current clan you're in."
+not_owner: "<red>You're not the owner of the clan"
+cant_leave: "<red>You can't leave a clan you're owner of!"
+no_permission: "<red>No permission!"
+max_money: "<red>Theres already too much money bank."
 
 clan:
   chat:
@@ -25,6 +33,7 @@ clan:
       lore:
         - ""
         - "<gray>Interest rate: <gold>{interest_rate}<gray>%"
+        - "<gray>Bank: <gold>{bank}<gray>$"
         - "<gray>-----------------------"
     members:
       name: "<reset><#ffffff>[<gold>Members</gold><#ffffff>]"
@@ -51,6 +60,14 @@ clan:
       lore:
         - ""
         - "<gray>Click to see join requests</gray>"
+    bannerIcon:
+      title: "<white>[<red>Banner<white>]"
+      lore:
+        - ""
+        - "<gray>Click to buy"
+        - "<gray>--------------------------"
+        - "<gray>Buy price: <red>{buy_price}<gray>$"
+
 clan_list:
   menu:
     title: "<gold>Clan List [<white>{page}</white>]</gold>"
@@ -59,6 +76,7 @@ clan_list:
       lore:
         - ""
         - "<gray>Members:<white> {members}"
+        - "<gray>Interest rate: <white>{interest_rate}<gray>%"
         - ""
         - "<gold>Click to send a join request!"
 invite:
@@ -109,12 +127,24 @@ create:
         - "<gray>Current kick time: <red>{time}"
     banner:
       name: "{name}"
+      name_message: "<green>Please send new clan name in chat:"
+      display_name_message: "<green>Please send new clan display name in chat:"
+      invalid_display_name: "<red>Invalid display name!"
+      invalid_name: "<red>Invalid name!"
       lore:
         - "<gold>Drag and drop banner"
         - ""
         - "<gray>L-Click to change name"
         - "<gray>R-Click to change display name"
         - "{display_name}"
+    tag:
+      name: "<white>[<red>Clan tag<white>]"
+      invalid: "<red>Invalid tag, has to be 2 letters long!"
+      lore:
+        - "<gray>R-Click to reset"
+        - "<gray>L-Click to change"
+        - "<gray>-----------------"
+        - "{tag}"
     create:
       name: "<green>Create the clan"
       lore:
@@ -131,6 +161,7 @@ members:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
     inactive_lore:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
@@ -138,16 +169,18 @@ members:
       - "<gray>Time remaining util kick:"
       - "<gray>- <red>{time_remaining}"
     owner_lore:
-        - "<red>Clan owner"
-        - "<gray>Last active: <gold>{active}"
-        - "<gray>Joined clan on: <gold>{joined}"
-        - "<gray>Currently: {status}"
+      - "<red>Clan owner"
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
   kick:
     title: "<gray>Kick <red>{player}"
     kick_success: "<green>Successfully kicked <red>{player}"
     kicked: "<red>You have been kicked from the clan!"
 settings:
   menu:
+    title: "<gold>Clan settings"
     kickIcon:
       title: "<white>[<red>Kick time<white>]"
       lore:
@@ -184,6 +217,8 @@ settings:
 requests:
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"
+  not_enough_money_accepter: "<red>Player you tried to accept doesn't have enough money!"
+  not_enough_money_sender: "<red>Owner of clan {clan} tried to accept your request but you didn't have enough money to join!"
   menu:
     invite:
       title: "<gray>Accept <red>{player}"
@@ -191,6 +226,23 @@ requests:
       lore:
         - ""
         - "<gray>Created on: <red>{requested}"
-        - "<gray>Expires: <red>{expires}"
         - ""
         - "<green>Click to accept request"
+        - "<gray>---------------------------"
+        - "<gray>Expires: <red>{expires}"
+requests_own:
+  cancel: "<green>Successfully canceled the request for clan <red>{clan}"
+  cancel_menu:
+    title: "<red>Cancel request sent to {clan}"
+  menu:
+    title: "<gold>Clan join requests"
+    name: "<white>[<gold>{clan}<white>]"
+    lore:
+      - ""
+      - "<gray>Click to cancel the request"
+      - "<gray>---------------------------"
+      - "<gray>Expires: <red>{time}"
+leave_confirm:
+  title: "<red>Leave?"
+delete_clan:
+  title: "<red>Delete clan?"

@@ -33,7 +33,7 @@ public class ClanSettingsGUI extends GUI {
     private LogController logController;
     public ClanSettingsGUI(Player player, Clan clan, ClansController clansController,
                            GUI previous, ClansPlugin plugin, LogController logController) {
-        super(45, "title");
+        super(45, LanguageController.getLocalized("settings.menu.title"));
         this.player = player;
         this.clan = clan;
         this.clansController = clansController;
@@ -71,7 +71,7 @@ public class ClanSettingsGUI extends GUI {
         var meta = item.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.kickIcon.title")));
         var loreText = getLocalizedList("settings.menu.kickIcon.lore");
-        var kickText = clan.getAutoKickTime() == -1 ? LanguageController.getLocalized("disabled") : DurationFormatUtils.formatDurationWords(clan.getAutoKickTime(), true,false);
+        var kickText = clan.getAutoKickTime() == -1 ? LanguageController.getLocalized("disabled") : DurationFormatUtils.formatDurationWords(clan.getAutoKickTime(), true,true);
         meta.lore(loreText.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
                         .replace("{time}", kickText)
@@ -88,6 +88,11 @@ public class ClanSettingsGUI extends GUI {
             self.itemStack = kickTimeItem();
         });
         icon.addLeftClickAction((player1 -> {
+            if(!player.hasPermission("easyclans.settings.kick_time")) {
+                player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                return;
+            }
             setForceClose(true);
             new AbstractChatUtil(player, (event) ->  {
                 try{
@@ -111,6 +116,11 @@ public class ClanSettingsGUI extends GUI {
         }));
 
         icon.addRightClickAction(player1 -> {
+            if(!player.hasPermission("easyclans.settings.kick_time")) {
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                return;
+            }
             clan.setAutoKickTime(7*24*60*60*1000); // 7 days
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
             refresh(player);
@@ -146,6 +156,11 @@ public class ClanSettingsGUI extends GUI {
         });
 
         icon.addLeftClickAction((player1 -> {
+            if(!player.hasPermission("easyclans.settings.join_price")) {
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                return;
+            }
             setForceClose(true);
             new AbstractChatUtil(player, (event) ->  {
                 try{
@@ -172,6 +187,11 @@ public class ClanSettingsGUI extends GUI {
 
 
         icon.addRightClickAction(player1 -> {
+            if(!player.hasPermission("easyclans.settings.join_price")) {
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                return;
+            }
             clan.setJoinMoneyPrice(10000.0);
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
             refresh(player);

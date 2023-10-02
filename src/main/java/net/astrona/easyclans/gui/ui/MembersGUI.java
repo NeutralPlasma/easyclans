@@ -26,17 +26,20 @@ import java.time.Duration;
 import java.util.*;
 
 public class MembersGUI extends Paginator {
+    private ClansPlugin plugin;
     private Clan clan;
     private Player player;
     private ClansController clansController;
     private PlayerController playerController;
     private LogController logController;
     private GUI previousUI;
+    private SimpleDateFormat sdf;
 
     public MembersGUI(Player player, Clan clan,
                       ClansController clansController,
                       PlayerController playerController,
-                      GUI previousUI, LogController logController) {
+                      GUI previousUI, LogController logController,
+                      ClansPlugin plugin) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -44,12 +47,17 @@ public class MembersGUI extends Paginator {
                 37, 38, 39, 40, 41, 42, 43
         ), LanguageController.getLocalized("members.menu.title"), 54);
 
+
+        this.plugin = plugin;
         this.player = player;
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
         this.previousUI = previousUI;
         this.logController = logController;
+        Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
+        sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
+
         init();
         this.open(0);
     }
@@ -119,18 +127,11 @@ public class MembersGUI extends Paginator {
     }
 
     private List<Component> format(List<String> strings, CPlayer cPlayer, int kickTime) {
-        Locale loc = new Locale("sl", "SI");
-
         List<Component> newlist = new ArrayList<>();
-
         var activeDate = new Date(cPlayer.getLastActive());
         var joinDate = new Date(cPlayer.getJoinClanDate());
-
         var timeDiff = Math.abs(kickTime - (System.currentTimeMillis() - activeDate.getTime()));
-
-
-        SimpleDateFormat sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
-
+        double interest_player = plugin.getConfig().getDouble("rank_interest_value." + cPlayer.getRank());
         for (String string : strings) {
             newlist.add(
                     ClansPlugin.MM.deserialize(string
@@ -139,6 +140,7 @@ public class MembersGUI extends Paginator {
                             .replace("{time_remaining}", DurationFormatUtils.formatDurationWords(timeDiff, true,false))
                             .replace("{status}", cPlayer.isActive() ?
                                     LanguageController.getLocalized("active") : LanguageController.getLocalized("inactive"))
+                            .replace("{interest}", String.format("%.7f", interest_player))
                     ));
         }
         return newlist;
