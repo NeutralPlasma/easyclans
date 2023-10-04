@@ -56,8 +56,8 @@ public class PlaceholderController extends PlaceholderExpansion {
         if(ident.isBlank() || ident.isEmpty()) return null;
         CPlayer cPlayer = playerController.getPlayer(offlinePlayer.getUniqueId());
         Clan clan = clansController.getClan(cPlayer.getClanID());
-
-        switch(ident.toLowerCase()){
+        String[] ident2 = ident.split(":");
+        switch(ident2[0].toLowerCase()){
             case "tag": {
                 if(clan == null) return "";
                 return clan.getTag();
@@ -66,13 +66,17 @@ public class PlaceholderController extends PlaceholderExpansion {
                 if(clan == null) return "";
                 return clan.getName();
             }
-            case "bank": {
+            case "currency": {
                 if(clan == null) return "";
-                return Formatter.formatMoney(clan.getBank());
+                var currency = clan.getCurrency(ident2[1]);
+                if(currency == null) return "";
+                return Formatter.formatMoney(currency.getValue());
             }
-            case "bank_raw": {
+            case "currency_raw": {
                 if(clan == null) return "";
-                return String.valueOf(clan.getBank());
+                var currency = clan.getCurrency(ident2[1]);
+                if(currency == null) return "";
+                return String.valueOf(currency.getValue());
             }
             case "clan_interest": {
                 if(clan == null) return "";

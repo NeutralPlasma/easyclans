@@ -19,11 +19,13 @@ public class AdminClanGUI extends GUI {
     private PlayerController playerController;
     private RequestsController requestsController;
     private LogController logController;
+    private CurrenciesController currenciesController;
     private ClansPlugin plugin;
 
 
     public AdminClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                        RequestsController requestsController, ClansPlugin plugin, LogController logController) {
+                        RequestsController requestsController, ClansPlugin plugin, LogController logController,
+                        CurrenciesController currenciesController) {
         super(54, "Admin " + clan.getName() + " Clan");
 
         this.clan = clan;
@@ -32,6 +34,7 @@ public class AdminClanGUI extends GUI {
         this.requestsController = requestsController;
         this.plugin = plugin;
         this.logController = logController;
+        this.currenciesController = currenciesController;
 
         construct();
         fancyBackground();
@@ -117,7 +120,8 @@ public class AdminClanGUI extends GUI {
 
         icon.addClickAction(player -> {
             player.closeInventory();
-            new BankGUI(player, clan, this, plugin, clansController, logController);
+            new CurrenciesGUI(player, clan, clansController, playerController, this, logController, plugin, currenciesController);
+            //new BankGUI(player, clan, this, plugin, clansController, logController, currenciesController);
         });
 
         return icon;
@@ -131,7 +135,7 @@ public class AdminClanGUI extends GUI {
         itemStack.setItemMeta(meta);
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
-            new ClanSettingsGUI(player, clan, clansController, this, plugin, logController);
+            new ClanSettingsGUI(player, clan, clansController, this, plugin, logController, currenciesController);
         }));
         return icon;
     }
@@ -145,7 +149,7 @@ public class AdminClanGUI extends GUI {
         Icon icon = new Icon(itemStack);
         icon.addClickAction((player -> {
             new RequestsGUI(player, clan, clansController,
-                    playerController, requestsController, this, logController, plugin);
+                    playerController, requestsController, this, logController, plugin, currenciesController);
         }));
         return icon;
     }

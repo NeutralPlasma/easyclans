@@ -34,13 +34,14 @@ public class RequestsGUI extends Paginator {
     private GUI previousUI;
     private LogController logController;
     private SimpleDateFormat sdf;
+    private CurrenciesController currenciesController;
 
     public RequestsGUI(Player player, Clan clan,
                        ClansController clansController,
                        PlayerController playerController,
                        RequestsController requestsController,
                        GUI previousUI, LogController logController,
-                       ClansPlugin plugin) {
+                       ClansPlugin plugin, CurrenciesController currenciesController) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -56,6 +57,7 @@ public class RequestsGUI extends Paginator {
         this.requestsController = requestsController;
         this.previousUI = previousUI;
         this.logController = logController;
+        this.currenciesController = currenciesController;
         Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
         sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
         init();
@@ -93,10 +95,12 @@ public class RequestsGUI extends Paginator {
                 new ConfirmGUI(player, (ignored) -> {
 
                     // check if sender has money
-                    if(ClansPlugin.Economy.getBalance(Bukkit.getOfflinePlayer(cPlayer.getUuid())) < clan.getJoinMoneyPrice()){
+                    if(currenciesController.getProvider("Vault").getValue(Bukkit.getOfflinePlayer(cPlayer.getUuid())) < clan.getJoinMoneyPrice()){
                         player.sendMessage(ClansPlugin.MM.deserialize(
                                 LanguageController.getLocalized("requests.not_enough_money_accepter")
                                 .replace("{player}", cPlayer.getName())));
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+
                         if(requester != null){
                             requester.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
                             requester.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("requests.not_enough_money_sender")
@@ -105,9 +109,19 @@ public class RequestsGUI extends Paginator {
                         open();
                         return;
                     }
+                    if(clan.getMembers().size() > plugin.getConfig().getInt("clan.max_members")){
+                        player.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("requests.too_many_members")
+                                        .replace("{max}", String.valueOf(plugin.getConfig().getInt("clan.max_members")))
+                                        .replace("{current}", String.valueOf(clan.getMembers().size()))
+                        ));
+                        player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                        open();
+                        return;
+                    }
 
-
-                    ClansPlugin.Economy.withdrawPlayer(Bukkit.getOfflinePlayer(cPlayer.getUuid()), clan.getJoinMoneyPrice());
+                    currenciesController.getProvider("Vault").removeValue(Bukkit.getOfflinePlayer(cPlayer.getUuid()), clan.getJoinMoneyPrice());
+                    //ClansPlugin.Economy.withdrawPlayer(Bukkit.getOfflinePlayer(cPlayer.getUuid()), clan.getJoinMoneyPrice());
                     requestsController.deleteRequest(cRequest);
                     cPlayer.setClanID(clan.getId());
                     cPlayer.setJoinClanDate(System.currentTimeMillis());

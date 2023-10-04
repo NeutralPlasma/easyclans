@@ -1,6 +1,5 @@
 package net.astrona.easyclans.gui.ui;
 
-import com.google.common.collect.Multimap;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.controller.*;
 import net.astrona.easyclans.gui.GUI;
@@ -12,20 +11,17 @@ import net.astrona.easyclans.models.LogType;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
 public class ClanListGUI extends Paginator {
 
+    private ClansPlugin plugin;
     private Player player;
     private ClansController clansController;
     private RequestsController requestsController;
@@ -36,7 +32,8 @@ public class ClanListGUI extends Paginator {
     public ClanListGUI(Player player, ClansController clansController,
                        PlayerController playerController,
                        RequestsController requestsController,
-                       GUI previousUI, LogController logController) {
+                       GUI previousUI, LogController logController,
+                       ClansPlugin plugin) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -44,6 +41,7 @@ public class ClanListGUI extends Paginator {
                 37, 38, 39, 40, 41, 42, 43
         ), LanguageController.getLocalized("clan_list.menu.title"), 54);
 
+        this.plugin = plugin;
         this.player = player;
         this.clansController = clansController;
         this.playerController = playerController;
@@ -98,7 +96,7 @@ public class ClanListGUI extends Paginator {
                     requestsController.createRequest(
                             c.getId(),
                             player1.getUniqueId(),
-                            System.currentTimeMillis() + 100000,
+                            System.currentTimeMillis() + (plugin.getConfig().getLong("clan.default_request_expire_duration") * 1000),
                             System.currentTimeMillis()
                     );
                     player1.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("invite.sent")));

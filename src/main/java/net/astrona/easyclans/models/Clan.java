@@ -2,6 +2,7 @@ package net.astrona.easyclans.models;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class Clan {
     private double bank, interestRate;
     private String tag;
     private List<UUID> members;
+    private List<Currency> currencies;
     private long createdOn;
 
     public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
@@ -34,6 +36,7 @@ public class Clan {
         this.tag = tag;
         this.members = members;
         this.createdOn = createdOn;
+        this.currencies = new ArrayList<>();
     }
 
     public long getCreatedOn() {
@@ -109,13 +112,13 @@ public class Clan {
         this.banner = banner;
     }
 
-    public double getBank() {
-        return bank;
-    }
+    //public double getBank() {
+    //    return bank;
+    //}
 
-    public void setBank(double bank) {
-        this.bank = bank;
-    }
+    //public void setBank(double bank) {
+    //    this.bank = bank;
+    //}
 
     public String getTag() {
         return tag;
@@ -139,5 +142,25 @@ public class Clan {
 
     public void setMembers(List<UUID> members) {
         this.members = members;
+    }
+
+    public void addCurrency(Currency currency) {
+        this.currencies.add(currency);
+    }
+
+    public Currency getCurrency(String name) {
+        for (var currency : currencies) {
+            if (currency.getName().equals(name))
+                return currency;
+        }
+        return null;
+    }
+
+    public void setCurrencies(List<Currency> currencies) {
+        this.currencies = currencies;
+    }
+
+    public List<Currency> getCurrencies() {
+        return currencies;
     }
 }

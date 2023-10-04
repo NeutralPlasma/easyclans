@@ -31,19 +31,22 @@ public class ClansCommand implements TabExecutor {
     private ClansPlugin plugin;
     private final List<String> oneArgumentSubCommands = List.of(
             "menu", "bank", "members", "list", "create",
-            "chat", "leave", "delete", "leave");
+            "chat", "leave", "delete", "help");
     private final List<String> moreArgumentSubCommands = List.of("kick", "join", "invite");
     private final PlayerController playerController;
     private final ClansController clansController;
     private final RequestsController requestsController;
     private final LogController logController;
+    private final CurrenciesController currenciesController;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
                         RequestsController requestsController,
-                        ClansPlugin plugin, LogController logController) {
+                        ClansPlugin plugin, LogController logController,
+                        CurrenciesController currenciesController) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
+        this.currenciesController = currenciesController;
         this.plugin = plugin;
         this.logController = logController;
     }
@@ -74,58 +77,64 @@ public class ClansCommand implements TabExecutor {
             return true;
         }
 
-        if(oneArgumentSubCommands.contains(args[0].toLowerCase())){
-            switch(args[0].toLowerCase()){
-                case "bank" -> {
-                    this.executeBankSubCommand(player, cPlayer, clan);
+
+        switch(args[0].toLowerCase()){
+            case "bank" -> {
+                this.executeBankSubCommand(player, cPlayer, clan);
+            }
+            case "members" -> {
+                this.executeMembersSubCommand(player, cPlayer, clan);
+            }
+            case "list" -> {
+                this.executeListSubCommand(player, cPlayer, clan);
+            }
+            case "create" -> {
+                this.executeCreateSubCommand(player, cPlayer, clan);
+            }
+            case "chat" -> {
+                var cplayer = playerController.getPlayer(player.getUniqueId());
+                if (cplayer.isInClubChat()) {
+                    player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
+                } else {
+                    player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
                 }
-                case "members" -> {
-                    this.executeMembersSubCommand(player, cPlayer, clan);
-                }
-                case "list" -> {
-                    this.executeListSubCommand(player, cPlayer, clan);
-                }
-                case "create" -> {
-                    this.executeCreateSubCommand(player, cPlayer, clan);
-                }
-                case "chat" -> {
-                    var cplayer = playerController.getPlayer(player.getUniqueId());
-                    if (cplayer.isInClubChat()) {
-                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
-                    } else {
-                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
-                    }
-                    cplayer.setInClubChat(!cplayer.isInClubChat());
-                }
-                case "delete" -> {
-                    this.executeDeleteClanSubCommand(player, cPlayer, clan);
-                }
-                case "leave" -> {
-                    this.executeLeaveClanSubCommand(player, cPlayer, clan);
-                }
+                cplayer.setInClubChat(!cplayer.isInClubChat());
+            }
+            case "delete" -> {
+                this.executeDeleteClanSubCommand(player, cPlayer, clan);
+            }
+            case "leave" -> {
+                this.executeLeaveClanSubCommand(player, cPlayer, clan);
+            }
+            case "help" -> {
+                this.executeHelpCommand(player);
+            }
+            case "info" -> {
+                this.executeInfoCommand(sender);
             }
         }
 
-        if(moreArgumentSubCommands.contains(args[0].toLowerCase())){
-            if(args.length < 2){
-                player.sendMessage("Invalid arguments count for command....");
-                return true;
-            }
 
-            switch(args[0].toLowerCase()){
-                case "kick" -> {
-                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                    this.executeKickSubCommand(player, player);
-                }
-                case "join" -> {
-                    this.executeJoinSubCommand(player, args[1]);
-                }
-                case "invite" -> {
-                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                    this.executeInviteSubCommand(player, player);
-                }
-            }
-        }
+//        if(moreArgumentSubCommands.contains(args[0].toLowerCase())){
+//            if(args.length < 2){
+//                player.sendMessage("Invalid arguments count for command....");
+//                return true;
+//            }
+//
+//            switch(args[0].toLowerCase()){
+//                case "kick" -> {
+//                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+//                    this.executeKickSubCommand(player, player);
+//                }
+//                case "join" -> {
+//                    this.executeJoinSubCommand(player, args[1]);
+//                }
+//                case "invite" -> {
+//                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+//                    this.executeInviteSubCommand(player, player);
+//                }
+//            }
+//        }
 
 
         return true;
@@ -141,7 +150,10 @@ public class ClansCommand implements TabExecutor {
         if (args.length < 2) {
             List<String> arguments = new ArrayList<>();
             arguments.addAll(oneArgumentSubCommands);
-            arguments.addAll(moreArgumentSubCommands);
+            if(sender.hasPermission("easyclans.command.info")){
+                arguments.add("info");
+            }
+            //arguments.addAll(moreArgumentSubCommands);
             return arguments;
         } else if (args.length == 2) {
             switch (args[0]) {
@@ -176,14 +188,14 @@ public class ClansCommand implements TabExecutor {
 
     private void executeMenuSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
         if (clan == null) {
-            new ClanListGUI(sender, clansController, playerController, requestsController, null, logController);
+            new ClanListGUI(sender, clansController, playerController, requestsController, null, logController, plugin);
             return;
         }
         if(clan.getOwner().equals(sender.getUniqueId())){
             new AdminClanGUI(sender, clan, clansController, playerController,
-                    requestsController, plugin, logController);
+                    requestsController, plugin, logController, currenciesController);
         }else{
-            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController, plugin);
+            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController, plugin, currenciesController);
         }
 
     }
@@ -193,7 +205,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_in_clan")));
             return;
         }
-        new BankGUI(sender, clan, null, plugin, clansController, logController);
+        new CurrenciesGUI(sender, clan, clansController, playerController, null, logController, plugin, currenciesController);
     }
 
     private void executeMembersSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -205,7 +217,7 @@ public class ClansCommand implements TabExecutor {
     }
 
     private void executeListSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
-        new ClanListGUI(sender, clansController, playerController, requestsController, null, logController);
+        new ClanListGUI(sender, clansController, playerController, requestsController, null, logController, plugin);
     }
 
     private void executeCreateSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -213,7 +225,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("already_in_clan")));
             return;
         }
-        new ClanCreateGUI( sender, plugin, playerController, clansController, requestsController, logController);
+        new ClanCreateGUI( sender, plugin, playerController, clansController, requestsController, logController,currenciesController);
     }
 
     private void executeDeleteClanSubCommand(Player sender, CPlayer cPlayer, Clan clan){
@@ -253,6 +265,22 @@ public class ClansCommand implements TabExecutor {
             player.closeInventory();
 
         }, LanguageController.getLocalized("leave_confirm.title"));
+    }
+
+    private void executeHelpCommand(Player sender){
+        LanguageController.getLocalizedDesiralizedList("help").forEach(sender::sendMessage);
+    }
+
+    private void executeInfoCommand(CommandSender sender){
+        if(!sender.hasPermission("easyclans.command.info")){
+            sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+            return;
+        }
+
+        sender.sendMessage(MM.deserialize("<gold>Enabled economy providers: "));
+        for(var provider : currenciesController.getCurrencyProviders().values()){
+            sender.sendMessage(MM.deserialize("<gray>- <yellow>" + provider.getPluginName()));
+        }
     }
 
     private void executeKickSubCommand(Player sender, OfflinePlayer receiver) {

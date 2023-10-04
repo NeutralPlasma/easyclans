@@ -3,6 +3,7 @@ package net.astrona.easyclans.controller;
 import net.astrona.easyclans.ClansPlugin;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Currency;
 import net.astrona.easyclans.models.Log;
 import net.astrona.easyclans.models.LogType;
 import net.astrona.easyclans.storage.SQLStorage;
@@ -13,14 +14,17 @@ import java.util.*;
 
 public class ClansController {
     private PlayerController playerController;
+    private CurrenciesController currenciesController;
     private final Map<Integer, Clan> clans;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
-    public ClansController(ClansPlugin plugin, SQLStorage sqlStorage, PlayerController playerController) {
+    public ClansController(ClansPlugin plugin, SQLStorage sqlStorage, PlayerController playerController,
+                           CurrenciesController currenciesController) {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
         this.playerController = playerController;
+        this.currenciesController = currenciesController;
         this.clans = new HashMap<>();
 
         loadClans();
@@ -28,6 +32,23 @@ public class ClansController {
 
     private void loadClans() {
         for (var clan : sqlStorage.getAllClans()) {
+            for(var currency : currenciesController.getCurrencyProviders().keySet()){
+                boolean has = false;
+                for(var clanCurrency : clan.getCurrencies()){
+                    if(clanCurrency.getName().equals(currency))
+                        has = true;
+                }
+                if(!has){
+                    var newCurrency = new Currency(-1, 0.0, currency, clan.getId());
+                    clan.addCurrency(newCurrency);
+                    sqlStorage.insertSingleClanCurrency(newCurrency);
+
+
+                }
+
+            }
+
+
             this.clans.put(clan.getId(), clan);
 
         }
@@ -59,6 +80,11 @@ public class ClansController {
 
         Clan clan = new Clan(-1, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
                 banner, bank, interestRate, tag, members, System.currentTimeMillis());
+
+        for(var currency : currenciesController.getCurrencyProviders().keySet()){
+            var newCurrency = new Currency(-1, 0.0, currency, clan.getId());
+            clan.addCurrency(newCurrency);
+        }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.saveClan(clan); // clan gets new ID when this is executed.
@@ -161,12 +187,24 @@ public class ClansController {
 
                 sqlStorage.addLog(new Log(String.valueOf(currentInterestRate), null, clan.getId(), LogType.INTEREST_ADD));
                 clan.setInterestRate(currentInterestRate);
-            }
-            if(clan.getBank() != 0 && clan.getInterestRate() != 0){
-                var addMoney = clan.getBank() * clan.getInterestRate();
-                clan.setBank(clan.getBank() + addMoney);
-                sqlStorage.addLog(new Log(String.valueOf(addMoney), null, clan.getId(), LogType.MONEY_ADD));
             }*/
+
+            if(clan.getInterestRate() != 0){
+                for(var currency: clan.getCurrencies()){
+                    if(currency.getValue() == 0) continue;
+                    var toAdd = currency.getValue() * (clan.getInterestRate()/100);
+                    if(toAdd > 0){
+                        currency.addValue(toAdd);
+                        sqlStorage.addLog(new Log("currency:" + currency.getName() + ":" + toAdd , null, clan.getId(), LogType.MONEY_ADD));
+                    }
+                }
+                /*if(clan.getBank() > 0) {
+                    var addMoney = clan.getBank() * clan.getInterestRate();
+                    clan.setBank(clan.getBank() + addMoney);
+                    sqlStorage.addLog(new Log("currency:bank:" + addMoney , null, clan.getId(), LogType.MONEY_ADD));
+                }*/
+
+            }
 
             sqlStorage.updateClan(clan);
         }

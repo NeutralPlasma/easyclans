@@ -3,9 +3,11 @@ package net.astrona.easyclans.storage;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.astrona.easyclans.ClansPlugin;
+import net.astrona.easyclans.gui.Icon;
 import net.astrona.easyclans.models.CPlayer;
 import net.astrona.easyclans.models.CRequest;
 import net.astrona.easyclans.models.Clan;
+import net.astrona.easyclans.models.Currency;
 import net.astrona.easyclans.models.Log;
 import net.astrona.easyclans.utils.Serialization;
 import org.bukkit.Bukkit;
@@ -55,9 +57,6 @@ public class SQLStorage {
             hikariConfig.addDataSourceProperty("databaseName", database);
             hikariConfig.addDataSourceProperty("serverName", hostname);
             hikariConfig.addDataSourceProperty("port", port);
-            //hikariConfig.setUsername(username);
-            //hikariConfig.setPassword(password);
-            //hikariConfig.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + SSL);
         } else {
             hikariConfig.setDriverClassName("org.sqlite.JDBC");
             hikariConfig.setJdbcUrl("jdbc:sqlite:" + path + "/db.sqlite");
@@ -75,6 +74,7 @@ public class SQLStorage {
         this.createClanInvitesTable();
         this.createClanJoinRequestsTable();
         this.createLogsTable();
+        this.createCurrenciesTable();
     }
 
 
@@ -108,7 +108,7 @@ public class SQLStorage {
                             CREATE TABLE IF NOT EXISTS ec_clan_data(
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 owner CHAR(36) NOT NULL,
-                                clan_name VARCHAR(16),
+                                clan_name VARCHAR(16) UNIQUE,
                                 display_name TEXT,
                                 autokick_time INT,
                                 join_points_price INT,
@@ -128,6 +128,26 @@ public class SQLStorage {
             logger.severe("Could not initialize the sql tables!");
             e.printStackTrace();
         }
+    }
+
+    private void createCurrenciesTable() {
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS ec_clan_currencies(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    amount DOUBLE,
+                    currency_name VARCHAR(128),
+                    clan_id INT,
+                    FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id)
+                    )
+
+                    """);
+            statement.execute();
+        } catch (SQLException e) {
+            logger.severe("Could not initialize the sql tables!");
+            e.printStackTrace();
+        }
+
     }
 
     private void createClanInvitesTable() {
@@ -153,21 +173,21 @@ public class SQLStorage {
         }
     }
 
-    private void createLogsTable(){
+    private void createLogsTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                        CREATE TABLE IF NOT EXISTS ec_logs (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            message TEXT,
-                            clan_id INTEGER,
-                            player_id VARCHAR(36),
-                            log_type VARCHAR(25),
-                            created_on BIGINT,
-                            FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
-                            FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
-                        );
-                        """
+                            CREATE TABLE IF NOT EXISTS ec_logs (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                message TEXT,
+                                clan_id INTEGER,
+                                player_id VARCHAR(36),
+                                log_type VARCHAR(25),
+                                created_on BIGINT,
+                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
+                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                            );
+                            """
             );
             statement.execute();
         } catch (SQLException e) {
@@ -244,6 +264,7 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
+
     public CPlayer getPlayer(UUID uuid) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
@@ -324,6 +345,120 @@ public class SQLStorage {
         return members;
     }
 
+    private List<Currency> getClanCurrencies(int clan_id) {
+        List<Currency> currencies = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    SELECT * FROM
+                    ec_clan_currencies
+                    WHERE clan_id = ?
+                    """);
+            statement.setInt(1, clan_id);
+
+            var result = statement.executeQuery();
+            while (result.next()) {
+                currencies.add(new Currency(
+                        result.getInt("id"),
+                        result.getDouble("amount"),
+                        result.getString("currency_name"),
+                        clan_id
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return currencies;
+    }
+
+    public void updateClanCurrencies(Clan clan){
+        try (Connection connection = dataSource.getConnection()) {
+            for (var currency : clan.getCurrencies()) {
+                PreparedStatement statement = connection.prepareStatement(
+                        """
+                                UPDATE ec_clan_currencies
+                                SET amount = ?
+                                WHERE clan_id = ?
+                                AND id = ?
+                            """);
+
+                statement.setDouble(1, currency.getValue());
+                statement.setInt(2, clan.getId());
+                statement.setInt(3, currency.getId());
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertSingleClanCurrency(Currency currency){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                            INSERT INTO ec_clan_currencies
+                                (clan_id, amount, currency_name)
+                            VALUES
+                                (?, ?, ?)
+                        """);
+
+            statement.setInt(1, currency.getClanId());
+            statement.setDouble(2, currency.getValue());
+            statement.setString(3, currency.getName());
+            int rows = statement.executeUpdate();
+            if (rows != 0) {
+                var result = statement.getGeneratedKeys();
+                if (result.next()) {
+                    currency.setId(result.getInt(1));
+                }
+            }
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void insertClanCurrencies(Clan clan) {
+        try (Connection connection = dataSource.getConnection()) {
+            for (var currency : clan.getCurrencies()) {
+                PreparedStatement statement = connection.prepareStatement(
+                        """
+                                INSERT INTO ec_clan_currencies
+                                    (clan_id, amount, currency_name)
+                                VALUES
+                                    (?, ?, ?)
+                            """);
+
+                statement.setInt(1, clan.getId());
+                statement.setDouble(2, currency.getValue());
+                statement.setString(3, currency.getName());
+                int rows = statement.executeUpdate();
+                if (rows != 0) {
+                    var result = statement.getGeneratedKeys();
+                    if (result.next()) {
+                        currency.setId(result.getInt(1));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteClanCurrencies(Clan clan){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                            DELETE FROM ec_clan_currencies
+                            WHERE clan_id = ?
+                        """);
+
+            statement.setInt(1, clan.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Clan> getAllClans() {
         List<Clan> clans = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
@@ -349,6 +484,7 @@ public class SQLStorage {
                         result.getLong("created_on")
                 );
                 clan.setMembers(getClanMembers(clan.getId()));
+                clan.setCurrencies(getClanCurrencies(clan.getId()));
                 clans.add(clan);
             }
         } catch (SQLException e) {
@@ -381,11 +517,12 @@ public class SQLStorage {
             statement.setInt(5, clan.getJoinPointsPrice());
             statement.setDouble(6, clan.getJoinMoneyPrice());
             statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(8, clan.getBank());
+            statement.setDouble(8, 0.0);
             statement.setDouble(9, clan.getInterestRate());
             statement.setString(10, clan.getTag());
 
             statement.executeUpdate();
+            updateClanCurrencies(clan);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -419,17 +556,17 @@ public class SQLStorage {
             statement.setInt(5, clan.getJoinPointsPrice());
             statement.setDouble(6, clan.getJoinMoneyPrice());
             statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(8, clan.getBank());
+            statement.setDouble(8, 0.0);
             statement.setDouble(9, clan.getInterestRate());
             statement.setString(10, clan.getTag());
             statement.setLong(11, clan.getCreatedOn());
 
             int rows = statement.executeUpdate();
-            if(rows>0) {
+            if (rows > 0) {
                 var result = statement.getGeneratedKeys();
                 if (result.next()) {
-                    Bukkit.getConsoleSender().sendMessage("Updated index of the clan: " + result.getInt(1) + " " + clan.getName());
                     clan.setId(result.getInt(1));
+                    insertClanCurrencies(clan);
                     return clan;
                 }
             }
@@ -439,13 +576,14 @@ public class SQLStorage {
         return clan;
     }
 
-    public void deleteClan(Clan clan){
+    public void deleteClan(Clan clan) {
         try (Connection connection = dataSource.getConnection()) {
+            deleteClanCurrencies(clan);
             PreparedStatement statement = connection.prepareStatement("""
-            DELETE FROM
-            ec_clan_data
-            WHERE id = ?
-            """);
+                    DELETE FROM
+                    ec_clan_data
+                    WHERE id = ?
+                    """);
 
             statement.setInt(1, clan.getId());
             statement.execute();
@@ -486,7 +624,7 @@ public class SQLStorage {
     }
 
 
-    public CRequest insertRequest(CRequest request) {
+    public void insertRequest(CRequest request) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO
@@ -500,22 +638,16 @@ public class SQLStorage {
             statement.setLong(3, request.getExpireTime());
             statement.setLong(4, request.getCreatedTime());
             int rows = statement.executeUpdate();
-            if (rows == 0) {
-                return null;
-            } else {
-
+            if (rows != 0) {
                 var result = statement.getGeneratedKeys();
                 if (result.next()) {
                     request.setRequestId(result.getInt(1));
-                    return request;
-                } else {
-                    return null;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.warning("Could not insert new clan join request into the database: " + request.toString());
         }
-        return null;
     }
 
 
@@ -530,6 +662,7 @@ public class SQLStorage {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.warning("Could not delete clan join request: " + cRequest.toString());
         }
     }
 
@@ -538,7 +671,7 @@ public class SQLStorage {
 
     //<editor-fold desc="logs
 
-    public void addLog(Log log){
+    public void addLog(Log log) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO
@@ -559,14 +692,10 @@ public class SQLStorage {
     }
 
 
-
     //</editor-fold">
 
 
     //<editor-fold desc="notifications">
-
-
-
 
 
     //</editor-fold">

@@ -1,5 +1,8 @@
 package net.astrona.easyclans;
 
+import com.bencodez.votingplugin.VotingPluginHooks;
+import com.bencodez.votingplugin.VotingPluginMain;
+import com.bencodez.votingplugin.user.VotingPluginUser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.astrona.easyclans.commands.ClansCommand;
 import net.astrona.easyclans.controller.*;
@@ -23,11 +26,12 @@ public class ClansPlugin extends JavaPlugin {
     private RequestsController requestsController;
     private LogController logController;
     private SQLStorage sqlStorage;
+    private CurrenciesController currenciesController;
 
     private BukkitTask bgTask;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
-    public static Economy Economy = null;
+    //public static Economy Economy = null;
     public static LuckPerms Ranks = null;
 
     @Override
@@ -35,12 +39,13 @@ public class ClansPlugin extends JavaPlugin {
         saveDefaultConfig();
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
-        setupEconomy();
+        //setupEconomy();
         setupLuckPerms();
         logController = new LogController(sqlStorage, this);
 
+        currenciesController = new CurrenciesController(this);
         playerController = new PlayerController(this, sqlStorage);
-        clansController = new ClansController(this, sqlStorage, playerController);
+        clansController = new ClansController(this, sqlStorage, playerController, currenciesController);
         requestsController = new RequestsController(this, sqlStorage);
 
         this.registerListeners();
@@ -59,6 +64,8 @@ public class ClansPlugin extends JavaPlugin {
                     this, playerController, clansController, requestsController));
         }
 
+
+
         this.inited = true;
     }
 
@@ -76,7 +83,7 @@ public class ClansPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController));
+        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController));
     }
 
     private void registerGUI() {
@@ -92,7 +99,7 @@ public class ClansPlugin extends JavaPlugin {
         LanguageController.reload(this);
     }
 
-    private boolean setupEconomy() {
+    /*private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
@@ -102,7 +109,7 @@ public class ClansPlugin extends JavaPlugin {
         }
         Economy = rsp.getProvider();
         return Economy != null;
-    }
+    }*/
 
     private boolean setupLuckPerms(){
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);

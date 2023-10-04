@@ -37,18 +37,23 @@ public class ClanCreateGUI extends GUI {
     private final ClansController clansController;
     private final RequestsController requestsController;
     private final LogController logController;
+    private CurrenciesController currenciesController;
 
 
     public ClanCreateGUI(Player player, ClansPlugin plugin,
                          PlayerController playerController, ClansController clansController,
-                         RequestsController requestsController, LogController logController) {
+                         RequestsController requestsController, LogController logController,
+                         CurrenciesController currenciesController) {
         super(54, LanguageController.getLocalized("create.menu.title"));
         this.plugin = plugin;
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
         this.logController = logController;
+        this.currenciesController = currenciesController;
         this.moneyPrice = plugin.getConfig().getDouble("clan.default_join_price");
+        this.name = player.getName();
+        this.displayName = player.getName() + "_DISPLAY";
         init();
         fancyBackground();
         open(player);
@@ -114,6 +119,12 @@ public class ClanCreateGUI extends GUI {
                     return;
                 }
 
+                for(var clan : clansController.getClans()){
+                    if(clan.getName().equalsIgnoreCase(stripped)){
+                        player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.invalid_name")));
+                        return;
+                    }
+                }
                 name = stripped;
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
@@ -175,7 +186,8 @@ public class ClanCreateGUI extends GUI {
         icon.addClickAction(player -> {
             new ConfirmGUI(player, (confirmPlayer) -> {
                 // TODO: add multi currency support
-                if(ClansPlugin.Economy.getBalance(player) < plugin.getConfig().getDouble("clan.create.price.money") ){
+
+                if(currenciesController.getProvider("Vault").getValue(player) < plugin.getConfig().getDouble("clan.create.price.money") ){
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.not_enough_money")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                     player.sendMessage(ClansPlugin.MM.deserialize(
@@ -183,7 +195,8 @@ public class ClanCreateGUI extends GUI {
                                     .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.create.price.money")))
                     ));
                 }else{
-                    ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.create.price.money"));
+                    currenciesController.getProvider("Vault").removeValue(player, plugin.getConfig().getDouble("clan.create.price.money"));
+                    //ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.create.price.money"));
                     Clan clan = clansController.createClan(
                             confirmPlayer.getUniqueId(),
                             name,
@@ -197,7 +210,7 @@ public class ClanCreateGUI extends GUI {
                             tag,
                             List.of(confirmPlayer.getUniqueId())
                     );
-                    new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin, logController);
+                    new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin, logController, currenciesController);
                     logController.addLog(new Log(name, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
                 }
             }, (cancelPlayer) -> {

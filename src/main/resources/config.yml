@@ -3,8 +3,19 @@ db:
   mysql: false
 
 
+currency:
+  Vault: "money"
+  VotingPlugin: "Tokens"
+
+
+deposit_maxs:
+  Vault: 10000000
+  VotingPlugin: 10
+
 # clan pricing
 clan:
+  default_request_expire_duration: 504000 # in seconds
+  max_members: 10
   max_bank_deposit_cap: 1000000
   update_interval: 1200 # in ticks 1 sec => 20 ticks
   default_join_price: 10000

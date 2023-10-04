@@ -27,12 +27,14 @@ public class ClanGUI extends GUI {
     private PlayerController playerController;
     private RequestsController requestsController;
     private LogController logController;
+    private CurrenciesController currenciesController;
     private Player player;
 
 
     public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
-                   RequestsController requestsController, LogController logController, ClansPlugin plugin) {
-        super(27, clan.getDisplayName());
+                   RequestsController requestsController, LogController logController, ClansPlugin plugin,
+                   CurrenciesController currenciesController) {
+        super(54, clan.getDisplayName());
 
         this.plugin = plugin;
         this.clan = clan;
@@ -40,6 +42,7 @@ public class ClanGUI extends GUI {
         this.playerController = playerController;
         this.requestsController = requestsController;
         this.logController = logController;
+        this.currenciesController = currenciesController;
         this.player = player;
 
         construct();
@@ -51,6 +54,7 @@ public class ClanGUI extends GUI {
         setIcon(11, membersIcon());
         setIcon(13, clanInfoIcon());
         setIcon(15, bannerIcon());
+        setIcon(31, bankIcon());
         //  33, 31, 29
 
     }
@@ -67,7 +71,7 @@ public class ClanGUI extends GUI {
                         ClansPlugin.MM.deserialize(it
                                 .replace("{clan}", String.valueOf(clan.getName()))
                                 .replace("{clan_name}", String.valueOf(clan.getDisplayName()))
-                                .replace("{bank}", Formatter.formatMoney(clan.getBank()))
+                                //.replace("{bank}", Formatter.formatMoney(clan.getBank()))
                                 .replace("{interest_rate}", String.format("%.5f", clan.getInterestRate()))
 
         )).toList());
@@ -100,6 +104,29 @@ public class ClanGUI extends GUI {
         return icon;
     }
 
+    ItemStack bankIconItem() {
+        ItemStack itemStack = new ItemStack(Material.SUNFLOWER);
+        var meta = itemStack.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan.menu.bank.name")));
+        meta.lore(getLocalizedDesiralizedList("clan.menu.bank.lore"));
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    Icon bankIcon() {
+        Icon icon = new Icon(bankIconItem(), ((it, player) -> {
+            it.itemStack = bankIconItem();
+        }));
+
+        icon.addClickAction(player -> {
+            player.closeInventory();
+            new CurrenciesGUI(player, clan, clansController, playerController, this, logController, plugin, currenciesController);
+            //new BankGUI(player, clan, this, plugin, clansController, logController, currenciesController);
+        });
+
+        return icon;
+    }
+
 
     // banner
     private ItemStack bannerItem(){
@@ -128,8 +155,9 @@ public class ClanGUI extends GUI {
 
         icon.addClickAction((player1 -> {
 
-            if(ClansPlugin.Economy.getBalance(player) >= plugin.getConfig().getDouble("clan.banner.buy_price.money")){
-                ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.banner.buy_price.money"));
+            if(currenciesController.getProvider("Vault").getValue(player) >= plugin.getConfig().getDouble("clan.banner.buy_price.money")){
+                currenciesController.getProvider("Vault").removeValue(player, plugin.getConfig().getDouble("clan.banner.buy_price.money"));
+                //ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.banner.buy_price.money"));
                 PlayerUtils.giveItem(player, clan.getBanner().clone(), true);
             }else{
                 player.sendMessage(ClansPlugin.MM.deserialize(

@@ -40,4 +40,16 @@ public class CRequest {
     public long getCreatedTime() {
         return createdTime;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName()
+                + "[clanId:" + clanId
+                + ";userId:" + playerUuid
+                + ";id:" + requestId
+                + ";createDate:" + createdTime
+                + ";expireDate:" + expireTime
+                + "]";
+
+    }
 }

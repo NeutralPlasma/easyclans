@@ -115,4 +115,16 @@ public class Paginator {
         gui.setTitle(title.replace("{page}", String.valueOf(current_page)));
         gui.open(player);
     }
+
+    public boolean isForceClose() {
+        return gui.isForceClose();
+    }
+
+    public void setForceClose(boolean forceClose) {
+        gui.setForceClose(forceClose);
+    }
+
+    public void refresh(){
+        gui.refresh(player);
+    }
 }

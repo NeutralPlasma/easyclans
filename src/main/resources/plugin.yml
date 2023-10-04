@@ -8,6 +8,10 @@ depend:
   - Vault
   - PlaceholderAPI
 
+
+soft depend:
+  - VotingPlugin
+
 commands:
   clans:
     permission: clans.command.main
