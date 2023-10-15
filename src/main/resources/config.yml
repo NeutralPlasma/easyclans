@@ -12,15 +12,27 @@ deposit_maxs:
   Vault: 10000000
   VotingPlugin: 10
 
+currencies_max_interest_adding:
+  Vault: 10000000.0
+  VotingPlugin: 100
+
 # clan pricing
 clan:
   default_request_expire_duration: 504000 # in seconds
   max_members: 10
-  max_bank_deposit_cap: 1000000
+
+  tag_min_length: 1
+  tag_max_length: 2
+
+  min_name_length: 4
+  max_name_length: 16 # how long can clan name be.
+
   update_interval: 1200 # in ticks 1 sec => 20 ticks
+
   default_join_price: 10000
-  interest_rate_increase: 0.00001 # by how much interest increases every minute
+  interest_rate_increase: 0.00001 # by how much interest increases every iteration
   max_interest_rate: 7.0 # Maximum interest rate for the clan
+
   create:
     price:
       money: 100000.0
@@ -46,19 +58,3 @@ rank_interest_value:
   default: 0.00001
   vip: 0.000001
 
-
-# random names for clans
-random_clan_names:
-  - "Soul Thieves"
-  - "Amber Ghosts"
-  - "Space Knives"
-  - "Armed Tribe"
-  - "Alien Amigos"
-  - "Wild Jets"
-  - "Exiled Bunch"
-  - "Rebel Orcs"
-  - "Bros n Pros"
-  - "Fear United"
-  - "Fangs Inc"
-  - "Tasty Trash"
-  - "Dark Rifles"

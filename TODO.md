@@ -2,9 +2,9 @@
 
 - [x] ~~Player chat component~~
 - [x] ~~Clan creating UI~~
-- [ ] Clan invites UI
+- [x] ~~Clan invites UI~~
 - [ ] Join clan request
 - [x] ~~Clans UI~~
-- [ ] ~~Default user clan UI~~
-- [ ] Clan settings menu
-- [ ] Clan bank
+- [x] ~~Default user clan UI~~
+- [x] ~~Clan settings menu~~
+- [x] ~~Clan bank~~

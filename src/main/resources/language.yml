@@ -14,6 +14,8 @@ not_owner: "<red>You're not the owner of the clan"
 cant_leave: "<red>You can't leave a clan you're owner of!"
 no_permission: "<red>No permission!"
 max_money: "<red>Theres already too much money bank."
+invalid_player: "<red>Invalid player!"
+request_expired: "<red>This request has expired."
 
 help:
   - "<gold>Easy clans, proudly coded by VirtusDevelops <red><3"
@@ -31,14 +33,16 @@ help:
 
 clan:
   chat:
-    join_chat: "<green>You are now talking in Clan chat."
-    leave_chat: "<red>You are no longer talking in Clan chat"
+    join_chat: "<green>You are now talking in Clan chat. <click:run_command:/clan chat><gray>(click to disable)</click>"
+    leave_chat: "<red>You are no longer talking in Clan chat. <click:run_command:/clan chat><gray>(click to enable)</click>"
   menu:
     clan_admin:
       name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"
       lore:
         - ""
-        - "<gray>Interest rate: <gold>{interest_rate}<gray>%"
+        - "<gray>Interest users: <gold>{interest_rate_members}<gray>%"
+        - "<gray>Interest clan: <gold>{interest_rate_time}<gray>%"
+        - "<gray>Interest total: <gold>{interest_rate_full}<gray>%"
         - "<gray>-----------------------"
         - "<gray>L-Click to change name"
         - "<gray>R-Click to change display name"
@@ -46,8 +50,9 @@ clan:
       name: "<reset><#ffffff>[<#08fcfc>{clan}<#ffffff>]"
       lore:
         - ""
-        - "<gray>Interest rate: <gold>{interest_rate}<gray>%"
-        - "<gray>Bank: <gold>{bank}<gray>$"
+        - "<gray>Interest users: <gold>{interest_rate_members}<gray>%"
+        - "<gray>Interest clan: <gold>{interest_rate_time}<gray>%"
+        - "<gray>Interest total: <gold>{interest_rate_full}<gray>%"
         - "<gray>-----------------------"
     members:
       name: "<reset><#ffffff>[<gold>Members</gold><#ffffff>]"
@@ -90,16 +95,17 @@ clan_list:
       lore:
         - ""
         - "<gray>Members:<white> {members}"
-        - "<gray>Interest rate: <white>{interest_rate}<gray>%"
+        - "<gray>Interest rate: <white>{interest_rate_full}<gray>%"
         - ""
         - "<gold>Click to send a join request!"
 invite:
   sent: "<green>Successfully sent join request!"
   already_sent: "<red>You already have pending join request for that clan!"
   same_clan: "<red>You can't send join request to clan you're already in!"
-  invite_received: "<green>You received new join request from: <red>{player}"
+  invite_received: "<green>You received new join request from: <red>{player} <click:run_command:/clan accept {player}>(click to accept)</click>"
   request_accepted: "<green>Your join request for clan: <red>{clan} <green>has been accepted!"
   request_declined: "<red>Your join request for clan: <green>{clan} <red>has been declined!"
+  cant_request_owner: "<red>You currently own a clan, so you cannot send a join request to other clans!"
 bank:
   menu:
     title: "<gold>Clan Bank"
@@ -195,6 +201,7 @@ members:
 settings:
   menu:
     title: "<gold>Clan settings"
+    confirm_name_reset: "Reset name?"
     kickIcon:
       title: "<white>[<red>Kick time<white>]"
       lore:
@@ -260,6 +267,8 @@ requests_own:
 
 currencies:
   limit_reached: "You can't deposit anymore, max deposited amount is {value}"
+  withdraw: "<green>Please enter amount you want to withdraw!"
+  deposit: "<green>Please enter amount you want to deposit!"
   item:
     title: "<white>[<gold>{currency}<white>]"
     lore:

@@ -1,5 +1,5 @@
 name: EasyClans
-main: net.astrona.easyclans.ClansPlugin
+main: eu.virtusdevelops.easyclans.ClansPlugin
 api-version: 1.19
 version: @version@
 
