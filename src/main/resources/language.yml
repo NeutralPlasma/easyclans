@@ -200,8 +200,20 @@ members:
     kicked: "<red>You have been kicked from the clan!"
 settings:
   menu:
+    enter_new_tag: "<green>Please provide new tag: "
     title: "<gold>Clan settings"
     confirm_name_reset: "Reset name?"
+    tag_invalid: "<red>Invalid tag"
+
+    tag:
+      name: "<white>[<red>Clan tag<white>]"
+      invalid: "<red>Invalid tag, has to be 2 letters long!"
+      lore:
+        - "<gray>R-Click to reset"
+        - "<gray>L-Click to change"
+        - "<gray>-----------------"
+        - "{tag}"
+
     kickIcon:
       title: "<white>[<red>Kick time<white>]"
       lore:

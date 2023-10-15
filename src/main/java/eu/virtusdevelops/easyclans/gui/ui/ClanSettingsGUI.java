@@ -356,10 +356,10 @@ public class ClanSettingsGUI extends GUI {
     private ItemStack tagSettingsItem(){
         var item = new ItemStack(Material.BOOK);
         var meta = item.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.tag.name"))
+        meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.tag.name"))
                 .decoration(TextDecoration.ITALIC, false)
         );
-        var loreStrings = LanguageController.getLocalizedList("create.menu.tag.lore");
+        var loreStrings = LanguageController.getLocalizedList("settings.menu.tag.lore");
         meta.lore(loreStrings.stream().map(it ->
                 ClansPlugin.MM.deserialize(it
                                 .replace("{tag}", clan.getTag()))
@@ -377,12 +377,13 @@ public class ClanSettingsGUI extends GUI {
 
         icon.addLeftClickAction((player) -> {
             setForceClose(true);
+            player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.enter_new_tag")));
             new AbstractChatUtil(player, (meow) -> {
                 var stripped = meow.message().replace(" ", "_").strip().trim();
                 if(stripped.length() > plugin.getConfig().getInt("clan.tag_max_length")
                         || stripped.length() < plugin.getConfig().getInt("clan.tag_min_length")){
                     // not good
-                    player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.tag.invalid")));
+                    player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("settings.menu.tag.invalid")));
                     return;
                 }
 

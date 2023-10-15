@@ -44,6 +44,9 @@ clan:
   name:
     change_price:
       money: 100000.0
+  tag:
+    change_price:
+      money: 100000.0
 
 # clan chat
 chat-format: "<gold>➜</gold> {player}<dark_gray>:</dark_gray><gray> {message}</gray>"

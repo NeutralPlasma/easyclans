@@ -29,7 +29,7 @@ public class ClanCreateGUI extends GUI {
     private ItemStack banner;
     private int kickTime = 7*24*60*60*1000;
     private double moneyPrice;
-    private String name = "DEFAULT", displayName = "NONE", tag = "DE";
+    private String name, displayName, tag;
     private final ClansPlugin plugin;
     private final PlayerController playerController;
     private final ClansController clansController;
@@ -52,6 +52,10 @@ public class ClanCreateGUI extends GUI {
         this.moneyPrice = plugin.getConfig().getDouble("clan.default_join_price");
         this.name = player.getName();
         this.displayName = player.getName() + "_DISPLAY";
+
+        this.tag = "" + name.charAt(0) + name.charAt(1);
+        this.tag = this.tag.toUpperCase();
+
         init();
         fancyBackground();
         open(player);
@@ -126,6 +130,9 @@ public class ClanCreateGUI extends GUI {
                         return;
                     }
                 }
+                tag = "" + stripped.charAt(0) + stripped.charAt(1);
+                tag = tag.toUpperCase();
+
                 name = stripped;
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
