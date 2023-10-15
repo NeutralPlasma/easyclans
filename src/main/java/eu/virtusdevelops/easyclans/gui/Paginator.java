@@ -21,6 +21,8 @@ public class Paginator {
     private final List<Integer> valid_slots;
     private final List<Icon> icons = new ArrayList<>();
 
+    private Icon emptyIcon;
+
     public Paginator(Player player, List<Integer> valid_slots, String title, int size) {
         this.player = player;
         this.size = size;
@@ -31,6 +33,7 @@ public class Paginator {
 
         init();
         gui.fancyBackground();
+        emptyIcon = new Icon(new ItemStack(Material.AIR));
         //open(0);
     }
 
@@ -110,7 +113,7 @@ public class Paginator {
                 gui.setIcon(slot, icon);
             } else {
                 int slot = valid_slots.get(i);
-                gui.setIcon(slot, null);
+                gui.setIcon(slot, emptyIcon);
                 //break;
             }
         }

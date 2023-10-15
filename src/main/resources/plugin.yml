@@ -14,7 +14,7 @@ soft depend:
 
 commands:
   clans:
-    permission: clans.command.main
+    permission: easyclans.command.main
     aliases: ["clan"]
 
 permissions:

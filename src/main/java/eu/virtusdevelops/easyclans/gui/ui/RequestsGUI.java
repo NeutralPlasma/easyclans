@@ -160,7 +160,7 @@ public class RequestsGUI extends Paginator {
                     logController.addLog(new Log( cPlayer.getUuid().toString(), player.getUniqueId(), clan.getId(), LogType.REQUEST_DECLINED));
                     removeIcon(icon);
                     open();
-                }, LanguageController.getLocalized("requests.menu.invite.title").formatted("{player}", cPlayer.getName()));
+                }, LanguageController.getLocalized("requests.menu.invite.title").replace("{player}", cPlayer.getName()));
             });
 
 
