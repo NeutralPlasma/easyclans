@@ -83,78 +83,94 @@ public class ClansCommand implements TabExecutor {
 
         switch(args[0].toLowerCase()){
             case "bank" -> {
-                this.executeBankSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.bank"))
+                    this.executeBankSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "members" -> {
-                this.executeMembersSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.members"))
+                    this.executeMembersSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "list" -> {
-                this.executeListSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.list"))
+                    this.executeListSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "create" -> {
-                this.executeCreateSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.create"))
+                    this.executeCreateSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "chat" -> {
-                var cplayer = playerController.getPlayer(player.getUniqueId());
-                if (cplayer.isInClubChat()) {
-                    player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
-                } else {
-                    player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
+                if(player.hasPermission("easyclans.command.chat")){
+                    var cplayer = playerController.getPlayer(player.getUniqueId());
+                    if (cplayer.isInClubChat()) {
+                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.leave_chat")));
+                    } else {
+                        player.sendMessage(MM.deserialize(LanguageController.getLocalized("clan.chat.join_chat")));
+                    }
+                    cplayer.setInClubChat(!cplayer.isInClubChat());
+                }else{
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
                 }
-                cplayer.setInClubChat(!cplayer.isInClubChat());
+
             }
             case "delete" -> {
-                this.executeDeleteClanSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.delete"))
+                    this.executeDeleteClanSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "leave" -> {
-                this.executeLeaveClanSubCommand(player, cPlayer, clan);
+                if(sender.hasPermission("easyclans.command.leave"))
+                    this.executeLeaveClanSubCommand(player, cPlayer, clan);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "help" -> {
-                this.executeHelpCommand(player);
+                if(sender.hasPermission("easyclans.command.help"))
+                    this.executeHelpCommand(player);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "accept" -> {
-                if(args.length < 2){
-                    sender.sendMessage(ClansPlugin.MM.deserialize(
-                            LanguageController.getLocalized("invalid_player")
-                    ));
-                    break;
+                if(sender.hasPermission("easyclans.command.accept")){
+                    if(args.length < 2){
+                        sender.sendMessage(ClansPlugin.MM.deserialize(
+                                LanguageController.getLocalized("invalid_player")
+                        ));
+                        break;
+                    }
+                    this.executeAcceptSubCommand(player, args[1]);
+                }else{
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
                 }
-                this.executeAcceptSubCommand(player, args[1]);
+
             }
             case "info" -> {
-                this.executeInfoCommand(sender);
+                if(sender.hasPermission("easyclans.command.info"))
+                    this.executeInfoCommand(sender);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
-            case "logs" -> {
-                this.executeLogsCommand(player);
+            case "logs", "log" -> {
+                if(sender.hasPermission("easyclans.command.logs"))
+                    this.executeLogsCommand(player);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
-            case "clogs" -> {
-                this.executeClanLogsCommand(player);
+            case "clogs", "clog" -> {
+                if(sender.hasPermission("easyclans.command.clogs"))
+                    this.executeClanLogsCommand(player);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
         }
-
-
-//        if(moreArgumentSubCommands.contains(args[0].toLowerCase())){
-//            if(args.length < 2){
-//                player.sendMessage("Invalid arguments count for command....");
-//                return true;
-//            }
-//
-//            switch(args[0].toLowerCase()){
-//                case "kick" -> {
-//                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-//                    this.executeKickSubCommand(player, player);
-//                }
-//                case "join" -> {
-//                    this.executeJoinSubCommand(player, args[1]);
-//                }
-//                case "invite" -> {
-//                    //OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-//                    this.executeInviteSubCommand(player, player);
-//                }
-//            }
-//        }
-
-
         return true;
     }
 
@@ -360,7 +376,7 @@ public class ClansCommand implements TabExecutor {
             return;
         }
 
-        if(clan.getMembers().size() > plugin.getConfig().getInt("clan.max_members")){
+        if(clan.getMembers().size()+1 > plugin.getConfig().getInt("clan.max_members")){
             sender.sendMessage(ClansPlugin.MM.deserialize(
                     LanguageController.getLocalized("requests.too_many_members")
                             .replace("{max}", String.valueOf(plugin.getConfig().getInt("clan.max_members")))
@@ -371,7 +387,7 @@ public class ClansCommand implements TabExecutor {
 
         var provider =  currenciesController.getProvider("Vault");
         var requester = Bukkit.getPlayer(oRequester.getUniqueId());
-        if(provider.getValue(Bukkit.getOfflinePlayer(cPlayer.getUuid())) < clan.getJoinMoneyPrice()){
+        if(provider.getValue(oRequester) < clan.getJoinMoneyPrice()){
             sender.sendMessage(ClansPlugin.MM.deserialize(
                     LanguageController.getLocalized("requests.not_enough_money_accepter")
                             .replace("{player}", cPlayer.getName())));

@@ -103,7 +103,7 @@ public class SQLStorage {
                             CREATE TABLE IF NOT EXISTS ec_clan_data(
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 owner CHAR(36) NOT NULL,
-                                clan_name VARCHAR(16) UNIQUE,
+                                clan_name VARCHAR(16),
                                 display_name TEXT,
                                 autokick_time INT,
                                 join_points_price INT,

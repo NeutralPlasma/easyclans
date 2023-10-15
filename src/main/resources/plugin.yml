@@ -16,3 +16,35 @@ commands:
   clans:
     permission: clans.command.main
     aliases: ["clan"]
+
+permissions:
+  easyclans.command.reload:
+    description: "permission for reload command"
+  easyclans.command.bank:
+    description: "permission for bank command"
+  easyclans.command.members:
+    description: "permission for members command"
+  easyclans.command.list:
+    description: "permission for list command"
+  easyclans.command.create:
+    description: "permission for create command"
+  easyclans.command.chat:
+    description: "permission for chat command"
+  easyclans.command.delete:
+    description: "permission for delete command"
+  easyclans.command.leave:
+    description: "permission for leave command"
+  easyclans.command.help:
+    description: "permission for help command"
+  easyclans.command.accept:
+    description: "permission for accept command"
+  easyclans.command.info:
+    description: "permission for info command"
+  easyclans.command.logs:
+    description: "permission for logs command"
+  easyclans.command.clogs:
+    description: "permission for clogs command"
+  easyclans.command.join_price:
+    description: "permission for changing join price"
+  easyclans.command.kick_time:
+    description: "permission for changing kick time for inactive players"

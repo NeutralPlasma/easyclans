@@ -248,6 +248,13 @@ public class ClanSettingsGUI extends GUI {
                     return;
                 }
 
+                for(var clan : clansController.getClans()){
+                    if(clan.getName().equalsIgnoreCase(stripped)){
+                        player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.banner.invalid_name")));
+                        return;
+                    }
+                }
+
                 if (currenciesController.getProvider("Vault").getValue(player) >= plugin.getConfig().getDouble("clan.name.change_price.money")) {
                     currenciesController.getProvider("Vault").removeValue(player, plugin.getConfig().getDouble("clan.name.change_price.money"));
                     //ClansPlugin.Economy.withdrawPlayer(player, plugin.getConfig().getDouble("clan.name.change_price.money"));
