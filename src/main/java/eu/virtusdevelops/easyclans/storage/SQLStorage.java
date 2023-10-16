@@ -504,6 +504,7 @@ public class SQLStorage {
                     bank = ?,
                     interest_rate = ?,
                     tag = ?
+                    WHERE id = ?
                     """);
             statement.setString(1, clan.getOwner().toString());
             statement.setString(2, clan.getName());
@@ -515,6 +516,7 @@ public class SQLStorage {
             statement.setDouble(8, 0.0);
             statement.setDouble(9, clan.getInterestRate());
             statement.setString(10, clan.getTag());
+            statement.setInt(11, clan.getId());
 
             statement.executeUpdate();
             updateClanCurrencies(clan);
