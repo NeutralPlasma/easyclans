@@ -19,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +69,7 @@ public class CurrenciesGUI extends Paginator {
         var meta = item.getItemMeta();
         meta.lore(LanguageController.getLocalizedList("currencies.item.lore").stream().map(it -> ClansPlugin.MM.deserialize(it
                 .replace("{amount}", Formatter.formatMoney(currency.getValue()))
+                .replace("{raw}", new DecimalFormat("#").format(currency.getValue()))
                 .replace("{currency}", plugin.getConfig().getString("currency." + currency.getName()))
         )).toList());
         meta.displayName(ClansPlugin.MM.deserialize(LanguageController.getLocalized("currencies.item.title")
@@ -84,6 +86,22 @@ public class CurrenciesGUI extends Paginator {
             ItemStack item = currencyItem(currency);
             Icon icon = new Icon(item, (self, pl) -> {
                 self.itemStack = currencyItem(currency);
+            });
+
+            icon.addShiftLeftClickAction((player1) -> {
+                if (!isOwner && !player.hasPermission("easyclans.withdraw." + currency.getName())) {
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    return;
+                }
+                var provider = currenciesController.getProvider(currency.getName());
+                if(provider instanceof VotingPluginProvider) return;
+
+                currenciesController.getProvider(currency.getName()).addValue(player, currency.getValue());
+                currency.setValue(0);
+                player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+                logController.addLog(new Log(String.valueOf(currency.getValue()), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
+                clansController.updateClan(clan);
+                refresh();
             });
 
 
