@@ -4,6 +4,7 @@ import eu.virtusdevelops.easyclans.controller.PlayerController;
 import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.models.CPlayer;
 import net.luckperms.api.model.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,9 +34,6 @@ public class PlayerConnectionListener implements Listener {
             cPlayer.setRank(user.getPrimaryGroup());
             playerController.updatePlayer(cPlayer);
         }
-
-
-
     }
 
     @EventHandler

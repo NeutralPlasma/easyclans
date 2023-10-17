@@ -6,6 +6,7 @@ import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.models.*;
 import eu.virtusdevelops.easyclans.models.Currency;
 import eu.virtusdevelops.easyclans.utils.Serialization;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SQLStorage {
 
@@ -65,6 +67,7 @@ public class SQLStorage {
 
         logger.info("Creating database tables...");
         this.createPlayersTable();
+        this.createPermissionsTable();
         this.createClansTable();
         this.createClanInvitesTable();
         this.createClanJoinRequestsTable();
@@ -95,7 +98,24 @@ public class SQLStorage {
             e.printStackTrace();
         }
     }
-
+    private void createPermissionsTable(){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                        CREATE TABLE IF NOT EXISTS ec_permissions (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            player_id VARCHAR(36),
+                            permission VARCHAR(128)
+                        );
+                        """
+            );
+            statement.execute();
+        } catch (SQLException e) {
+            logger.severe("Could not initialize the sql tables!");
+            //logger.severe(e.getMessage());
+            e.printStackTrace();
+        }
+    }
     private void createClansTable() {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
@@ -255,6 +275,9 @@ public class SQLStorage {
             statement.setString(5, cPlayer.getUuid().toString());
             statement.setString(4, cPlayer.getRank());
             statement.execute();
+
+            updatePlayerPermissions(cPlayer);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -288,6 +311,76 @@ public class SQLStorage {
         return null;
     }
 
+    public void updatePlayerPermissions(CPlayer cPlayer){
+        try (Connection connection = dataSource.getConnection()) {
+
+            var st_statement = String.format("""
+                    DELETE FROM
+                    ec_permissions
+                    WHERE ec_permissions.player_id = ?
+                    AND ec_permissions.permission NOT IN (%s)
+                    """,
+                    cPlayer.getUserPermissionsList()
+                            .stream().map(it -> "?")
+                            .collect(Collectors.joining(", "))
+            );
+
+            PreparedStatement statement = connection.prepareStatement(st_statement);
+
+
+
+            statement.setString(1, cPlayer.getUuid().toString());
+            int index = 2;
+            for(var perm : cPlayer.getUserPermissionsList()){
+                statement.setString(index, perm.name());
+                index++;
+            }
+            statement.execute();
+            for(var permission : cPlayer.getUserPermissionsList()){
+                PreparedStatement statement2 = connection.prepareStatement("""
+                INSERT INTO ec_permissions (permission, player_id)
+                SELECT ?, ?
+                WHERE NOT EXISTS (
+                    SELECT *
+                    FROM ec_permissions
+                    WHERE permission = ?
+                    AND player_id = ?
+                )
+                """);
+                statement2.setString(1, permission.name());
+                statement2.setString(2, cPlayer.getUuid().toString());
+                statement2.setString(3, permission.name());
+                statement2.setString(4, cPlayer.getUuid().toString());
+                statement2.execute();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<UserPermissions> getAllPlayerPermissions(UUID player){
+        List<UserPermissions> permissions = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                    SELECT permission as 'permission' FROM
+                    ec_permissions
+                    WHERE ec_permissions.player_id = ?
+                    """);
+            statement.setString(1, player.toString());
+            var result = statement.executeQuery();
+            while (result.next()) {
+                permissions.add(UserPermissions.valueOf(result.getString("permission")));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return permissions;
+    }
+
     public List<CPlayer> getAllPlayers() {
         List<CPlayer> players = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
@@ -297,14 +390,17 @@ public class SQLStorage {
                     """);
             var result = statement.executeQuery();
             while (result.next()) {
-                players.add(new CPlayer(
+                var cPlayer = new CPlayer(
                         UUID.fromString(result.getString("uuid")),
                         result.getInt("clan"),
                         result.getLong("last_active"),
                         result.getLong("joined_clan"),
                         result.getString("name"),
                         result.getString("rank")
-                ));
+                );
+                var permissions = getAllPlayerPermissions(cPlayer.getUuid());
+                cPlayer.setUserPermissionsList(permissions);
+                players.add(cPlayer);
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -16,20 +16,20 @@ public class Paginator {
     private final int size;
     private final String title;
     private int current_page;
-    private final Player player;
     private final Map<Integer, Icon> fixedIcons = new HashMap<>();
     private final List<Integer> valid_slots;
     private final List<Icon> icons = new ArrayList<>();
 
     private Icon emptyIcon;
+    protected final Player player;
 
     public Paginator(Player player, List<Integer> valid_slots, String title, int size) {
-        this.player = player;
         this.size = size;
         this.title = title;
         this.valid_slots = valid_slots;
+        this.player = player;
 
-        gui = new GUI(size, title);
+        gui = new GUI(player, size, title);
 
         init();
         gui.fancyBackground();
@@ -118,7 +118,7 @@ public class Paginator {
             }
         }
         gui.setTitle(title.replace("{page}", String.valueOf(current_page)));
-        gui.open(player);
+        gui.open();
     }
 
     public boolean isForceClose() {
@@ -130,6 +130,6 @@ public class Paginator {
     }
 
     public void refresh(){
-        gui.refresh(player);
+        gui.refresh();
     }
 }

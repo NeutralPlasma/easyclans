@@ -26,13 +26,12 @@ public class ClanGUI extends GUI {
     private RequestsController requestsController;
     private LogController logController;
     private CurrenciesController currenciesController;
-    private Player player;
 
 
     public ClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
                    RequestsController requestsController, LogController logController, ClansPlugin plugin,
                    CurrenciesController currenciesController) {
-        super(54, clan.getDisplayName());
+        super(player, 54, clan.getDisplayName());
 
         this.plugin = plugin;
         this.clan = clan;
@@ -41,11 +40,10 @@ public class ClanGUI extends GUI {
         this.requestsController = requestsController;
         this.logController = logController;
         this.currenciesController = currenciesController;
-        this.player = player;
 
         construct();
         fancyBackground();
-        open(player);
+        open();
     }
 
     private void construct() {
@@ -85,7 +83,9 @@ public class ClanGUI extends GUI {
         Icon icon = new Icon(clanInfoIconItem(), (it, player) -> {
             it.itemStack = clanInfoIconItem();
         });
-        icon.addClickAction((this::refresh));
+        icon.addClickAction( (dd) -> {
+            refresh();
+        });
         return icon;
     }
 

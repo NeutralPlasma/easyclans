@@ -31,6 +31,114 @@ help:
   - "<gray>- <gold>/clan help <gray>shows this text"
 
 
+clan_menu:
+  title: "<gold>Clan menu"
+  settings_item:
+    title: "<gray>[<gold>Settings<gray>]"
+    lore:
+      - "<gray>"
+      - "<gray>Click to edit"
+  members_item:
+    title: "<gray>[<gold>Members<gray>]"
+    lore:
+      - ""
+      - "<gray>Click to see"
+  requests_item:
+    title: "<gray>[<gold>Requests<gray>]"
+    lore:
+      - ""
+      - "<gray>Click to see"
+  invites_item:
+    title: "<gray>[<gold>Invites<gray>]"
+    lore:
+      - ""
+      - "<gray>Click to see"
+  bank_item:
+    title: "<gray>[<gold>Bank<gray>]"
+    lore:
+      - ""
+      - "<gray>Click to see"
+  info_item:
+    title: "<gray>[<gold>{clan}<gray>]"
+    lore:
+      - "<gray>-----------------------"
+      - "<yellow>Display name: <gray>{display_name}"
+      - "<yellow>Interest clan: <gray>{interest_clan}"
+      - "<yellow>Interest members: <gray>{interest_members}"
+      - "<yellow>Interest total: <gray>{interest_total}"
+      - "<yellow>Tag: <gray>{tag}"
+
+members_menu:
+  title: "<gold>Members"
+  member_item:
+    title: "<gold>{player}"
+    lore_owner:
+      - "<red>Clan owner"
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
+    lore_active:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
+    lore_inactive:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Time remaining util kick:"
+      - "<gray>- <red>{time_remaining}"
+
+member_menu:
+  title: "<gold>Member <red>{player}"
+  member_item:
+    title: "<gold>{player}"
+    lore_owner:
+      - "<red>Clan owner"
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
+    lore_active:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Interest: <gold>{interest}"
+    lore_inactive:
+      - "<gray>Last active: <gold>{active}"
+      - "<gray>Joined clan on: <gold>{joined}"
+      - "<gray>Currently: {status}"
+      - "<gray>Time remaining util kick:"
+      - "<gray>- <red>{time_remaining}"
+  kick_item:
+    title: "<gray>[<red>Kick<gray>]"
+    lore:
+      - ""
+      - "<gray>Click to kick <red>{target}"
+  permissions_item:
+    title: "<gray>[<gold>Permissions<gray>]"
+    lore:
+      - ""
+      - "<Gray>Click to view"
+
+
+kick_confirm_menu:
+  title: "<gold>Kick <red>{player}?"
+
+requests_menu:
+  title: "<gold>Requests"
+  request_item:
+    title: "<gold>{player}"
+    lore:
+      - ""
+      - "<gray>Created on: <red>{requested}"
+      - ""
+      - "<green>Click to accept request"
+      - "<gray>---------------------------"
+      - "<gray>Expires: <red>{expires}"
+
+
 clan:
   chat:
     join_chat: "<green>You are now talking in Clan chat. <click:run_command:/clan chat><gray>(click to disable)</click>"
@@ -86,6 +194,18 @@ clan:
         - "<gray>Click to buy"
         - "<gray>--------------------------"
         - "<gray>Buy price: <red>{buy_price}<gray>$"
+
+permissions_menu:
+  title: "Permissions for {player}"
+  has: "<green>Enabled"
+  doesnt_have: "<red>Disabled"
+  permission_item:
+    title: "<gold>{permission}"
+    lore:
+      - "<gray>Status: {status}"
+      - "<gray>Description:"
+      - "<yellow>{description}"
+
 
 clan_list:
   menu:

@@ -42,7 +42,7 @@ public class ClanCreateGUI extends GUI {
                          PlayerController playerController, ClansController clansController,
                          RequestsController requestsController, LogController logController,
                          CurrenciesController currenciesController) {
-        super(54, LanguageController.getLocalized("create.menu.title"));
+        super(player, 54, LanguageController.getLocalized("create.menu.title"));
         this.plugin = plugin;
         this.playerController = playerController;
         this.clansController = clansController;
@@ -58,7 +58,7 @@ public class ClanCreateGUI extends GUI {
 
         init();
         fancyBackground();
-        open(player);
+        open();
     }
 
 
@@ -103,7 +103,7 @@ public class ClanCreateGUI extends GUI {
             if (itemStack.getType().toString().endsWith("BANNER")) {
                 banner = itemStack.clone();
                 legalizeBanner();
-                this.update(player, 13);
+                this.update(13);
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
             } else {
                 player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -137,9 +137,9 @@ public class ClanCreateGUI extends GUI {
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
                 icon.itemStack = banner;
-                open(player);
+                open();
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    refresh(player);
+                    refresh();
                 }, 5L);
             });
             player.closeInventory();
@@ -157,9 +157,9 @@ public class ClanCreateGUI extends GUI {
             }, plugin).setOnClose(() -> {
                 legalizeBanner();
                 icon.itemStack = banner;
-                open(player);
+                open();
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    refresh(player);
+                    refresh();
                 }, 5L);
 
             });
@@ -273,7 +273,7 @@ public class ClanCreateGUI extends GUI {
                 }
             }, plugin).setOnClose(() -> {
                 icon.itemStack = priceSettingsItem();
-                open(player);
+                open();
             });
         });
         icon.addRightClickAction((player) -> {
@@ -342,7 +342,7 @@ public class ClanCreateGUI extends GUI {
                 }
             }, plugin).setOnClose(() -> {
                 icon.itemStack = kickSettingsItem();
-                open(player);
+                open();
             });
         });
 
@@ -387,8 +387,8 @@ public class ClanCreateGUI extends GUI {
                 tag = stripped;
             }, plugin).setOnClose(() -> {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    open(player);
-                    refresh(player);
+                    open();
+                    refresh();
                 }, 5L);
             });
             player.closeInventory();
@@ -399,7 +399,7 @@ public class ClanCreateGUI extends GUI {
         icon.addRightClickAction((player) -> {
             tag = String.valueOf(name.charAt(0)) + name.charAt(1);
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            refresh(player);
+            refresh();
         });
 
         return icon;

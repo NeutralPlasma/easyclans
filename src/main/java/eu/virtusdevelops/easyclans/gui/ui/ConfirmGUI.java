@@ -18,12 +18,12 @@ public class ConfirmGUI extends GUI {
     private Action cancelAction;
 
     public ConfirmGUI(Player player, Action confirmAction, Action cancelAction, String title) {
-        super(27, title);
+        super(player, 27, title);
         this.confirmAction = confirmAction;
         this.cancelAction = cancelAction;
         init();
         fancyBackground();
-        this.open(player);
+        this.open();
     }
 
     private void init() {

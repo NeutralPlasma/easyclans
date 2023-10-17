@@ -25,7 +25,7 @@ public class AdminClanGUI extends GUI {
     public AdminClanGUI(Player player, Clan clan, ClansController clansController, PlayerController playerController,
                         RequestsController requestsController, ClansPlugin plugin, LogController logController,
                         CurrenciesController currenciesController) {
-        super(54, "Admin " + clan.getName() + " Clan");
+        super(player, 54, "Admin " + clan.getName() + " Clan");
 
         this.clan = clan;
         this.clansController = clansController;
@@ -37,7 +37,7 @@ public class AdminClanGUI extends GUI {
 
         construct();
         fancyBackground();
-        open(player);
+        open();
     }
 
     private void construct() {
@@ -75,7 +75,9 @@ public class AdminClanGUI extends GUI {
         Icon icon = new Icon(clanInfoIconItem(), (it, player) -> {
             it.itemStack = clanInfoIconItem();
         });
-        icon.addClickAction((this::refresh));
+        icon.addClickAction((dd) -> {
+            refresh();
+        });
         return icon;
     }
 

@@ -27,7 +27,6 @@ import static net.kyori.adventure.sound.Sound.sound;
 
 public class ClanSettingsGUI extends GUI {
 
-    private final Player player;
     private final Clan clan;
     private final ClansController clansController;
     private final GUI previous;
@@ -38,8 +37,7 @@ public class ClanSettingsGUI extends GUI {
     public ClanSettingsGUI(Player player, Clan clan, ClansController clansController,
                            GUI previous, ClansPlugin plugin, LogController logController,
                            CurrenciesController currenciesController) {
-        super(45, LanguageController.getLocalized("settings.menu.title"));
-        this.player = player;
+        super(player, 45, LanguageController.getLocalized("settings.menu.title"));
         this.clan = clan;
         this.clansController = clansController;
         this.previous = previous;
@@ -50,15 +48,15 @@ public class ClanSettingsGUI extends GUI {
         addCloseAction((ignored) -> {
             clansController.updateClan(clan);
             if (previous != null) {
-                previous.open(player);
-                previous.refresh(player);
+                previous.open();
+                previous.refresh();
             }
         });
 
         init();
         fancyBackground();
 
-        open(player);
+        open();
 
     }
 
@@ -117,8 +115,8 @@ public class ClanSettingsGUI extends GUI {
                 }
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
-                open(player);
-                refresh(player);
+                open();
+                refresh();
             });
         }));
 
@@ -130,7 +128,7 @@ public class ClanSettingsGUI extends GUI {
             }
             clan.setAutoKickTime(7 * 24 * 60 * 60 * 1000); // 7 days
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            refresh(player);
+            refresh();
         });
 
         return icon;
@@ -187,8 +185,8 @@ public class ClanSettingsGUI extends GUI {
                 }
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
-                open(player);
-                refresh(player);
+                open();
+                refresh();
             });
         }));
 
@@ -201,7 +199,7 @@ public class ClanSettingsGUI extends GUI {
             }
             clan.setJoinMoneyPrice(10000.0);
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            refresh(player);
+            refresh();
         });
 
 
@@ -271,8 +269,8 @@ public class ClanSettingsGUI extends GUI {
                 }
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
-                open(player);
-                refresh(player);
+                open();
+                refresh();
             });
         }));
 
@@ -282,12 +280,12 @@ public class ClanSettingsGUI extends GUI {
             new ConfirmGUI(player, (confirm) -> {
                 clan.setName(player.getName());
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                open(player);
-                refresh(player);
+                open();
+                refresh();
             }, (cancel) -> {
                 player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
-                open(player);
-                refresh(player);
+                open();
+                refresh();
             }, LanguageController.getLocalized("settings.menu.confirm_name_reset"));
 
 
@@ -401,8 +399,8 @@ public class ClanSettingsGUI extends GUI {
             }, plugin).setOnClose(() -> {
                 setForceClose(false);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    open(player);
-                    refresh(player);
+                    open();
+                    refresh();
                 }, 5L);
             });
             player.closeInventory();
@@ -413,7 +411,7 @@ public class ClanSettingsGUI extends GUI {
         icon.addRightClickAction((player) -> {
             clan.setTag(String.valueOf(clan.getName().charAt(0)) + clan.getName().charAt(1));
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            refresh(player);
+            refresh();
         });
 
         return icon;

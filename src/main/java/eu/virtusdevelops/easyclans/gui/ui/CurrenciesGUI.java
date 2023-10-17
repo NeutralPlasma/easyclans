@@ -30,7 +30,6 @@ import static net.kyori.adventure.sound.Sound.sound;
 public class CurrenciesGUI extends Paginator {
     private ClansPlugin plugin;
     private Clan clan;
-    private Player player;
     private ClansController clansController;
     private PlayerController playerController;
     private RequestsController requestsController;
@@ -50,7 +49,6 @@ public class CurrenciesGUI extends Paginator {
         ), "<gold>Currencies <white>[<gold>{page}<white>]", 36);
 
         this.plugin = plugin;
-        this.player = player;
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
@@ -97,9 +95,9 @@ public class CurrenciesGUI extends Paginator {
                 if(provider instanceof VotingPluginProvider) return;
 
                 currenciesController.getProvider(currency.getName()).addValue(player, currency.getValue());
+                logController.addLog(new Log("currency:" + currency.getName() + ":" + currency.getValue(), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                 currency.setValue(0);
                 player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                logController.addLog(new Log(String.valueOf(currency.getValue()), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                 clansController.updateClan(clan);
                 refresh();
             });
@@ -154,12 +152,12 @@ public class CurrenciesGUI extends Paginator {
                             }
                             currency.setValue(currency.getValue() - value);
                             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                            logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
+                            logController.addLog(new Log("currency:" + currency.getName() + ":" + value, player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                         }else{
                             currenciesController.getProvider(currency.getName()).addValue(player, value);
                             currency.setValue(currency.getValue() - value);
                             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                            logController.addLog(new Log(String.valueOf(value), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
+                            logController.addLog(new Log("currency:" + currency.getName() + ":" + value, player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                         }
 
                     } catch (NumberFormatException e) {
@@ -243,7 +241,7 @@ public class CurrenciesGUI extends Paginator {
 
         if (previousUI != null) {
             addCloseAction((player) -> {
-                previousUI.open(player);
+                previousUI.open();
             });
         }
     }

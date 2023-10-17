@@ -27,7 +27,6 @@ import static net.kyori.adventure.sound.Sound.sound;
 public class RequestsGUI extends Paginator {
     private ClansPlugin plugin;
     private Clan clan;
-    private Player player;
     private ClansController clansController;
     private PlayerController playerController;
     private RequestsController requestsController;
@@ -50,7 +49,6 @@ public class RequestsGUI extends Paginator {
         ), "<gold>Members <white>[<gold>{page}<white>]", 54);
 
         this.plugin = plugin;
-        this.player = player;
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
@@ -168,7 +166,7 @@ public class RequestsGUI extends Paginator {
         }
         if (previousUI != null) {
             addCloseAction((player) -> {
-                previousUI.open(player);
+                previousUI.open();
             });
         }
     }

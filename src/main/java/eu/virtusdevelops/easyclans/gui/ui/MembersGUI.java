@@ -26,7 +26,6 @@ import java.util.*;
 public class MembersGUI extends Paginator {
     private ClansPlugin plugin;
     private Clan clan;
-    private Player player;
     private ClansController clansController;
     private PlayerController playerController;
     private LogController logController;
@@ -47,7 +46,6 @@ public class MembersGUI extends Paginator {
 
 
         this.plugin = plugin;
-        this.player = player;
         this.clan = clan;
         this.clansController = clansController;
         this.playerController = playerController;
@@ -119,7 +117,7 @@ public class MembersGUI extends Paginator {
 
         if (previousUI != null) {
             addCloseAction((player) -> {
-                previousUI.open(player);
+                previousUI.open();
             });
         }
     }
