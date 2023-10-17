@@ -15,8 +15,10 @@ public class CPlayer {
     private boolean isActive;
     private boolean inClubChat = false;
     private List<UserPermissions> userPermissionsList;
+    private List<Notification> unreadNotifications;
 
-    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name, String rank) {
+    public CPlayer(UUID uuid, int clanId, long lastActive,
+                   long joinClanDate, String name, String rank) {
         this.uuid = uuid;
         this.clanId = clanId;
         this.lastActive = lastActive;
@@ -24,10 +26,12 @@ public class CPlayer {
         this.name = name;
         this.rank = rank;
         this.isActive = false;
+        this.unreadNotifications = new ArrayList<>();
         userPermissionsList = new ArrayList<>();
     }
 
-    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name, String rank, List<UserPermissions> permissions) {
+    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate,
+                   String name, String rank, List<UserPermissions> permissions) {
         this.uuid = uuid;
         this.clanId = clanId;
         this.lastActive = lastActive;
@@ -35,6 +39,7 @@ public class CPlayer {
         this.name = name;
         this.rank = rank;
         this.isActive = false;
+        this.unreadNotifications = new ArrayList<>();
         userPermissionsList = permissions;
     }
 
@@ -131,5 +136,18 @@ public class CPlayer {
 
     public boolean hasPermission(UserPermissions permission){
         return userPermissionsList.contains(permission); // TODO!
+    }
+
+
+    public List<Notification> getUnreadNotifications() {
+        return unreadNotifications;
+    }
+
+    public void setUnreadNotifications(List<Notification> unreadNotifications) {
+        this.unreadNotifications = unreadNotifications;
+    }
+
+    public void addNotification(Notification notification){
+        this.unreadNotifications.add(notification);
     }
 }

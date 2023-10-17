@@ -22,6 +22,8 @@ public class Clan {
     private List<Currency> currencies;
     private long createdOn;
 
+    private List<Notification> unreadNotifications;
+
     public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
                 double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
         this.id = id;
@@ -38,6 +40,7 @@ public class Clan {
         this.members = members;
         this.createdOn = createdOn;
         this.currencies = new ArrayList<>();
+        this.unreadNotifications = new ArrayList<>();
     }
 
     public long getCreatedOn() {
@@ -187,5 +190,17 @@ public class Clan {
 
     public void resetTempInterestRate(){
         this.tempInterestRate = 0.0;
+    }
+
+    public List<Notification> getUnreadNotifications() {
+        return unreadNotifications;
+    }
+
+    public void setUnreadNotifications(List<Notification> unreadNotifications) {
+        this.unreadNotifications = unreadNotifications;
+    }
+
+    public void addNotification(Notification notification){
+        this.unreadNotifications.add(notification);
     }
 }

@@ -325,7 +325,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             return;
         }
-        new LogsGUI(sender, plugin, sqlStorage, clansController, playerController);
+        new LogsMenu(sender, plugin, sqlStorage, clansController, playerController);
     }
 
 

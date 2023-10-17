@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LogsGUI extends AsyncPaginator {
+public class LogsMenu extends AsyncPaginator {
     private SQLStorage sqlStorage;
     private ClansController clansController;
     private PlayerController playerController;
 
     private SimpleDateFormat sdf;
-    public LogsGUI(Player player,
-                   ClansPlugin plugin,
-                   SQLStorage sqlStorage,
-                   ClansController clansController,
-                   PlayerController playerController) {
+    public LogsMenu(Player player,
+                    ClansPlugin plugin,
+                    SQLStorage sqlStorage,
+                    ClansController clansController,
+                    PlayerController playerController) {
 
         super(player, plugin, 54, "<Gray>Logs <dark_gray>[<gold>{page}<gray>/<gold>{pages}<dark_gray>] (<gold>{total}<dark_gray>)", List.of(
                 10, 11, 12, 13, 14, 15, 16,
