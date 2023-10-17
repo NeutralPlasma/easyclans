@@ -138,6 +138,35 @@ requests_menu:
       - "<gray>---------------------------"
       - "<gray>Expires: <red>{expires}"
 
+permissions_menu:
+  title: "Permissions for {player}"
+  has: "<green>Enabled"
+  doesnt_have: "<red>Disabled"
+  permission_item:
+    title: "<gold>{permission}"
+    lore:
+      - "<gray>Status: {status}"
+      - "<gray>Description:"
+      - "<yellow>{description}"
+
+banks_menu:
+  title: "<gold>Bank"
+  currency_item:
+    title: "<gray>[<gold>{currency}<gray>]"
+    lore:
+      - "<gray>Amount: <yellow>{amount}"
+      - "<gray>Raw Amount: <yellow>{raw}"
+      - "<dark_gray>------------------------"
+      - "<gray>L-Click to deposit"
+      - "<gray>R-Click to withdraw"
+      - "<gray>Shift L-Click to withdraw all"
+
+currencies:
+  limit_reached: "You can't deposit anymore, max deposited amount is {value}"
+  deposit: "<gray>Please enter a value you wish to deposit:"
+  withdraw: "<gray>Please enter a value you wish to withdraw:"
+  not_enough: "<gray>You dont have enough <red>{currency}<gray>, you entered <red>{price}"
+  invalid_amount: "<red>Invalid amount!"
 
 clan:
   chat:
@@ -195,16 +224,7 @@ clan:
         - "<gray>--------------------------"
         - "<gray>Buy price: <red>{buy_price}<gray>$"
 
-permissions_menu:
-  title: "Permissions for {player}"
-  has: "<green>Enabled"
-  doesnt_have: "<red>Disabled"
-  permission_item:
-    title: "<gold>{permission}"
-    lore:
-      - "<gray>Status: {status}"
-      - "<gray>Description:"
-      - "<yellow>{description}"
+
 
 
 clan_list:
@@ -397,17 +417,6 @@ requests_own:
       - "<gray>---------------------------"
       - "<gray>Expires: <red>{time}"
 
-currencies:
-  limit_reached: "You can't deposit anymore, max deposited amount is {value}"
-  withdraw: "<green>Please enter amount you want to withdraw!"
-  deposit: "<green>Please enter amount you want to deposit!"
-  item:
-    title: "<white>[<gold>{currency}<white>]"
-    lore:
-      - "<gray>L-Click to withdraw"
-      - "<gray>R-Click to deposit"
-      - "<gray>-------------------"
-      - "<gray>Amount: <gold>{amount}"
 leave_confirm:
   title: "<red>Leave?"
 delete_clan:

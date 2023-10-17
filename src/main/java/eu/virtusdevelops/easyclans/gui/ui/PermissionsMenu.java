@@ -37,7 +37,6 @@ public class PermissionsMenu extends AsyncPaginator {
     private final LogController logController;
     private final ClansPlugin plugin;
     private final GUI previousUI;
-    private final SimpleDateFormat sdf;
 
     public PermissionsMenu(Player player, CPlayer cTarget, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
                            RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin, GUI previousUI){
@@ -59,8 +58,6 @@ public class PermissionsMenu extends AsyncPaginator {
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
         this.previousUI = previousUI;
         this.cTarget = cTarget;
-        Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
-        sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
 
         setup();
         init();

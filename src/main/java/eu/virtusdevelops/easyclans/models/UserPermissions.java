@@ -10,7 +10,9 @@ public enum UserPermissions {
     VIEW_REQUESTS(""),
     VIEW_INVITES(""),
     VIEW_BANK(""),
-    VIEW_CLAN_INFO("")
+    VIEW_CLAN_INFO(""),
+    BANK_DEPOSIT(""),
+    BANK_WITHDRAW("")
 
     ;
 

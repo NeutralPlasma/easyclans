@@ -67,9 +67,9 @@ public class RequestsController {
     }
 
     public void deleteRequest(CRequest cRequest) {
+        requests.remove(cRequest.getRequestId());
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.deleteRequest(cRequest);
-            requests.remove(cRequest.getRequestId());
         });
     }
 

@@ -55,7 +55,7 @@ public class AsyncPaginator extends GUI{
 
 
 
-        open();
+        openStock();
         setTitle("Loading....");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             totalItems = getItemsCountTask.fetchData();
@@ -64,6 +64,7 @@ public class AsyncPaginator extends GUI{
         });
         fancyBackground();
     }
+
 
 
     private Icon firstPage(){
@@ -157,8 +158,18 @@ public class AsyncPaginator extends GUI{
                     .replace("{pages}", "" + totalPages)
                     .replace("{total}", "" + totalItems));
             refresh();
-            open();
+            openStock();
         });
+    }
+
+
+    public void openStock(){
+        player.openInventory(getInventory());
+    }
+    @Override
+    public void open() {
+        updatePage();
+        openStock();
     }
 
 

@@ -77,6 +77,7 @@ public class RequestsMenu extends AsyncPaginator {
                 List<Icon> icons = new ArrayList<>();
 
                 for(int i = 0; i < perPage; i++){
+                    Bukkit.getConsoleSender().sendMessage("Refreshing!");
                     var index = i + (page * perPage);
                     if(index >= requests.size()) break;
                     var request = requests.get(index);
