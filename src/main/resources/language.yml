@@ -161,6 +161,15 @@ banks_menu:
       - "<gray>R-Click to withdraw"
       - "<gray>Shift L-Click to withdraw all"
 
+clan_create_menu:
+  banner_item:
+    title: "<gray>[<gold>Banner<gray>]"
+    lore:
+      - "<dark_gray>------------------------"
+      - "<gray>Drag and drop to change"
+      - "<gray>Shift click to randomize"
+
+
 currencies:
   limit_reached: "You can't deposit anymore, max deposited amount is {value}"
   deposit: "<gray>Please enter a value you wish to deposit:"
