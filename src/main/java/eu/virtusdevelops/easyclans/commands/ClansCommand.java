@@ -333,7 +333,7 @@ public class ClansCommand implements TabExecutor {
         }
         var cPlayer = playerController.getPlayer(sender.getUniqueId());
         var clan = clansController.getClan(cPlayer.getClanID());
-        if(clan.getOwner().equals(cPlayer.getUuid()) || sender.hasPermission("easyclans.command.logs"))
+        if(clan.getOwner().equals(cPlayer.getUuid()) || sender.hasPermission("easyclans.command.clan_logs"))
             new ClanLogsGUI(sender, clan, plugin, sqlStorage, clansController, playerController);
         else
             sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
