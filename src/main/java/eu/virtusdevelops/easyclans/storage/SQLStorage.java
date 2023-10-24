@@ -526,7 +526,7 @@ public class SQLStorage {
         }
     }
 
-    public Clan saveClan(Clan clan) {
+    public boolean saveClan(Clan clan) {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO ec_clan_data
@@ -564,13 +564,15 @@ public class SQLStorage {
                 if (result.next()) {
                     clan.setId(result.getInt(1));
                     insertClanCurrencies(clan);
-                    return clan;
+                    return true;
                 }
+            }else{
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return clan;
+        return false;
     }
 
     public void deleteClan(Clan clan) {

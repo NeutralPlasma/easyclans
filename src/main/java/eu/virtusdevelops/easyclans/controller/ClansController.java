@@ -86,7 +86,10 @@ public class ClansController {
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.saveClan(clan); // clan gets new ID when this is executed.
+            if(sqlStorage.saveClan(clan)){
+                sqlStorage.saveClan(clan);
+                // if failed again then send error blabla
+            }
             var player = playerController.getPlayer(clan.getOwner());
             player.setClanID(clan.getId());
             player.setJoinClanDate(System.currentTimeMillis());

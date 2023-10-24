@@ -220,6 +220,7 @@ public class ClanCreateGUI extends GUI {
                             tag,
                             members
                     );
+
                     new AdminClanGUI(player, clan, clansController, playerController, requestsController, plugin, logController, currenciesController);
                     logController.addLog(new Log(name, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
                 }

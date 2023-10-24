@@ -165,10 +165,7 @@ public class ClansCommand implements TabExecutor {
                     sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
             case "clogs", "clog" -> {
-                if(sender.hasPermission("easyclans.command.clogs"))
-                    this.executeClanLogsCommand(player);
-                else
-                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                this.executeClanLogsCommand(player);
             }
         }
         return true;
