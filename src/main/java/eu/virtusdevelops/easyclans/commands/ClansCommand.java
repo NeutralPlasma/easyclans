@@ -38,19 +38,21 @@ public class ClansCommand implements TabExecutor {
     private final RequestsController requestsController;
     private final LogController logController;
     private final CurrenciesController currenciesController;
+    private final InvitesController invitesController;
     private final SQLStorage sqlStorage;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
                         RequestsController requestsController,
                         ClansPlugin plugin, LogController logController,
                         CurrenciesController currenciesController,
-                        SQLStorage sqlStorage) {
+                        InvitesController invitesController, SQLStorage sqlStorage) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
         this.currenciesController = currenciesController;
         this.plugin = plugin;
         this.logController = logController;
+        this.invitesController = invitesController;
         this.sqlStorage = sqlStorage;
     }
 
@@ -194,7 +196,7 @@ public class ClansCommand implements TabExecutor {
                 case "kick" -> {
                     CPlayer cPlayer = playerController.getPlayer(playerSender.getUniqueId());
 
-                    if (cPlayer.getClanID() == -1) {
+                    if (cPlayer.getClanID() == null) {
                         return Collections.emptyList();
                     }
 
@@ -222,19 +224,16 @@ public class ClansCommand implements TabExecutor {
 
     private void executeMenuSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
         if (clan == null) {
-            new ClanListGUI(sender, clansController, playerController, requestsController, null, logController, plugin);
+            new ClanListGUI(sender, clansController,
+                    playerController, requestsController,
+                    null, logController, plugin);
             return;
         }
 
-        new ClanMenu(sender, clan, clansController, playerController, currenciesController, requestsController, null, logController, plugin);
-
-        /*if(clan.getOwner().equals(sender.getUniqueId())){
-            new AdminClanGUI(sender, clan, clansController, playerController,
-                    requestsController, plugin, logController, currenciesController);
-        }else{
-            new ClanGUI(sender, clan, clansController, playerController, requestsController, logController, plugin, currenciesController);
-        }*/
-
+        new ClanMenu(sender, clan, clansController,
+                playerController, currenciesController,
+                requestsController, null,
+                logController, plugin);
     }
 
     private void executeBankSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -242,7 +241,10 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_in_clan")));
             return;
         }
-        new CurrenciesGUI(sender, clan, clansController, playerController, null, logController, plugin, currenciesController);
+        new ClanBankMenu(sender, clan, clansController,
+                playerController, currenciesController,
+                requestsController, invitesController,
+                logController, plugin, null);
     }
 
     private void executeMembersSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -250,7 +252,10 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("not_in_clan")));
             return;
         }
-        new MembersGUI(sender, clan, clansController, playerController, null, logController, plugin);
+        new MembersMenu(sender, clan, clansController,
+                playerController, currenciesController,
+                requestsController, invitesController,
+                logController, plugin, null);
     }
 
     private void executeListSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -262,7 +267,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("already_in_clan")));
             return;
         }
-        new ClanCreateGUI( sender, plugin, playerController, clansController, requestsController, logController,currenciesController);
+        new ClanCreateMenu(sender, clansController, playerController, currenciesController, requestsController, invitesController, logController, plugin);
     }
 
     private void executeDeleteClanSubCommand(Player sender, CPlayer cPlayer, Clan clan){
@@ -292,7 +297,7 @@ public class ClansCommand implements TabExecutor {
         new ConfirmGUI(sender, (player) -> {
             // confirm
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            cPlayer.setClanID(-1);
+            cPlayer.setClanID(null);
             playerController.updatePlayer(cPlayer);
             player.closeInventory();
 
@@ -313,7 +318,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             return;
         }
-
+        sender.sendMessage(MM.deserialize("<yellow>EasyClans <gray>(<gold>" + plugin.getPluginMeta().getVersion() + "<gray>)"));
         sender.sendMessage(MM.deserialize("<gold>Enabled economy providers: "));
         for(var provider : currenciesController.getCurrencyProviders().values()){
             sender.sendMessage(MM.deserialize("<gray>- <yellow>" + provider.getPluginName()));
@@ -344,7 +349,7 @@ public class ClansCommand implements TabExecutor {
 
     private void executeAcceptSubCommand(Player sender, String player){
         var cPlayer = playerController.getPlayer(sender.getUniqueId());
-        if(cPlayer.getClanID() == -1){
+        if(cPlayer.getClanID() == null){
             sender.sendMessage(ClansPlugin.MM.deserialize(
                     LanguageController.getLocalized("not_in_clan")
             ));
@@ -415,6 +420,7 @@ public class ClansCommand implements TabExecutor {
         playerController.updatePlayer(cRequester);
 
         // edit clan add member blabla
+        playerController.setDefaultPermissions(cRequester);
         clan.addMember(cRequester.getUuid());
 
         // send message

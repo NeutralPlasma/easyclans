@@ -19,6 +19,7 @@ currencies_max_interest_adding:
 # clan pricing
 clan:
   default_request_expire_duration: 504000 # in seconds
+  default_kick_time: 604800 # in seconds (7 days)
   max_members: 10
 
   tag_min_length: 1
@@ -26,6 +27,9 @@ clan:
 
   min_name_length: 4
   max_name_length: 16 # how long can clan name be.
+
+  display_name_max_length: 16
+  display_name_min_length: 4
 
   update_interval: 1200 # in ticks 1 sec => 20 ticks
 

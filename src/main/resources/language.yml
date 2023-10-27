@@ -168,6 +168,38 @@ clan_create_menu:
       - "<dark_gray>------------------------"
       - "<gray>Drag and drop to change"
       - "<gray>Shift click to randomize"
+  join_price_item:
+    message: "<gray>Please enter join price."
+    invalid_message: "<red>Invalid value"
+    title: "<gray>[<gold>Join price<gray>]"
+    lore:
+      - "<gray>Current: <gold>{price}"
+      - "<dark_gray>------------------------"
+      - "<gray>Click to change"
+  kicktime_item:
+    message: "<gray>Please enter new inactive time for kick in seconds: "
+    invalid_message: "<red>Invalid value"
+    title: "<gray>[<gold>Inactive kick<gray>]"
+    lore:
+      - "<gray>Current: <gold>{time}"
+      - "<dark_gray>------------------------"
+      - "<gray>Click to change"
+  name_item:
+    invalid_name: "<red>Invalid clan name!"
+    invalid_tag: "<red>Invalid tag!"
+    invalid_display_name: "<red>Invalid display name!"
+    title: "<gray>[<gold>Clan name<gray>]"
+    lore:
+      - "<gray>Name: <gold>{name}"
+      - "<gray>Display name: <gold>{display_name}"
+      - "<gray>Tag: <gold>{tag}"
+      - "<dark_gray>------------------------"
+      - "<gray>L-Click to change name"
+      - "<gray>R-Click to change display name"
+      - "<gray>Shift L-Click change to tag"
+  confirm:
+    title: "<green>Confirm clan creation"
+    not_enough_money: "<red>Not enough money!"
 
 
 currencies:

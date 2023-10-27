@@ -23,6 +23,7 @@ public class ClansPlugin extends JavaPlugin {
     private LogController logController;
     private SQLStorage sqlStorage;
     private CurrenciesController currenciesController;
+    private InvitesController invitesController;
 
     private BukkitTask bgTask;
     private boolean inited = false;
@@ -43,6 +44,7 @@ public class ClansPlugin extends JavaPlugin {
         playerController = new PlayerController(this, sqlStorage);
         clansController = new ClansController(this, sqlStorage, playerController, currenciesController);
         requestsController = new RequestsController(this, sqlStorage);
+        invitesController = new InvitesController(this, sqlStorage);
 
         this.registerListeners();
         this.registerCommands();
@@ -79,7 +81,7 @@ public class ClansPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, sqlStorage));
+        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, sqlStorage));
     }
 
     private void registerGUI() {

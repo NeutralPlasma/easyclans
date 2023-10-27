@@ -3,13 +3,13 @@ package eu.virtusdevelops.easyclans.models;
 import java.util.UUID;
 
 public class CRequest {
-    private int requestId;
-    private int clanId;
+    private UUID requestId;
+    private UUID clanId;
     private UUID playerUuid;
     private long expireTime;
     private long createdTime;
 
-    public CRequest(int requestId, int clanId, UUID playerUuid, long expireTime, long createdTime) {
+    public CRequest(UUID requestId, UUID clanId, UUID playerUuid, long expireTime, long createdTime) {
         this.requestId = requestId;
         this.clanId = clanId;
         this.playerUuid = playerUuid;
@@ -17,15 +17,12 @@ public class CRequest {
         this.createdTime = createdTime;
     }
 
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
 
-    public int getRequestId() {
+    public UUID getRequestId() {
         return requestId;
     }
 
-    public int getClanId() {
+    public UUID getClanId() {
         return clanId;
     }
 

@@ -2,15 +2,18 @@ package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.models.CPlayer;
+import eu.virtusdevelops.easyclans.models.UserPermissions;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PlayerController {
     private final Map<UUID, CPlayer> players;
+    private List<UserPermissions> permissions = new ArrayList<>();
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
@@ -26,6 +29,10 @@ public class PlayerController {
         for (CPlayer cplayer : lPlayers) {
             players.put(cplayer.getUuid(), cplayer);
         }
+
+        // load default perms
+        var list = plugin.getConfig().getStringList("default_permissions");
+        permissions.addAll(list.stream().map(UserPermissions::valueOf).toList());
     }
 
     /**
@@ -41,7 +48,7 @@ public class PlayerController {
     public CPlayer createPlayer(Player player) {
         User user = ClansPlugin.Ranks.getPlayerAdapter(Player.class).getUser(player);
         CPlayer cPlayer = new CPlayer(player.getUniqueId(),
-                -1,
+                null,
                 System.currentTimeMillis(),
                 0,
                 player.getName(),
@@ -52,6 +59,20 @@ public class PlayerController {
         });
         addPlayer(cPlayer);
         return cPlayer;
+    }
+
+    public void addDefaultPermissions(CPlayer cPlayer){
+        for(var perm: permissions){
+            if(!cPlayer.hasPermission(perm))
+                cPlayer.addPermission(perm);
+        }
+    }
+
+    public void setDefaultPermissions(CPlayer cPlayer){
+        cPlayer.getUserPermissionsList().clear();
+        for(var perm: permissions){
+            cPlayer.addPermission(perm);
+        }
     }
 
 
@@ -92,7 +113,7 @@ public class PlayerController {
     }
 
 
-    public List<CPlayer> getClanPlayers(int clan_id) {
+    public List<CPlayer> getClanPlayers(UUID clan_id) {
         List<CPlayer> playerss = new ArrayList<>();
         for (CPlayer player : players.values()) {
             if (player.getClanID() == clan_id) {

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Clan {
-    private int id;
+    private UUID id;
     private UUID owner;
     private String name;
     private String displayName;
@@ -20,11 +20,30 @@ public class Clan {
     private String tag;
     private List<UUID> members;
     private List<Currency> currencies;
+    private List<Trophy> trophies;
     private long createdOn;
 
-    private List<Notification> unreadNotifications;
 
-    public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+    public Clan(UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+                double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
+        this.id = UUID.randomUUID();
+        this.owner = owner;
+        this.name = name;
+        this.displayName = displayName;
+        this.autoKickTime = autoKickTime;
+        this.joinPointsPrice = joinPointsPrice;
+        this.joinMoneyPrice = joinMoneyPrice;
+        this.interestRate = interestRate;
+        this.banner = banner;
+        this.bank = bank;
+        this.tag = tag;
+        this.members = members;
+        this.createdOn = createdOn;
+        this.currencies = new ArrayList<>();
+        this.trophies = new ArrayList<>();
+    }
+
+    public Clan(UUID id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
                 double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
         this.id = id;
         this.owner = owner;
@@ -40,7 +59,7 @@ public class Clan {
         this.members = members;
         this.createdOn = createdOn;
         this.currencies = new ArrayList<>();
-        this.unreadNotifications = new ArrayList<>();
+        this.trophies = new ArrayList<>();
     }
 
     public long getCreatedOn() {
@@ -51,13 +70,10 @@ public class Clan {
         this.createdOn = createdOn;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public UUID getOwner() {
         return owner;
@@ -192,15 +208,4 @@ public class Clan {
         this.tempInterestRate = 0.0;
     }
 
-    public List<Notification> getUnreadNotifications() {
-        return unreadNotifications;
-    }
-
-    public void setUnreadNotifications(List<Notification> unreadNotifications) {
-        this.unreadNotifications = unreadNotifications;
-    }
-
-    public void addNotification(Notification notification){
-        this.unreadNotifications.add(notification);
-    }
 }

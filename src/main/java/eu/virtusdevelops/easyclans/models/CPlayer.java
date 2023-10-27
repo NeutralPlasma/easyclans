@@ -2,6 +2,7 @@ package eu.virtusdevelops.easyclans.models;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,14 @@ import java.util.UUID;
 public class CPlayer {
     private String name, rank;
     private UUID uuid;
-    private int clanId;
+    private UUID clanId;
     private long lastActive, joinClanDate;
     private boolean isActive;
     private boolean inClubChat = false;
     private List<UserPermissions> userPermissionsList;
     private List<Notification> unreadNotifications;
 
-    public CPlayer(UUID uuid, int clanId, long lastActive,
+    public CPlayer(UUID uuid, UUID clanId, long lastActive,
                    long joinClanDate, String name, String rank) {
         this.uuid = uuid;
         this.clanId = clanId;
@@ -30,7 +31,7 @@ public class CPlayer {
         userPermissionsList = new ArrayList<>();
     }
 
-    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate,
+    public CPlayer(UUID uuid, UUID clanId, long lastActive, long joinClanDate,
                    String name, String rank, List<UserPermissions> permissions) {
         this.uuid = uuid;
         this.clanId = clanId;
@@ -59,20 +60,20 @@ public class CPlayer {
         this.uuid = uuid;
     }
 
-    public int getClanID() {
+    public UUID getClanID() {
         return clanId;
     }
 
-    public void setClanID(int clan_id) {
+    public void setClanID(UUID clan_id) {
         this.clanId = clan_id;
-        if(clan_id == -1){
+        if(clan_id == null){
             inClubChat = false;
         }
     }
 
     public void removeFromClan() {
         this.userPermissionsList.clear();
-        this.clanId = -1;
+        this.clanId = null;
     }
 
     public long getLastActive() {
@@ -93,6 +94,10 @@ public class CPlayer {
 
     public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uuid);
+    }
+
+    public Player tryGetPlayer(){
+        return Bukkit.getPlayer(uuid);
     }
 
     public String getName() {

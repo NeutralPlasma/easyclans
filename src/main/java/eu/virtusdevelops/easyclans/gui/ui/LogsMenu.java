@@ -72,7 +72,7 @@ public class LogsMenu extends AsyncPaginator {
                     var meta = item.getItemMeta();
                     meta.displayName(ClansPlugin.MM.deserialize("<gold>" + log.type()));
                     var lore = new ArrayList<Component>();
-                    var clan = log.clan() != -1 ? clansController.getClan(log.clan()) != null ? clansController.getClan(log.clan()).getName() : "DELETED" : "UNKNOWN";
+                    var clan = log.clan() != null ? clansController.getClan(log.clan()) != null ? clansController.getClan(log.clan()).getName() : "DELETED" : "UNKNOWN";
 
                     lore.add(ClansPlugin.MM.deserialize("<gray>-------------------"));
                     lore.add(ClansPlugin.MM.deserialize("<gray>Clan: <yellow>" + clan));

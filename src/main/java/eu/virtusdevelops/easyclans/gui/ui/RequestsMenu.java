@@ -205,6 +205,7 @@ public class RequestsMenu extends AsyncPaginator {
                 playerController.updatePlayer(cTarget);
 
                 // edit clan add member blabla
+                playerController.setDefaultPermissions(cTarget);
                 clan.addMember(cTarget.getUuid());
 
                 // send message

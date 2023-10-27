@@ -1,10 +1,8 @@
 package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.models.Clan;
+import eu.virtusdevelops.easyclans.models.*;
 import eu.virtusdevelops.easyclans.models.Currency;
-import eu.virtusdevelops.easyclans.models.Log;
-import eu.virtusdevelops.easyclans.models.LogType;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +12,7 @@ import java.util.*;
 public class ClansController {
     private PlayerController playerController;
     private CurrenciesController currenciesController;
-    private final Map<Integer, Clan> clans;
+    private final Map<UUID, Clan> clans;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
@@ -38,7 +36,7 @@ public class ClansController {
                         has = true;
                 }
                 if(!has){
-                    var newCurrency = new eu.virtusdevelops.easyclans.models.Currency(-1, 0.0, currency, clan.getId());
+                    var newCurrency = new eu.virtusdevelops.easyclans.models.Currency(UUID.randomUUID(), 0.0, currency, clan.getId());
                     clan.addCurrency(newCurrency);
                     sqlStorage.insertSingleClanCurrency(newCurrency);
 
@@ -58,52 +56,46 @@ public class ClansController {
         clans.put(clan.getId(), clan);
     }
 
-    /**
-     * Adds a new clan to the clan list.
-     *
-     * @param owner                the UUID of the player who owns the clan.
-     * @param name                 the name of the clan.
-     * @param displayName          the display name of the clan.
-     * @param autoKickTime         the auto-kick time for inactive members.
-     * @param joinPointsPrice      the points price for joining the clan.
-     * @param joinMoneyPrice       the money price for joining the clan.
-     * @param banner               the banner item for the clan.
-     * @param bank                 the initial bank balance of the clan.
-     * @param interestRate         the interest rate
-     * @param tag                  the tag associated with the clan.
-     * @param members              the list of UUIDs of clan members.
-     */
+
     public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
                            int joinPointsPrice, double joinMoneyPrice,
                            ItemStack banner, double bank, double interestRate, String tag, List<UUID> members) {
 
-        Clan clan = new Clan(-1, owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
+        Clan clan = new Clan(owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
                 banner, bank, interestRate, tag, members, System.currentTimeMillis());
 
         for(var currency : currenciesController.getCurrencyProviders().keySet()){
-            var newCurrency = new Currency(-1, 0.0, currency, clan.getId());
+            var newCurrency = new Currency(UUID.randomUUID(), 0.0, currency, clan.getId());
             clan.addCurrency(newCurrency);
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.saveClan(clan); // clan gets new ID when this is executed.
-            var player = playerController.getPlayer(clan.getOwner());
-            player.setClanID(clan.getId());
-            player.setJoinClanDate(System.currentTimeMillis());
-            playerController.updatePlayer(player);
-            addClan(clan);
+            if(sqlStorage.saveClan(clan)){
+                var player = playerController.getPlayer(clan.getOwner());
+                player.setClanID(clan.getId());
+                player.setJoinClanDate(System.currentTimeMillis());
+                playerController.updatePlayer(player);
+                addClan(clan);
+            }else{
+                // FAILED inserting new clan into database notify.
+                var player = playerController.getPlayer(clan.getOwner());
+                var oPlayer = player.tryGetPlayer();
+                if(oPlayer!= null) {
+                    oPlayer.closeInventory();
+                }
+            }
         });
         return clan;
     }
 
-    public void deleteClan(int id){
+    public void deleteClan(UUID id){
         if(!clans.containsKey(id)) return;
         Clan clan = clans.get(id);
         clans.remove(id);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for(var uuid : clan.getMembers()){
                 var player = playerController.getPlayer(uuid);
-                player.setClanID(-1);
+                player.setClanID(null);
                 playerController.updatePlayer(player);
             }
             sqlStorage.deleteClan(clan);
@@ -118,11 +110,16 @@ public class ClansController {
      * @return the clan object associated with the provided id, or null if
      *         no clan with the given id is found.
      */
-    public Clan getClan(int id) {
-        if(id == -1) return null;
+    public Clan getClan(UUID id) {
+        if(id == null) return null;
         if (clans.containsKey(id))
             return clans.get(id);
         return null;
+    }
+
+    public Clan getClan(String name){
+        if(name.isEmpty()) return null;
+        return clans.values().stream().filter(it -> it.getName().equals(name)).findFirst().orElse(null);
     }
 
     public void updateClan(Clan clan){
@@ -141,10 +138,10 @@ public class ClansController {
 
 
         for(var player : playerController.getPlayers()){
-            if(player.getClanID() == -1) continue;
+            if(player.getClanID() == null) continue;
             var clan = clans.get(player.getClanID());
             if(clan == null){
-                player.setClanID(-1);
+                player.setClanID(null);
                 playerController.updatePlayer(player);
                 return;
             }
@@ -158,7 +155,7 @@ public class ClansController {
 
             if(clan.getOwner().equals(player.getUuid())) continue;
             if(System.currentTimeMillis() - player.getLastActive() > clan.getAutoKickTime()){
-                player.setClanID(-1);
+                player.setClanID(null);
                 // TODO: send kick notification
                 sqlStorage.addLog(new Log("Inactivity kick", player.getUuid(), clan.getId(), LogType.AUTO_KICK, System.currentTimeMillis()));
                 sqlStorage.updatePlayer(player);
