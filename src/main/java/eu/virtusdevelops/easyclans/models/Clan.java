@@ -15,7 +15,7 @@ public class Clan {
     private int joinPointsPrice;
     private double joinMoneyPrice;
     private ItemStack banner;
-    private double bank, interestRate, actualInterestRate;
+    private double interestRate, actualInterestRate;
     private double tempInterestRate = 0.0;
     private String tag;
     private List<UUID> members;
@@ -25,7 +25,7 @@ public class Clan {
 
 
     public Clan(UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, long createdOn) {
         this.id = UUID.randomUUID();
         this.owner = owner;
         this.name = name;
@@ -35,7 +35,6 @@ public class Clan {
         this.joinMoneyPrice = joinMoneyPrice;
         this.interestRate = interestRate;
         this.banner = banner;
-        this.bank = bank;
         this.tag = tag;
         this.members = members;
         this.createdOn = createdOn;
@@ -44,7 +43,7 @@ public class Clan {
     }
 
     public Clan(UUID id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, long createdOn) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -54,7 +53,6 @@ public class Clan {
         this.joinMoneyPrice = joinMoneyPrice;
         this.interestRate = interestRate;
         this.banner = banner;
-        this.bank = bank;
         this.tag = tag;
         this.members = members;
         this.createdOn = createdOn;

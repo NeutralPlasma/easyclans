@@ -67,11 +67,12 @@ public class SQLStorage {
 
         logger.info("Creating database tables...");
         this.createPlayersTable();
-        this.createPermissionsTable();
-
         this.createClansTable();
-
         this.createTrophiesTable();
+
+        // dependant tables
+        this.createPermissionsTable();
+        this.createClanTrophytable();
         this.createClanInvitesTable();
         this.createClanJoinRequestsTable();
         this.createCurrenciesTable();
@@ -108,7 +109,8 @@ public class SQLStorage {
                         CREATE TABLE IF NOT EXISTS ec_permissions (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             player_id VARCHAR(36),
-                            permission VARCHAR(128)
+                            permission VARCHAR(128),
+                            FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid) ON DELETE CASCADE
                         );
                         """
             );
@@ -133,7 +135,6 @@ public class SQLStorage {
                                 join_money_price DOUBLE,
                                 interest_rate DOUBLE,
                                 banner TEXT,
-                                bank DOUBLE,
                                 tag VARCHAR(16),
                                 
                                 created_on DATETIME,
@@ -157,7 +158,7 @@ public class SQLStorage {
                     currency_name VARCHAR(128),
                     clan_id VARCHAR(36),
                     
-                    FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id)
+                    FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE
                     )
                     """);
             statement.execute();
@@ -179,8 +180,8 @@ public class SQLStorage {
                                 expire_date BIGINT,
                                 created_on BIGINT,
                                 
-                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
-                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE,
+                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid) ON DELETE CASCADE
                             );
                             """
             );
@@ -196,7 +197,7 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement(
                     """
                             CREATE TABLE IF NOT EXISTS ec_logs (
-                                id CHAR(36) PRIMARY KEY,
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 message TEXT,
                                 clan_id VARCHAR(36),
                                 player_id VARCHAR(36),
@@ -226,8 +227,8 @@ public class SQLStorage {
                                 expire_date BIGINT,
                                 created_on BIGINT,
                           
-                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
-                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE,
+                                FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid) ON DELETE CASCADE
                             );
                             """
             );
@@ -245,15 +246,38 @@ public class SQLStorage {
                             CREATE TABLE IF NOT EXISTS ec_trophy (
                                 id CHAR(36) PRIMARY KEY,
                                 title VARCHAR(128),
-                                description TEXT,
-                                clan_id VARCHAR(36) NOT NULL,
-                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id)
+                                start_date BIGINT,
+                                end_date BIGINT,
+                                description TEXT
                             );
                             """
             );
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Could not requests table");
+            logger.severe("Could not trophies table");
+            e.printStackTrace();
+        }
+    }
+
+
+    private void createClanTrophytable(){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                            CREATE TABLE IF NOT EXISTS ec_clan_trophy (
+                                id CHAR(36) PRIMARY KEY,
+                                clan_id CHAR(36),
+                                trophy_id CHAR(36),
+                                ranking INT,
+                                achieve_date BIGINT,
+                                FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE,
+                                FOREIGN KEY (trophy_id) REFERENCES ec_trophy(id) ON DELETE CASCADE
+                            );
+                            """
+            );
+            statement.execute();
+        } catch (SQLException e) {
+            logger.severe("Could not clan trophies table");
             e.printStackTrace();
         }
     }
@@ -293,11 +317,11 @@ public class SQLStorage {
                     rank = ?
                     WHERE uuid = ?
                     """);
-            statement.setString(1, cPlayer.getClanID().toString());
+            statement.setString(1, cPlayer.getClanID() != null ? cPlayer.getClanID().toString() : null);
             statement.setLong(2, cPlayer.getLastActive());
             statement.setLong(3, cPlayer.getJoinClanDate());
-            statement.setString(5, cPlayer.getUuid() != null ? cPlayer.getUuid().toString(): null);
             statement.setString(4, cPlayer.getRank());
+            statement.setString(5, cPlayer.getUuid() != null ? cPlayer.getUuid().toString(): null);
             statement.execute();
 
             updatePlayerPermissions(cPlayer);
@@ -416,7 +440,7 @@ public class SQLStorage {
             while (result.next()) {
                 var cPlayer = new CPlayer(
                         UUID.fromString(result.getString("uuid")),
-                        UUID.fromString(result.getString("clan_id")),
+                        result.getString("clan_id") == null ? null : UUID.fromString(result.getString("clan_id")),
                         result.getLong("last_active"),
                         result.getLong("joined_clan"),
                         result.getString("name"),
@@ -599,7 +623,6 @@ public class SQLStorage {
                         result.getInt("join_points_price"),
                         result.getDouble("join_money_price"),
                         Serialization.decodeItemBase64(result.getString("banner")),
-                        result.getDouble("bank"),
                         result.getDouble("interest_rate"),
                         result.getString("tag"),
                         null,
@@ -628,7 +651,6 @@ public class SQLStorage {
                     join_points_price = ?,
                     join_money_price = ?,
                     banner = ?,
-                    bank = ?,
                     interest_rate = ?,
                     tag = ?
                     WHERE id = ?
@@ -640,10 +662,9 @@ public class SQLStorage {
             statement.setInt(5, clan.getJoinPointsPrice());
             statement.setDouble(6, clan.getJoinMoneyPrice());
             statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(8, 0.0);
-            statement.setDouble(9, clan.getInterestRate());
-            statement.setString(10, clan.getTag());
-            statement.setString(11, clan.getId().toString());
+            statement.setDouble(8, clan.getInterestRate());
+            statement.setString(9, clan.getTag());
+            statement.setString(10, clan.getId().toString());
 
             statement.executeUpdate();
             updateClanCurrencies(clan);
@@ -666,13 +687,12 @@ public class SQLStorage {
                     join_points_price,
                     join_money_price,
                     banner,
-                    bank,
                     interest_rate,
                     tag,
                     created_on
                     )
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """);
             statement.setString(1, clan.getId().toString());
             statement.setString(2, clan.getOwner().toString());
@@ -682,10 +702,9 @@ public class SQLStorage {
             statement.setInt(6, clan.getJoinPointsPrice());
             statement.setDouble(7, clan.getJoinMoneyPrice());
             statement.setString(8, Serialization.encodeItemBase64(clan.getBanner()));
-            statement.setDouble(9, 0.0);
-            statement.setDouble(10, clan.getInterestRate());
-            statement.setString(11, clan.getTag());
-            statement.setLong(12, clan.getCreatedOn());
+            statement.setDouble(9, clan.getInterestRate());
+            statement.setString(10, clan.getTag());
+            statement.setLong(11, clan.getCreatedOn());
 
             int rows = statement.executeUpdate();
             if (rows > 0) {
@@ -962,7 +981,128 @@ public class SQLStorage {
     //</editor-fold">
 
 
-    //<editor-fold desc="notifications">
+    //<editor-fold desc="trophies">
+
+    public boolean saveTrophy(Trophy trophy){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO
+                    ec_trophy
+                    (id, title, description, start_date, end_date)
+                    VALUES
+                    (?, ?, ?, ?, ?)
+                    """);
+            statement.setString(1, trophy.getId().toString());
+            statement.setString(2, trophy.getTitle());
+            statement.setString(3, trophy.getDescription());
+            statement.setLong(4, trophy.getStartDate());
+            statement.setLong(5, trophy.getEndDate());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean removeClanFromTrophy(ClanTrophy trophy){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement2 = connection.prepareStatement("""
+                DELETE FROM ec_clan_trophy
+                WHERE
+                id = ?
+                )
+                """);
+            statement2.setString(1, trophy.getId().toString());
+            statement2.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addClanToTrophy(ClanTrophy trophy){
+        try (Connection connection = dataSource.getConnection()) {
+            // insert or update
+            PreparedStatement statement2 = connection.prepareStatement("""
+            INSERT INTO ec_clan_trophy (id, clan_id, trophy_id, ranking, achieve_date)
+            SELECT ?, ?, ?, ?, ?
+            WHERE NOT EXISTS (
+                SELECT *
+                FROM ec_clan_trophy
+                id = ?
+            )
+            """);
+            statement2.setString(1, trophy.getId().toString());
+            statement2.setString(2, trophy.getClanID().toString());
+            statement2.setString(3, trophy.getId().toString());
+            statement2.setInt(4, trophy.getRanking());
+            statement2.setLong(5, trophy.getAchievedDate());
+            statement2.setString(6, trophy.getId().toString());
+            statement2.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean insertTrophyClans(Trophy trophy){
+        try (Connection connection = dataSource.getConnection()) {
+            for(var cTrophy : trophy.getClansData()){
+                // insert or update
+                PreparedStatement statement2 = connection.prepareStatement("""
+                INSERT INTO ec_clan_trophy (id, clan_id, trophy_id, ranking, achieve_date)
+                SELECT ?, ?, ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT *
+                    FROM ec_clan_trophy
+                    id = ?
+                )
+                """);
+                statement2.setString(1, cTrophy.getId().toString());
+                statement2.setString(2, cTrophy.getClanID().toString());
+                statement2.setString(3, trophy.getId().toString());
+                statement2.setInt(4, cTrophy.getRanking());
+                statement2.setLong(5, cTrophy.getAchievedDate());
+                statement2.setString(6, cTrophy.getId().toString());
+                statement2.execute();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateTrophy(Trophy trophy){
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    UPDATE ec_trophy
+                    SET
+                    title = ?,
+                    description = ?,
+                    start_date = ?,
+                    end_date = ?
+                    WHERE id = ?
+                    """);
+            statement.setString(1, trophy.getTitle());
+            statement.setString(2, trophy.getDescription());
+            statement.setLong(3, trophy.getStartDate());
+            statement.setLong(4, trophy.getEndDate());
+            statement.setString(4, trophy.getId().toString());
+            statement.execute();
+            insertTrophyClans(trophy);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
 
 
     //</editor-fold">

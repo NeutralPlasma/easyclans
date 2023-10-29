@@ -59,10 +59,10 @@ public class ClansController {
 
     public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
                            int joinPointsPrice, double joinMoneyPrice,
-                           ItemStack banner, double bank, double interestRate, String tag, List<UUID> members) {
+                           ItemStack banner, double interestRate, String tag, List<UUID> members) {
 
         Clan clan = new Clan(owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
-                banner, bank, interestRate, tag, members, System.currentTimeMillis());
+                banner, interestRate, tag, members, System.currentTimeMillis());
 
         for(var currency : currenciesController.getCurrencyProviders().keySet()){
             var newCurrency = new Currency(UUID.randomUUID(), 0.0, currency, clan.getId());

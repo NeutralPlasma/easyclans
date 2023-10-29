@@ -71,6 +71,8 @@ public class ClanCreateMenu extends GUI {
         addIcon(15, bannerIcon());
         addIcon(29, kickTimeIcon());
         addIcon(33, createClanIcon());
+
+        //addIcon(53, createConfirmIcon());
     }
 
     // <editor-fold desc="Banner icon">
@@ -123,7 +125,6 @@ public class ClanCreateMenu extends GUI {
         return icon;
     }
     // </editor-fold>
-
 
     // <editor-fold desc="Join price icon">
     private ItemStack joinPriceItem(){
@@ -178,8 +179,7 @@ public class ClanCreateMenu extends GUI {
     }
     // </editor-fold>
 
-
-    // <editor-fold desc="Join price icon">
+    // <editor-fold desc="Kick icon">
     private ItemStack kickTimeItem(){
         var item = new ItemStack(Material.ANVIL);
         var meta = item.getItemMeta();
@@ -234,8 +234,7 @@ public class ClanCreateMenu extends GUI {
     }
     // </editor-fold>
 
-
-    // <editor-fold desc="Join price icon">
+    // <editor-fold desc="Name icon">
     private ItemStack nameItem(){
         var item = new ItemStack(Material.WRITABLE_BOOK);
         var meta = item.getItemMeta();
@@ -347,37 +346,31 @@ public class ClanCreateMenu extends GUI {
     }
     // </editor-fold>
 
-
-    // <editor-fold desc="Join price icon">
+    // <editor-fold desc="Clan Item">
     private ItemStack createClanItem(){
-        var item = new ItemStack(Material.WRITABLE_BOOK);
+        var item = new ItemStack(Material.DARK_OAK_DOOR);
         var meta = item.getItemMeta();
         meta.displayName(ClansPlugin.MM.deserialize(
-                        LanguageController.getLocalized("clan_create_menu.create_item.title")
+                        LanguageController.getLocalized("clan_create_menu.confirm_item.title")
                 ).decoration(TextDecoration.ITALIC, false)
         );
-
         var kickText = kickTime == -1 ? LanguageController.getLocalized("disabled") : DurationFormatUtils.formatDurationWords(kickTime, true,true);
-        meta.lore(LanguageController.getLocalizedList("clan_create_menu.create_item.lore").stream().map(it -> ClansPlugin.MM.deserialize(it
+        meta.lore(LanguageController.getLocalizedList("clan_create_menu.confirm_item.lore").stream().map(it -> ClansPlugin.MM.deserialize(it
                 .replace("{name}", clanName)
                 .replace("{display_name}", clanDisplayName)
                 .replace("{tag}", clanTag)
                 .replace("{time}", kickText)
         )).toList());
         item.setItemMeta(meta);
-
-
         return item;
     }
     private Icon createClanIcon(){
         var icon = new Icon(createClanItem(), (self, target) -> {
             self.itemStack = createClanItem();
         });
-
         icon.setVisibilityCondition((target, self) ->
                 target.hasPermission("easyclans.create")
         );
-
         icon.addClickAction((target) -> {
 
             new ConfirmGUI(target, (target2) -> {
@@ -404,7 +397,6 @@ public class ClanCreateMenu extends GUI {
                         joinPrice,
                         BannerUtils.strip(clanBanner),
                         0.0,
-                        0.0,
                         clanTag,
                         members
                 );
@@ -414,16 +406,11 @@ public class ClanCreateMenu extends GUI {
             }, (target2) -> {
                 open();
                 refresh();
-
-
             }, LanguageController.getLocalized("clan_create_menu.confirm.title"));
-
         });
-
-
-
         return icon;
     }
     // </editor-fold>
+
 
 }

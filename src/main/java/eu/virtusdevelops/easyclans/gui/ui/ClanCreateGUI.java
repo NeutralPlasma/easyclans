@@ -216,7 +216,6 @@ public class ClanCreateGUI extends GUI {
                             moneyPrice,
                             strip(banner),
                             0.0,
-                            0.0,
                             tag,
                             members
                     );
