@@ -194,6 +194,12 @@ public class ClanCreateGUI extends GUI {
         icon.addClickAction(player -> {
             new ConfirmGUI(player, (confirmPlayer) -> {
                 // TODO: add multi currency support
+                var cPlayer = playerController.getPlayer(player.getUniqueId());
+                if(cPlayer.getClanID() != -1){
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    player.closeInventory();
+                    return;
+                }
 
                 if(currenciesController.getProvider("Vault").getValue(player) < plugin.getConfig().getDouble("clan.create.price.money") ){
                     player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("create.menu.create.not_enough_money")));
