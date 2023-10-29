@@ -14,8 +14,15 @@ public class TropyController {
     private SQLStorage sqlStorage;
     private List<Trophy> trophyList;
 
+    public TropyController(ClansPlugin plugin, SQLStorage sqlStorage) {
+        this.plugin = plugin;
+        this.sqlStorage = sqlStorage;
+        init();
+    }
 
-
+    private void init(){
+        // sql load all trophies...
+    }
 
     public Trophy createTrophy(String title, String description, long startDate, long endDate) {
         Trophy trophy = new Trophy(title, description, startDate, endDate);

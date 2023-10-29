@@ -1,6 +1,7 @@
 package eu.virtusdevelops.easyclans;
 
 import eu.virtusdevelops.easyclans.commands.ClansCommand;
+import eu.virtusdevelops.easyclans.commands.TrophyCommand;
 import eu.virtusdevelops.easyclans.controller.*;
 import eu.virtusdevelops.easyclans.gui.Handler;
 import eu.virtusdevelops.easyclans.listener.PlayerChatListener;
@@ -24,6 +25,7 @@ public class ClansPlugin extends JavaPlugin {
     private SQLStorage sqlStorage;
     private CurrenciesController currenciesController;
     private InvitesController invitesController;
+    private TropyController tropyController;
 
     private BukkitTask bgTask;
     private boolean inited = false;
@@ -45,6 +47,7 @@ public class ClansPlugin extends JavaPlugin {
         clansController = new ClansController(this, sqlStorage, playerController, currenciesController);
         requestsController = new RequestsController(this, sqlStorage);
         invitesController = new InvitesController(this, sqlStorage);
+        tropyController = new TropyController(this, sqlStorage);
 
         this.registerListeners();
         this.registerCommands();
@@ -82,6 +85,7 @@ public class ClansPlugin extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, sqlStorage));
+        getCommand("trophy").setExecutor(new TrophyCommand(clansController, playerController, tropyController));
     }
 
     private void registerGUI() {
