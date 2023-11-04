@@ -239,6 +239,74 @@ clan_settings_menu:
       - "<gray>R-Click to change display name"
       - "<gray>Shift L-Click change to tag"
 
+trophies_menu:
+  title: "<gold>Trophies"
+  trophy_item:
+    title: "<gold>{title}"
+    no_clan: "---"
+    lore:
+      - "<gray>Winning 3 clans:"
+      - "<gold>1 <gray>- <yellow>{1}"
+      - "<gold>2 <gray>- <yellow>{2}"
+      - "<gold>3 <gray>- <yellow>{3}"
+      - "<gray>------------------------"
+      - "<yellow>{description}"
+  create_trophy_item:
+    title: "<gold>Create new trophy"
+    lore:
+      - ""
+      - "<gray>Click to add new"
+
+trophy_details_menu:
+  title: "<gold>Trophy: <yellow>{trophy}"
+  clan_item:
+    title: "<gold>{position}<gray>. <yellow>{clan}"
+    lore:
+      - ""
+      - "<gray>Achieved on: <yellow>{date}"
+
+
+trophy_create_menu:
+  title: "<gold>Create new trophy"
+  title_item:
+    title: "<gray>[<gold>Trophy title<gray>]"
+    message: "<green>Please provide new title:"
+    lore:
+      - ""
+      - "<gold>Current: <yellow>{title}"
+  description_item:
+    title: "<gray>[<gold>Trophy description<gray>]"
+    message: "<green>Please provide new description:"
+    lore:
+      - ""
+      - "<gold>Current: "
+      - "<yellow>{description}"
+  time_item:
+    title: "<gray>[<gold>Trophy date<gray>]"
+    message_start: "<green>Please provide new start date (yyyy-MM-dd HH:mm:ss):"
+    message_end: "<green>Please provide new end date (yyyy-MM-dd HH:mm:ss):"
+    lore:
+      - ""
+      - "<gray>L-Click to edit start time"
+      - "<gray>R-Click to edit end time"
+      - "<gray>------------------"
+      - ""
+      - "<gold>Start: "
+      - "<yellow>{start}"
+      - "<gold>End: "
+      - "<yellow>{end}"
+      - "<gold>Duration: "
+      - "<yellow>{duration}"
+  confirm_item:
+    title: "<gray>[<gold>Create<gray>]"
+    lore:
+      - ""
+      - "<gold>Start: "
+      - "<yellow>{start}"
+      - "<gold>End: "
+      - "<yellow>{end}"
+      - "<gold>Duration: "
+      - "<yellow>{duration}"
 
 currencies:
   limit_reached: "You can't deposit anymore, max deposited amount is {value}"

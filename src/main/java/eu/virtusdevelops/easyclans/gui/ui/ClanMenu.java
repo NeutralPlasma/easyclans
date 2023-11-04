@@ -82,7 +82,7 @@ public class ClanMenu extends GUI {
         icon.setVisibilityCondition((target, self) ->
                 target.getUniqueId().equals(clan.getOwner())
                         || target.hasPermission("easyclans.admin.settings")
-                        || (cPlayer.hasPermission(UserPermissions.CLAN_SETTINGS) && cPlayer.getClanID() == clan.getId())
+                        || (cPlayer.hasPermission(UserPermissions.CLAN_SETTINGS) && cPlayer.getClanID().equals(clan.getId()))
         );
 
         icon.addClickAction((target) -> {
@@ -169,7 +169,7 @@ public class ClanMenu extends GUI {
         icon.setVisibilityCondition((target, self) ->
                 target.getUniqueId().equals(clan.getOwner())
                         || target.hasPermission("easyclans.admin.requests")
-                        || (cPlayer.hasPermission(UserPermissions.VIEW_REQUESTS) && cPlayer.getClanID() == clan.getId())
+                        || (cPlayer.hasPermission(UserPermissions.VIEW_REQUESTS) && cPlayer.getClanID().equals(clan.getId()))
         );
 
         icon.addClickAction((target) -> {
@@ -207,7 +207,7 @@ public class ClanMenu extends GUI {
         icon.setVisibilityCondition((target, self) ->
                 target.getUniqueId().equals(clan.getOwner())
                         || target.hasPermission("easyclans.admin.invites")
-                        || (cPlayer.hasPermission(UserPermissions.VIEW_INVITES) && cPlayer.getClanID() == clan.getId())
+                        || (cPlayer.hasPermission(UserPermissions.VIEW_INVITES) && cPlayer.getClanID().equals(clan.getId()))
         );
 
         icon.addClickAction((target) -> {
@@ -244,7 +244,7 @@ public class ClanMenu extends GUI {
         icon.setVisibilityCondition((target, self) ->
                 target.getUniqueId().equals(clan.getOwner())
                         || target.hasPermission("easyclans.admin.bank")
-                        || (cPlayer.hasPermission(UserPermissions.VIEW_BANK) && cPlayer.getClanID() == clan.getId())
+                        || (cPlayer.hasPermission(UserPermissions.VIEW_BANK) && cPlayer.getClanID().equals(clan.getId()))
         );
 
         icon.addClickAction((target) -> {
@@ -292,7 +292,7 @@ public class ClanMenu extends GUI {
         icon.setVisibilityCondition((target, self) ->
                 target.getUniqueId().equals(clan.getOwner())
                         || target.hasPermission("easyclans.admin.info")
-                        || (cPlayer.hasPermission(UserPermissions.VIEW_CLAN_INFO) && cPlayer.getClanID() == clan.getId())
+                        || (cPlayer.hasPermission(UserPermissions.VIEW_CLAN_INFO) && cPlayer.getClanID().equals(clan.getId()))
         );
 
         icon.addClickAction((target) -> {

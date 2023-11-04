@@ -4,9 +4,7 @@ import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.controller.*;
 import eu.virtusdevelops.easyclans.gui.GUI;
 import eu.virtusdevelops.easyclans.gui.Icon;
-import eu.virtusdevelops.easyclans.models.CPlayer;
-import eu.virtusdevelops.easyclans.models.Clan;
-import eu.virtusdevelops.easyclans.models.UserPermissions;
+import eu.virtusdevelops.easyclans.models.*;
 import eu.virtusdevelops.easyclans.utils.AbstractChatUtil;
 import eu.virtusdevelops.easyclans.utils.BannerUtils;
 import eu.virtusdevelops.easyclans.utils.ItemUtils;
@@ -60,6 +58,7 @@ public class ClanSettingsMenu extends GUI {
         addIcon(13, nameIcon());
         addIcon(15, bannerIcon());
         addIcon(29, kickTimeIcon());
+        addIcon(31, pvpIcon());
     }
 
 
@@ -100,6 +99,8 @@ public class ClanSettingsMenu extends GUI {
             }
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             randomizeBanner();
+
+            logController.addLog(new Log("banner:randomized", player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
             refresh();
         });
         icon.addShiftRightClickAction((target) -> {
@@ -113,6 +114,7 @@ public class ClanSettingsMenu extends GUI {
             }
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             randomizeBanner();
+            logController.addLog(new Log("banner:randomized", player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
             refresh();
         });
         icon.addDragItemAction((target, item) -> {
@@ -134,6 +136,7 @@ public class ClanSettingsMenu extends GUI {
             newBanner = ItemUtils.strip(newBanner);
             clan.setBanner(newBanner);
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
+            logController.addLog(new Log("banner:updated", player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
             refresh();
         });
 
@@ -185,6 +188,7 @@ public class ClanSettingsMenu extends GUI {
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                         return;
                     }
+                    logController.addLog(new Log("join_price:" + clan.getJoinMoneyPrice() + ":" + price, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                     clan.setJoinMoneyPrice(price);
                     target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
                 } catch (NumberFormatException e) {
@@ -239,19 +243,20 @@ public class ClanSettingsMenu extends GUI {
             }
 
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-            target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.kicktime_item.message")));
+            target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.kicktime_item.message")));
             new AbstractChatUtil(target, (event) -> {
                 try {
                     int time = Integer.parseInt(event.message());
                     if (time < -1) {
-                        target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.kicktime_item.invalid_message")));
+                        target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.kicktime_item.invalid_message")));
                         player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                         return;
                     }
-                    clan.setAutoKickTime(time == 0 ? -1 : time * 1000);
+                    logController.addLog(new Log("kick_time:" + clan.getAutoKickTime() + ":" + time, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
+                    clan.setAutoKickTime(time == 0 ? -1 : time == -1 ? time : time*1000);
                     target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
                 } catch (NumberFormatException e) {
-                    target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.kicktime_item.invalid_message")));
+                    target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.kicktime_item.invalid_message")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
             }, plugin).setOnClose(() -> {
@@ -413,4 +418,54 @@ public class ClanSettingsMenu extends GUI {
     }
     // </editor-fold>
 
+    // <editor-fold desc="Pvp icon">
+    private ItemStack pvpItem() {
+        var material = clan.isPvpEnabled() ? Material.DIAMOND_SWORD : Material.SHIELD;
+        var item = new ItemStack(material);
+        var meta = item.getItemMeta();
+        meta.displayName(ClansPlugin.MM.deserialize(
+                        LanguageController.getLocalized("clan_settings_menu.pvp_item.title")
+                ).decoration(TextDecoration.ITALIC, false)
+        );
+        var text = clan.isPvpEnabled() ? LanguageController.getLocalized("enabled") : LanguageController.getLocalized("disabled");
+
+        meta.lore(LanguageController.getLocalizedList("clan_settings_menu.pvp_item.lore").stream().map(it -> ClansPlugin.MM.deserialize(it
+                .replace("{status}", text)
+        )).toList());
+        item.setItemMeta(meta);
+
+
+        return item;
+    }
+
+    private Icon pvpIcon() {
+        var icon = new Icon(pvpItem(), (self, target) -> {
+            self.itemStack = pvpItem();
+        });
+
+        icon.addClickAction((target) -> {
+
+            if (!target.hasPermission("easyclans.edit.pvp")
+                    || (!target.getUniqueId().equals(clan.getOwner())
+                    && !cPlayer.hasPermission(UserPermissions.TOGGLE_PVP)
+            )) {
+                target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                return;
+            }
+
+            target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
+
+            logController.addLog(new Log("pvp:" + clan.isPvpEnabled() + ":" + !clan.isPvpEnabled(), player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
+            clan.setPvpEnabled(!clan.isPvpEnabled());
+            var text = clan.isPvpEnabled() ? LanguageController.getLocalized("enabled") : LanguageController.getLocalized("disabled");
+            target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.pvp_item.message")
+                    .replace("{status}", text)
+            ));
+            refresh();
+        });
+
+        return icon;
+    }
+    // </editor-fold>
 }

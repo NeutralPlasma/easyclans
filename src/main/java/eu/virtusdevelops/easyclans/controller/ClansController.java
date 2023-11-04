@@ -62,7 +62,7 @@ public class ClansController {
                            ItemStack banner, double interestRate, String tag, List<UUID> members) {
 
         Clan clan = new Clan(owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
-                banner, interestRate, tag, members, System.currentTimeMillis());
+                banner, interestRate, tag, members, false, System.currentTimeMillis());
 
         for(var currency : currenciesController.getCurrencyProviders().keySet()){
             var newCurrency = new Currency(UUID.randomUUID(), 0.0, currency, clan.getId());

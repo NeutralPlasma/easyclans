@@ -26,7 +26,7 @@ public class PlayerChatListener implements Listener {
         this.clansController = clansController;
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         CPlayer cPlayer = playerController.getPlayer(player.getUniqueId());

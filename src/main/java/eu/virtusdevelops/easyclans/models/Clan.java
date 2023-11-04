@@ -15,17 +15,20 @@ public class Clan {
     private int joinPointsPrice;
     private double joinMoneyPrice;
     private ItemStack banner;
-    private double interestRate, actualInterestRate;
-    private double tempInterestRate = 0.0;
+    private double interestRate;
     private String tag;
     private List<UUID> members;
-    private List<Currency> currencies;
     private List<Trophy> trophies;
+    private List<Currency> currencies;
     private long createdOn;
+    private boolean pvpEnabled;
+
+    // local stuff
+    private double tempInterestRate = 0.0, actualInterestRate;
 
 
     public Clan(UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, long createdOn) {
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, boolean pvpEnabled, long createdOn) {
         this.id = UUID.randomUUID();
         this.owner = owner;
         this.name = name;
@@ -37,13 +40,14 @@ public class Clan {
         this.banner = banner;
         this.tag = tag;
         this.members = members;
+        this.pvpEnabled = pvpEnabled;
         this.createdOn = createdOn;
         this.currencies = new ArrayList<>();
         this.trophies = new ArrayList<>();
     }
 
     public Clan(UUID id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, long createdOn) {
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, boolean pvpEnabled, long createdOn) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -55,6 +59,7 @@ public class Clan {
         this.banner = banner;
         this.tag = tag;
         this.members = members;
+        this.pvpEnabled = pvpEnabled;
         this.createdOn = createdOn;
         this.currencies = new ArrayList<>();
         this.trophies = new ArrayList<>();
@@ -206,4 +211,11 @@ public class Clan {
         this.tempInterestRate = 0.0;
     }
 
+    public boolean isPvpEnabled() {
+        return pvpEnabled;
+    }
+
+    public void setPvpEnabled(boolean pvpEnabled) {
+        this.pvpEnabled = pvpEnabled;
+    }
 }

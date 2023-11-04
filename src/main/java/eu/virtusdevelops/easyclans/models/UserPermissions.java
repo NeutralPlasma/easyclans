@@ -18,7 +18,8 @@ public enum UserPermissions {
     EDIT_CLAN_TAG(""),
     EDIT_INACTIVE_KICK(""),
     EDIT_JOIN_PRICE(""),
-    CHANGE_BANNER("")
+    CHANGE_BANNER(""),
+    TOGGLE_PVP("")
 
     ;
 

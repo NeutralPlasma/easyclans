@@ -6,6 +6,7 @@ import eu.virtusdevelops.easyclans.controller.*;
 import eu.virtusdevelops.easyclans.gui.Handler;
 import eu.virtusdevelops.easyclans.listener.PlayerChatListener;
 import eu.virtusdevelops.easyclans.listener.PlayerConnectionListener;
+import eu.virtusdevelops.easyclans.listener.PlayerDamageListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -81,11 +82,12 @@ public class ClansPlugin extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new PlayerConnectionListener(this, playerController), this);
         pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController), this);
+        pluginManager.registerEvents(new PlayerDamageListener(playerController, clansController), this);
     }
 
     private void registerCommands() {
         getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, sqlStorage));
-        getCommand("trophy").setExecutor(new TrophyCommand(clansController, playerController, tropyController));
+        getCommand("trophy").setExecutor(new TrophyCommand(this, clansController, playerController, tropyController));
     }
 
     private void registerGUI() {

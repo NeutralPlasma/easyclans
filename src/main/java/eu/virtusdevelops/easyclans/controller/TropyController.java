@@ -7,6 +7,7 @@ import eu.virtusdevelops.easyclans.models.Trophy;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TropyController {
@@ -21,7 +22,8 @@ public class TropyController {
     }
 
     private void init(){
-        // sql load all trophies...
+        plugin.getLogger().info("Loading all trophies...");
+        trophyList = sqlStorage.loadAllTrophies();
     }
 
     public Trophy createTrophy(String title, String description, long startDate, long endDate) {
@@ -32,6 +34,7 @@ public class TropyController {
                 sqlStorage.saveTrophy(trophy);
             }
         });
+        trophyList.add(trophy);
         return trophy;
     }
 
@@ -73,5 +76,10 @@ public class TropyController {
             return true;
         }
         return false;
+    }
+
+
+    public List<Trophy> getTrophyList() {
+        return trophyList;
     }
 }

@@ -1,9 +1,6 @@
 package eu.virtusdevelops.easyclans.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Trophy {
     private UUID id;
@@ -27,6 +24,9 @@ public class Trophy {
         this.endDate = endDate;
     }
 
+    public List<ClanTrophy> getOrganizedTrophies(){
+        return clansData.stream().sorted(Comparator.comparingInt(ClanTrophy::getRanking)).toList();
+    }
 
     public UUID getId() {
         return id;

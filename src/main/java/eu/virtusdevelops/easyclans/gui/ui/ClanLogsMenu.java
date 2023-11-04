@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ClanLogsGUI extends AsyncPaginator {
+public class ClanLogsMenu extends AsyncPaginator {
 
 
     private SQLStorage sqlStorage;
@@ -29,12 +29,12 @@ public class ClanLogsGUI extends AsyncPaginator {
     private Clan clan;
 
     private SimpleDateFormat sdf;
-    public ClanLogsGUI(Player player,
-                   Clan clan,
-                   ClansPlugin plugin,
-                   SQLStorage sqlStorage,
-                   ClansController clansController,
-                   PlayerController playerController) {
+    public ClanLogsMenu(Player player,
+                        Clan clan,
+                        ClansPlugin plugin,
+                        SQLStorage sqlStorage,
+                        ClansController clansController,
+                        PlayerController playerController) {
 
         super(player, plugin, 54, "<Gray>Logs <dark_gray>[<gold>{page}<gray>/<gold>{pages}<dark_gray>] (<gold>{total}<dark_gray>)", List.of(
                 10, 11, 12, 13, 14, 15, 16,

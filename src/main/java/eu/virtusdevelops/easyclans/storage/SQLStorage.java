@@ -136,7 +136,7 @@ public class SQLStorage {
                                 interest_rate DOUBLE,
                                 banner TEXT,
                                 tag VARCHAR(16),
-                                
+                                pvp_enabled TINYINT(1),
                                 created_on DATETIME,
                                 FOREIGN KEY (owner) REFERENCES ec_player_data(uuid)
                             );
@@ -626,6 +626,7 @@ public class SQLStorage {
                         result.getDouble("interest_rate"),
                         result.getString("tag"),
                         null,
+                        result.getBoolean("pvp_enabled"),
                         result.getLong("created_on")
                 );
                 clan.setMembers(getClanMembers(clan.getId()));
@@ -652,7 +653,8 @@ public class SQLStorage {
                     join_money_price = ?,
                     banner = ?,
                     interest_rate = ?,
-                    tag = ?
+                    tag = ?,
+                    pvp_enabled = ?
                     WHERE id = ?
                     """);
             statement.setString(1, clan.getOwner().toString());
@@ -664,7 +666,8 @@ public class SQLStorage {
             statement.setString(7, Serialization.encodeItemBase64(clan.getBanner()));
             statement.setDouble(8, clan.getInterestRate());
             statement.setString(9, clan.getTag());
-            statement.setString(10, clan.getId().toString());
+            statement.setBoolean(10, clan.isPvpEnabled());
+            statement.setString(11, clan.getId().toString());
 
             statement.executeUpdate();
             updateClanCurrencies(clan);
@@ -689,10 +692,11 @@ public class SQLStorage {
                     banner,
                     interest_rate,
                     tag,
+                    pvp_enabled,
                     created_on
                     )
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """);
             statement.setString(1, clan.getId().toString());
             statement.setString(2, clan.getOwner().toString());
@@ -704,7 +708,8 @@ public class SQLStorage {
             statement.setString(8, Serialization.encodeItemBase64(clan.getBanner()));
             statement.setDouble(9, clan.getInterestRate());
             statement.setString(10, clan.getTag());
-            statement.setLong(11, clan.getCreatedOn());
+            statement.setBoolean(11, clan.isPvpEnabled());
+            statement.setLong(12, clan.getCreatedOn());
 
             int rows = statement.executeUpdate();
             if (rows > 0) {
@@ -982,6 +987,51 @@ public class SQLStorage {
 
 
     //<editor-fold desc="trophies">
+
+    public List<Trophy> loadAllTrophies(){
+        List<Trophy> trophies = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("""
+                    SELECT * FROM
+                    ec_trophy
+                    """);
+            var results = statement.executeQuery();
+
+            while(results.next()){
+
+                Trophy trophy = new Trophy(
+                        UUID.fromString(results.getString("id")),
+                        results.getString("title"),
+                        results.getString("description"),
+                        results.getLong("start_date"),
+                        results.getLong("end_date")
+                );
+
+                PreparedStatement statement2 = connection.prepareStatement("""
+                    SELECT * FROM
+                    ec_clan_trophy
+                    WHERE
+                    trophy_id = ?
+                    """);
+                statement2.setString(1, trophy.getId().toString());
+
+                var ctResults = statement2.executeQuery();
+                while(ctResults.next()){
+                    trophy.addTrophy(new ClanTrophy(
+                            UUID.fromString(ctResults.getString("id")),
+                            UUID.fromString(ctResults.getString("clan_id")),
+                            ctResults.getInt("ranking"),
+                            ctResults.getLong("achieve_date")
+                    ));
+                }
+                trophies.add(trophy);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return trophies;
+        }
+        return trophies;
+    }
 
     public boolean saveTrophy(Trophy trophy){
         try (Connection connection = dataSource.getConnection()) {
