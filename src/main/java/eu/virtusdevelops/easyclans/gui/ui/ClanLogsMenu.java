@@ -57,7 +57,7 @@ public class ClanLogsMenu extends AsyncPaginator {
         setFetchPageTask(new AsyncReturnTask<>() {
             @Override
             public List<Icon> fetchPageData(int page, int perPage) {
-                var logs = sqlStorage.getLogs(page, perPage, clan.getId(), null);
+                var logs = sqlStorage.getClanLogs(page, perPage, clan.getId());
                 List<Icon> logIcons = new ArrayList<>();
                 for(Log log : logs){
                     var material = Material.PAPER;
@@ -127,12 +127,12 @@ public class ClanLogsMenu extends AsyncPaginator {
         setGetItemsCountTask(new AsyncReturnTask<>() {
             @Override
             public Integer fetchPageData(int page, int perPage) {
-                return sqlStorage.getLogsCount(clan.getId());
+                return sqlStorage.getLogsCount(clan.getId(), null);
             }
 
             @Override
             public Integer fetchData() {
-                return sqlStorage.getLogsCount(clan.getId());
+                return sqlStorage.getLogsCount(clan.getId(), null);
             }
         });
     }

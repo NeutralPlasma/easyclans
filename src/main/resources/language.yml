@@ -3,6 +3,7 @@ cancel: "<red>Cancel"
 active: "<green>Active"
 inactive: "<red>Inactive"
 disabled: "<red>Disabled"
+enabled: "<green>Enabled"
 next_page: "<gold>Next page"
 previous_page: "<gold>Previous page"
 invalid_amount: "<red>Invalid amount!"
@@ -77,16 +78,19 @@ members_menu:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+      - "<gray>Rank: <gold>{rank}"
       - "<gray>Interest: <gold>{interest}"
     lore_active:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+      - "<gray>Rank: <gold>{rank}"
       - "<gray>Interest: <gold>{interest}"
     lore_inactive:
       - "<gray>Last active: <gold>{active}"
       - "<gray>Joined clan on: <gold>{joined}"
       - "<gray>Currently: {status}"
+      - "<gray>Rank: <gold>{rank}"
       - "<gray>Time remaining util kick:"
       - "<gray>- <red>{time_remaining}"
 
@@ -160,6 +164,7 @@ banks_menu:
       - "<gray>L-Click to deposit"
       - "<gray>R-Click to withdraw"
       - "<gray>Shift L-Click to withdraw all"
+      - "<gray>Shift R-Click to deposit max"
 
 clan_create_menu:
   banner_item:
@@ -209,6 +214,9 @@ clan_settings_menu:
       - "<dark_gray>------------------------"
       - "<gray>Drag and drop to change"
       - "<gray>Shift click to randomize"
+      - "<dark_gray>------------------------"
+      - "<gray>Right click to buy"
+      - "<gray>Price: <green>{price}"
   join_price_item:
     message: "<gray>Please enter join price."
     invalid_message: "<red>Invalid value"
@@ -238,6 +246,13 @@ clan_settings_menu:
       - "<gray>L-Click to change name"
       - "<gray>R-Click to change display name"
       - "<gray>Shift L-Click change to tag"
+  pvp_item:
+    title: "<gray>[<gold>Clan pvp<gray>]"
+    lore:
+      - "<gray>Currently: {status}"
+      - "<dark_gray>------------------------"
+      - "<gray>Click to toggle"
+    message: "<gray>Successfully {status} <gray>pvp!"
 
 trophies_menu:
   title: "<gold>Trophies"
@@ -309,7 +324,7 @@ trophy_create_menu:
       - "<yellow>{duration}"
 
 currencies:
-  limit_reached: "You can't deposit anymore, max deposited amount is {value}"
+  limit_reached: "You can't deposit anymore, max deposited amount is {max}, and you're trying to deposit {value}"
   deposit: "<gray>Please enter a value you wish to deposit:"
   withdraw: "<gray>Please enter a value you wish to withdraw:"
   not_enough: "<gray>You dont have enough <red>{currency}<gray>, you entered <red>{price}"

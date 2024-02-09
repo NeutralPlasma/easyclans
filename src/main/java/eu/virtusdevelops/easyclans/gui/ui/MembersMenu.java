@@ -37,12 +37,14 @@ public class MembersMenu extends AsyncPaginator {
     private final RequestsController requestsController;
     private final InvitesController invitesController;
     private final LogController logController;
+    private final RanksController ranksController;
     private final ClansPlugin plugin;
     private final GUI previousUI;
     private final SimpleDateFormat sdf;
 
     public MembersMenu(Player player, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                       RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin, GUI previousUI){
+                       RequestsController requestsController, InvitesController invitesController, LogController logController, RanksController ranksController,
+                       ClansPlugin plugin, GUI previousUI){
         super(player, plugin,54, LanguageController.getLocalized("members_menu.title"),List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -57,6 +59,7 @@ public class MembersMenu extends AsyncPaginator {
         this.requestsController = requestsController;
         this.invitesController = invitesController;
         this.logController = logController;
+        this.ranksController = ranksController;
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
         this.previousUI = previousUI;
@@ -184,12 +187,13 @@ public class MembersMenu extends AsyncPaginator {
         var activeDate = new Date(cTarget.getLastActive());
         var joinDate = new Date(cTarget.getJoinClanDate());
         var timeDiff = Math.abs(kickTime - (System.currentTimeMillis() - activeDate.getTime()));
-        double interest_player = plugin.getConfig().getDouble("rank_interest_value." + cTarget.getRank());
+        double interest_player = ranksController.getRank(cTarget).getMultiplier();
         for (String string : strings) {
             newlist.add(
                     ClansPlugin.MM.deserialize(string
                             .replace("{active}", sdf.format(activeDate))
                             .replace("{joined}", sdf.format(joinDate))
+                            .replace("{rank}", cTarget.getRank())
                             .replace("{time_remaining}", DurationFormatUtils.formatDurationWords(timeDiff, true,false))
                             .replace("{status}", cTarget.isActive() ?
                                     LanguageController.getLocalized("active") : LanguageController.getLocalized("inactive"))

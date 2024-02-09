@@ -26,11 +26,12 @@ public class ClanMenu extends GUI {
     private final CurrenciesController currenciesController;
     private final RequestsController requestsController;
     private final InvitesController invitesController;
+    private final RanksController ranksController;
     private final LogController logController;
     private final ClansPlugin plugin;
 
     public ClanMenu(Player player, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                    RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin){
+                    RequestsController requestsController, InvitesController invitesController, LogController logController, RanksController ranksController, ClansPlugin plugin){
         super(player, 54, LanguageController.getLocalized("clan_menu.title"));
 
         this.clan = clan;
@@ -40,6 +41,7 @@ public class ClanMenu extends GUI {
         this.requestsController = requestsController;
         this.invitesController = invitesController;
         this.logController = logController;
+        this.ranksController = ranksController;
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
 
@@ -88,7 +90,7 @@ public class ClanMenu extends GUI {
         icon.addClickAction((target) -> {
             // open settings menu
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-            new ClanSettingsMenu(target, clan, clansController,playerController, currenciesController, requestsController, invitesController, logController, plugin);
+            new ClanSettingsMenu(target, clan, clansController,playerController, currenciesController, requestsController, invitesController, logController, plugin, this);
         });
 
         return icon;
@@ -134,6 +136,7 @@ public class ClanMenu extends GUI {
                     requestsController,
                     invitesController,
                     logController,
+                    ranksController,
                     plugin,
                     this
             );

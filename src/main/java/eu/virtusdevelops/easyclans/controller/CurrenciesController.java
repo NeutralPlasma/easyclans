@@ -1,5 +1,6 @@
 package eu.virtusdevelops.easyclans.controller;
 
+import eu.virtusdevelops.easyclans.providers.ExperienceProvider;
 import eu.virtusdevelops.easyclans.providers.VaultProvider;
 import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.providers.Provider;
@@ -20,16 +21,22 @@ public class CurrenciesController {
 
     private void load(){
         var pm = Bukkit.getPluginManager();
-        if(pm.isPluginEnabled("VotingPlugin")){
+        if(pm.isPluginEnabled("VotingPlugin") && plugin.getConfig().getBoolean("currency.VotingPlugin.enabled")){
             var provider = new VotingPluginProvider();
             if(provider.setup())
                 addProvider(provider, "VotingPlugin");
         }
-        if(pm.isPluginEnabled("Vault")){
+        if(pm.isPluginEnabled("Vault") && plugin.getConfig().getBoolean("currency.Vault.enabled")){
             var provider = new VaultProvider();
             if(provider.setup())
                 addProvider(provider, "Vault");
         }
+        if(plugin.getConfig().getBoolean("currency.Experience.enabled")){
+            var provider = new ExperienceProvider();
+            if(provider.setup())
+                addProvider(provider, "Experience");
+        }
+
     }
 
     public void addProvider(Provider provider, String name){

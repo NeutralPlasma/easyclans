@@ -1,8 +1,11 @@
 package eu.virtusdevelops.easyclans.listener;
 
+import eu.virtusdevelops.easyclans.controller.ClansController;
 import eu.virtusdevelops.easyclans.controller.PlayerController;
 import eu.virtusdevelops.easyclans.ClansPlugin;
+import eu.virtusdevelops.easyclans.controller.RanksController;
 import eu.virtusdevelops.easyclans.models.CPlayer;
+import eu.virtusdevelops.easyclans.models.RankMultiplyer;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,14 +14,26 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class PlayerConnectionListener implements Listener {
     private final ClansPlugin plugin;
     private final PlayerController playerController;
+    private final RanksController ranksController;
 
-    public PlayerConnectionListener(ClansPlugin plugin, PlayerController playerController) {
+
+
+    public PlayerConnectionListener(ClansPlugin plugin, PlayerController playerController, RanksController ranksController) {
         this.plugin = plugin;
         this.playerController = playerController;
+        this.ranksController = ranksController;
     }
+
+
+
+
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -30,8 +45,13 @@ public class PlayerConnectionListener implements Listener {
         } else {
             cPlayer.setActive(true);
             cPlayer.setLastActive(System.currentTimeMillis());
-            User user = ClansPlugin.Ranks.getPlayerAdapter(Player.class).getUser(event.getPlayer());
-            cPlayer.setRank(user.getPrimaryGroup());
+
+            RankMultiplyer rank = ranksController.parsePlayerRank(event.getPlayer());
+            if(rank == null){
+                cPlayer.setRank("null");
+            }else{
+                cPlayer.setRank(rank.getName());
+            }
             playerController.updatePlayer(cPlayer);
         }
     }

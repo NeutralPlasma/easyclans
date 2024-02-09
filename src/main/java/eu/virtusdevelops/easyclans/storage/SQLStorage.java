@@ -885,7 +885,7 @@ public class SQLStorage {
                 statement = connection.prepareStatement("""
                     SELECT * FROM
                     ec_logs
-                    AND player_id = ?
+                    WHERE player_id = ?
                     LIMIT ?, ?
                     """);
 
@@ -918,30 +918,21 @@ public class SQLStorage {
         return logs;
 
     }
-    public List<Log> getLogs(int page, int perPage, UUID player){
+    public List<Log> getPlayerLogs(int page, int perPage, UUID player){
         return getLogs(page, perPage, null, player);
     }
-    public List<Log> getLogs(int page, int perPage, int clanID){
-        return getLogs(page, perPage, clanID);
+    public List<Log> getClanLogs(int page, int perPage, UUID clanID){
+        return getLogs(page, perPage, clanID, null);
     }
     public List<Log> getLogs(int page, int perPage){
         return getLogs(page, perPage, null, null);
     }
 
-    public int getLogsCount(){
-        return getLogsCount(-1, null);
-    }
-    public int getLogsCount(int clanID){
-        return getLogsCount(clanID, null);
-    }
-    public int getLogsCount(UUID playerID){
-        return getLogsCount(-1, playerID);
-    }
 
-    public int getLogsCount(int clanID, UUID playerUUID){
+    public int getLogsCount(UUID clanID, UUID playerUUID){
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement;
-            if(clanID != -1 && playerUUID != null){
+            if(clanID != null && playerUUID != null){
                 statement = connection.prepareStatement("""
                     SELECT COUNT(*) FROM
                     ec_logs
@@ -949,22 +940,21 @@ public class SQLStorage {
                     AND player_id = ?
                     """);
 
-                statement.setInt(1, clanID);
+                statement.setString(1, clanID.toString());
                 statement.setString(2, playerUUID.toString());
-            }else if(clanID != -1){
+            }else if(clanID != null){
                 statement = connection.prepareStatement("""
                     SELECT COUNT(*) FROM
                     ec_logs
                     WHERE clan_id = ?
                     """);
-                statement.setInt(1, clanID);
+                statement.setString(1, clanID.toString());
             }else if(playerUUID != null){
                 statement = connection.prepareStatement("""
                     SELECT COUNT(*) FROM
                     ec_logs
-                    AND player_id = ?
+                    WHERE player_id = ?
                     """);
-
                 statement.setString(1, playerUUID.toString());
             }else{
                 statement = connection.prepareStatement("""

@@ -1,6 +1,7 @@
 package eu.virtusdevelops.easyclans.providers;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -20,10 +21,13 @@ public class VaultProvider implements Provider{
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
+
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+
         if (rsp == null) {
             return false;
         }
+
         Economy = rsp.getProvider();
         return Economy != null;
     }
@@ -34,23 +38,28 @@ public class VaultProvider implements Provider{
     }
 
     @Override
+    public String getVersion(){
+        return Bukkit.getPluginManager().getPlugin("Vault").getPluginMeta().getVersion();
+    }
+
+    @Override
     public double getValue(OfflinePlayer player) {
         return Economy.getBalance(player);
     }
 
     @Override
-    public void setValue(OfflinePlayer player, double value) {
-        Economy.withdrawPlayer(player, getValue(player));
+    public boolean setValue(OfflinePlayer player, double value) {
+        return Economy.withdrawPlayer(player, getValue(player)).transactionSuccess();
     }
 
     @Override
-    public void removeValue(OfflinePlayer player, double value) {
-        Economy.withdrawPlayer(player, value);
+    public boolean removeValue(OfflinePlayer player, double value) {
+        return Economy.withdrawPlayer(player, value).transactionSuccess();
     }
 
     @Override
-    public void addValue(OfflinePlayer player, double value) {
-        Economy.depositPlayer(player, value);
+    public boolean addValue(OfflinePlayer player, double value) {
+        return Economy.depositPlayer(player, value).transactionSuccess();
     }
 
     @Override
@@ -59,17 +68,17 @@ public class VaultProvider implements Provider{
     }
 
     @Override
-    public void setIntValue(OfflinePlayer player, int value) {
-        Economy.withdrawPlayer(player, getValue(player));
+    public boolean setIntValue(OfflinePlayer player, int value) {
+        return Economy.withdrawPlayer(player, getValue(player)).transactionSuccess();
     }
 
     @Override
-    public void removeIntValue(OfflinePlayer player, int value) {
-        Economy.withdrawPlayer(player, value);
+    public boolean removeIntValue(OfflinePlayer player, int value) {
+        return Economy.withdrawPlayer(player, value).transactionSuccess();
     }
 
     @Override
-    public void addIntValue(OfflinePlayer player, int value) {
-        Economy.depositPlayer(player, value);
+    public boolean addIntValue(OfflinePlayer player, int value) {
+        return Economy.depositPlayer(player, value).transactionSuccess();
     }
 }

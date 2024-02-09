@@ -12,16 +12,18 @@ import java.util.*;
 public class ClansController {
     private PlayerController playerController;
     private CurrenciesController currenciesController;
+    private RanksController ranksController;
     private final Map<UUID, Clan> clans;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
     public ClansController(ClansPlugin plugin, SQLStorage sqlStorage, PlayerController playerController,
-                           CurrenciesController currenciesController) {
+                           CurrenciesController currenciesController, RanksController ranksController) {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
         this.playerController = playerController;
         this.currenciesController = currenciesController;
+        this.ranksController = ranksController;
         this.clans = new HashMap<>();
 
         loadClans();
@@ -147,7 +149,8 @@ public class ClansController {
             }
 
             // add interest rate based on players rank.
-            double interestToAdd = plugin.getConfig().getDouble("rank_interest_value." + player.getRank());
+            RankMultiplyer rankMultiplyer = ranksController.getRank(player);
+            double interestToAdd = rankMultiplyer.getMultiplier();
             if(!Double.isNaN(interestToAdd) && interestToAdd > 0){
                 clan.addTempInterestRate(interestToAdd);
             }

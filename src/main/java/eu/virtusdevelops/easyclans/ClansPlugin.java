@@ -17,6 +17,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class ClansPlugin extends JavaPlugin {
     private Handler guiHandler;
     private PlayerController playerController;
@@ -27,6 +29,8 @@ public class ClansPlugin extends JavaPlugin {
     private CurrenciesController currenciesController;
     private InvitesController invitesController;
     private TropyController tropyController;
+    private PlayerConnectionListener connectionListener;
+    private RanksController ranksController;
 
     private BukkitTask bgTask;
     private boolean inited = false;
@@ -45,7 +49,8 @@ public class ClansPlugin extends JavaPlugin {
 
         currenciesController = new CurrenciesController(this);
         playerController = new PlayerController(this, sqlStorage);
-        clansController = new ClansController(this, sqlStorage, playerController, currenciesController);
+        ranksController = new RanksController(this);
+        clansController = new ClansController(this, sqlStorage, playerController, currenciesController, ranksController);
         requestsController = new RequestsController(this, sqlStorage);
         invitesController = new InvitesController(this, sqlStorage);
         tropyController = new TropyController(this, sqlStorage);
@@ -66,8 +71,7 @@ public class ClansPlugin extends JavaPlugin {
                     this, playerController, clansController, requestsController));
         }
 
-
-
+        ranksController.loadRankMultipliers();
         this.inited = true;
     }
 
@@ -80,13 +84,14 @@ public class ClansPlugin extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
-        pluginManager.registerEvents(new PlayerConnectionListener(this, playerController), this);
+        connectionListener = new PlayerConnectionListener(this, playerController, ranksController);
+        pluginManager.registerEvents(connectionListener, this);
         pluginManager.registerEvents(new PlayerChatListener(this.getConfig(), playerController, clansController), this);
         pluginManager.registerEvents(new PlayerDamageListener(playerController, clansController), this);
     }
 
     private void registerCommands() {
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, sqlStorage));
+        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, ranksController, sqlStorage));
         getCommand("trophy").setExecutor(new TrophyCommand(this, clansController, playerController, tropyController));
     }
 
@@ -100,6 +105,7 @@ public class ClansPlugin extends JavaPlugin {
 
     public void reload(){
         reloadConfig();
+        ranksController.loadRankMultipliers();
         LanguageController.reload(this);
     }
 

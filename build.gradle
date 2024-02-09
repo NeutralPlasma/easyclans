@@ -37,7 +37,7 @@ dependencies {
     compileOnly "net.luckperms:api:5.4"
     compileOnly group: 'com.bencodez', name: 'votingplugin', version: '6.14.1'
     compileOnly group: 'com.mojang', name: 'authlib', version: '3.17.30'
-    //compileOnly "com.willfp:EcoBits:<version>"
+    //compileOnly "com.willfp:EcoBits:<version>" -- doesnt exist T_T
 
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
 }

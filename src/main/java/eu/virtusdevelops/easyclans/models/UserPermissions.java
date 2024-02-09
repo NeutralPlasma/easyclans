@@ -19,6 +19,7 @@ public enum UserPermissions {
     EDIT_INACTIVE_KICK(""),
     EDIT_JOIN_PRICE(""),
     CHANGE_BANNER(""),
+    BUY_BANNER(""),
     TOGGLE_PVP("")
 
     ;

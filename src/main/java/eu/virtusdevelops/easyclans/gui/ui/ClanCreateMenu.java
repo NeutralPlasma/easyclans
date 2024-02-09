@@ -29,6 +29,7 @@ public class ClanCreateMenu extends GUI {
     private final RequestsController requestsController;
     private final InvitesController invitesController;
     private final LogController logController;
+    private final RanksController ranksController;
     private final ClansPlugin plugin;
 
     // clan specific
@@ -40,7 +41,7 @@ public class ClanCreateMenu extends GUI {
     int kickTime;
 
     public ClanCreateMenu(Player player, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                    RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin){
+                    RequestsController requestsController, InvitesController invitesController, LogController logController, RanksController ranksController, ClansPlugin plugin){
         super(player, 54, LanguageController.getLocalized("clan_menu.title"));
         this.clansController = clansController;
         this.playerController = playerController;
@@ -48,6 +49,7 @@ public class ClanCreateMenu extends GUI {
         this.requestsController = requestsController;
         this.invitesController = invitesController;
         this.logController = logController;
+        this.ranksController = ranksController;
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
 
@@ -401,7 +403,7 @@ public class ClanCreateMenu extends GUI {
                         members
                 );
                 logController.addLog(new Log(clanName, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
-                new ClanMenu(target2, clan, clansController, playerController, currenciesController, requestsController, invitesController, logController, plugin);
+                new ClanMenu(target2, clan, clansController, playerController, currenciesController, requestsController, invitesController, logController, ranksController, plugin);
 
             }, (target2) -> {
                 open();

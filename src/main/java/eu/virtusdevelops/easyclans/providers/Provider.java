@@ -7,13 +7,14 @@ public interface Provider {
     ProviderType type();
     boolean setup();
     String getPluginName();
+    String getVersion();
     double getValue(OfflinePlayer player);
-    void setValue(OfflinePlayer player, double value);
-    void removeValue(OfflinePlayer player, double value);
-    void addValue(OfflinePlayer player, double value);
+    boolean setValue(OfflinePlayer player, double value);
+    boolean removeValue(OfflinePlayer player, double value);
+    boolean addValue(OfflinePlayer player, double value);
 
     int getIntValue(OfflinePlayer player);
-    void setIntValue(OfflinePlayer player, int value);
-    void removeIntValue(OfflinePlayer player, int value);
-    void addIntValue(OfflinePlayer player, int value);
+    boolean setIntValue(OfflinePlayer player, int value);
+    boolean removeIntValue(OfflinePlayer player, int value);
+    boolean addIntValue(OfflinePlayer player, int value);
 }

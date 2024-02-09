@@ -51,7 +51,7 @@ public class LogsMenu extends AsyncPaginator {
         setFetchPageTask(new AsyncReturnTask<List<Icon>>() {
             @Override
             public List<Icon> fetchPageData(int page, int perPage) {
-                var logs = sqlStorage.getLogs(page, perPage);
+                var logs = sqlStorage.getPlayerLogs(page, perPage, player.getUniqueId());
                 List<Icon> logIcons = new ArrayList<>();
                 for(Log log : logs){
                     var material = Material.PAPER;
@@ -121,12 +121,12 @@ public class LogsMenu extends AsyncPaginator {
         setGetItemsCountTask(new AsyncReturnTask<Integer>() {
             @Override
             public Integer fetchPageData(int page, int perPage) {
-                return sqlStorage.getLogsCount();
+                return sqlStorage.getLogsCount(null, player.getUniqueId());
             }
 
             @Override
             public Integer fetchData() {
-                return sqlStorage.getLogsCount();
+                return sqlStorage.getLogsCount(null, player.getUniqueId());
             }
         });
     }

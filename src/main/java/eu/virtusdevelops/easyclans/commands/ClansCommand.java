@@ -31,7 +31,7 @@ public class ClansCommand implements TabExecutor {
     private ClansPlugin plugin;
     private final List<String> oneArgumentSubCommands = List.of(
             "menu", "bank", "members", "list", "create",
-            "chat", "leave", "delete", "help", "clogs");
+            "chat", "leave", "delete", "help", "clogs", "debug");
     private final List<String> moreArgumentSubCommands = List.of("accept");
     private final PlayerController playerController;
     private final ClansController clansController;
@@ -39,13 +39,14 @@ public class ClansCommand implements TabExecutor {
     private final LogController logController;
     private final CurrenciesController currenciesController;
     private final InvitesController invitesController;
+    private final RanksController ranksController;
     private final SQLStorage sqlStorage;
 
     public ClansCommand(PlayerController playerController, ClansController clansController,
                         RequestsController requestsController,
                         ClansPlugin plugin, LogController logController,
                         CurrenciesController currenciesController,
-                        InvitesController invitesController, SQLStorage sqlStorage) {
+                        InvitesController invitesController, RanksController ranksController, SQLStorage sqlStorage) {
         this.playerController = playerController;
         this.clansController = clansController;
         this.requestsController = requestsController;
@@ -53,6 +54,7 @@ public class ClansCommand implements TabExecutor {
         this.plugin = plugin;
         this.logController = logController;
         this.invitesController = invitesController;
+        this.ranksController = ranksController;
         this.sqlStorage = sqlStorage;
     }
 
@@ -172,6 +174,13 @@ public class ClansCommand implements TabExecutor {
                 else
                     sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
             }
+            case "debug" -> {
+                if(sender.hasPermission("easyclans.command.debug"))
+                    debugCommand(sender, args);
+                else
+                    sender.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("no_permission")));
+
+            }
         }
         return true;
     }
@@ -233,7 +242,7 @@ public class ClansCommand implements TabExecutor {
         new ClanMenu(sender, clan, clansController,
                 playerController, currenciesController,
                 requestsController, null,
-                logController, plugin);
+                logController, ranksController, plugin);
     }
 
     private void executeBankSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -255,7 +264,7 @@ public class ClansCommand implements TabExecutor {
         new MembersMenu(sender, clan, clansController,
                 playerController, currenciesController,
                 requestsController, invitesController,
-                logController, plugin, null);
+                logController, ranksController, plugin, null);
     }
 
     private void executeListSubCommand(Player sender, CPlayer cPlayer, Clan clan) {
@@ -267,7 +276,7 @@ public class ClansCommand implements TabExecutor {
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("already_in_clan")));
             return;
         }
-        new ClanCreateMenu(sender, clansController, playerController, currenciesController, requestsController, invitesController, logController, plugin);
+        new ClanCreateMenu(sender, clansController, playerController, currenciesController, requestsController, invitesController, logController, ranksController, plugin);
     }
 
     private void executeDeleteClanSubCommand(Player sender, CPlayer cPlayer, Clan clan){
@@ -321,7 +330,7 @@ public class ClansCommand implements TabExecutor {
         sender.sendMessage(MM.deserialize("<yellow>EasyClans <gray>(<gold>" + plugin.getPluginMeta().getVersion() + "<gray>)"));
         sender.sendMessage(MM.deserialize("<gold>Enabled economy providers: "));
         for(var provider : currenciesController.getCurrencyProviders().values()){
-            sender.sendMessage(MM.deserialize("<gray>- <yellow>" + provider.getPluginName()));
+            sender.sendMessage(MM.deserialize("<gray>- <yellow>" + provider.getPluginName() + " <gray> -> <yellow>" + provider.getVersion()));
         }
     }
 
@@ -435,6 +444,33 @@ public class ClansCommand implements TabExecutor {
         // add log
         logController.addLog(new Log( "request:" + cPlayer.getUuid().toString(), sender.getUniqueId(), clan.getId(), LogType.REQUEST_ACCEPTED));
 
+
+    }
+
+    private void debugCommand(CommandSender sender, String[] args){
+        if(args.length < 2){
+            sender.sendMessage(ClansPlugin.MM.deserialize("<red>Invalid arguments <gray>/clans debug <player>"));
+            return;
+
+        }
+        // try parse player if exists
+        OfflinePlayer player = Bukkit.getOfflinePlayerIfCached(args[1]);
+        if(player == null){
+            sender.sendMessage(ClansPlugin.MM.deserialize("<red>Invalid player: " + args[1]));
+            return;
+        }
+        var cPlayer = playerController.getPlayer(player.getUniqueId());
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Rank: <yellow>" + cPlayer.getRank()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Clan ID: <yellow>" + cPlayer.getClanID()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Joined clan: <yellow>" + cPlayer.getJoinClanDate()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Last active: <yellow>" + cPlayer.getLastActive()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>UUID: <yellow>" + cPlayer.getUuid()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Is Active: <yellow>" + cPlayer.isActive()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>In clan chat: <yellow>" + cPlayer.isInClubChat()));
+        sender.sendMessage(MM.deserialize(" <gray>- <gold>Permissions: <yellow>"));
+        for(var permission : cPlayer.getUserPermissionsList()){
+            sender.sendMessage(MM.deserialize(" <gray>- <yellow>" + permission.toString()));
+        }
 
     }
 
