@@ -10,10 +10,8 @@ import eu.virtusdevelops.easyclans.listener.PlayerDamageListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -35,21 +33,17 @@ public class ClansPlugin extends JavaPlugin {
     private BukkitTask bgTask;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
-    //public static Economy Economy = null;
-    public static LuckPerms Ranks = null;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
-        //setupEconomy();
-        setupLuckPerms();
         logController = new LogController(sqlStorage, this);
 
         currenciesController = new CurrenciesController(this);
-        playerController = new PlayerController(this, sqlStorage);
         ranksController = new RanksController(this);
+        playerController = new PlayerController(this, sqlStorage, ranksController);
         clansController = new ClansController(this, sqlStorage, playerController, currenciesController, ranksController);
         requestsController = new RequestsController(this, sqlStorage);
         invitesController = new InvitesController(this, sqlStorage);
@@ -109,23 +103,7 @@ public class ClansPlugin extends JavaPlugin {
         LanguageController.reload(this);
     }
 
-    /*private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        Economy = rsp.getProvider();
-        return Economy != null;
-    }*/
 
-    private boolean setupLuckPerms(){
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        Ranks = provider.getProvider();
-        return Ranks != null;
-    }
 
 
 

@@ -1,6 +1,7 @@
 package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
+import eu.virtusdevelops.easyclans.models.UserPermissions;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,6 +37,8 @@ public class LanguageController {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
+
+        UserPermissions.loadDescriptions();
     }
 
 

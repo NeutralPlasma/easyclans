@@ -30,6 +30,8 @@ help:
   - "<gray>- <gold>/clan leave <gray>leave the clan you're in"
   - "<gray>- <gold>/clan delete <gray>allows you to delete clan (if you're owner of it)"
   - "<gray>- <gold>/clan help <gray>shows this text"
+  - "<gray>- <gold>/clan debug {player} <gray>shows debug info about player"
+  - "<gray>- <gold>/clan info <gray>shows debug info about plugin"
 
 
 clan_menu:
@@ -583,3 +585,28 @@ leave_confirm:
   title: "<red>Leave?"
 delete_clan:
   title: "<red>Delete clan?"
+
+
+# descriptions for permissions....
+permissions:
+  ACCEPT_REQUEST: ""
+  CLAN_SETTINGS: ""
+  VIEW_MEMBERS: ""
+  EDIT_MEMBER: ""
+  EDIT_MEMBER_PERMISSIONS: ""
+  KICK_MEMBER: ""
+  VIEW_REQUESTS: ""
+  VIEW_INVITES: ""
+  VIEW_BANK: ""
+  VIEW_CLAN_INFO: ""
+  BANK_DEPOSIT: ""
+  BANK_WITHDRAW: ""
+  EDIT_CLAN_NAME: ""
+  EDIT_CLAN_DISPLAY_NAME: ""
+  EDIT_CLAN_TAG: ""
+  EDIT_INACTIVE_KICK: ""
+  EDIT_JOIN_PRICE: ""
+  CHANGE_BANNER: ""
+  BUY_BANNER: ""
+  TOGGLE_PVP: ""
+

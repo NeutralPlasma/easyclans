@@ -1,5 +1,7 @@
 package eu.virtusdevelops.easyclans.models;
 
+import eu.virtusdevelops.easyclans.controller.LanguageController;
+
 public enum UserPermissions {
     ACCEPT_REQUEST(""),
     CLAN_SETTINGS(""),
@@ -23,7 +25,6 @@ public enum UserPermissions {
     TOGGLE_PVP("")
 
     ;
-
     private String description;
 
     UserPermissions(String description){
@@ -32,5 +33,14 @@ public enum UserPermissions {
 
     public String getDescription() {
         return description;
+    }
+    public void setDescription(String desc){
+        description = desc;
+    }
+
+    public static void loadDescriptions(){
+        for(UserPermissions permissions : UserPermissions.values()){
+            permissions.setDescription(LanguageController.getLocalized("permissions." + permissions.toString()));
+        }
     }
 }

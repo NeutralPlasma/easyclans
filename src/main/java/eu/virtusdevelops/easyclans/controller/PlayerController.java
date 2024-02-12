@@ -2,24 +2,25 @@ package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.models.CPlayer;
+import eu.virtusdevelops.easyclans.models.RankMultiplyer;
 import eu.virtusdevelops.easyclans.models.UserPermissions;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
-import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PlayerController {
     private final Map<UUID, CPlayer> players;
     private List<UserPermissions> permissions = new ArrayList<>();
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
+    private final RanksController ranksController;
 
-    public PlayerController(ClansPlugin plugin, SQLStorage sqlStorage) {
+    public PlayerController(ClansPlugin plugin, SQLStorage sqlStorage, RanksController ranksController) {
         this.plugin = plugin;
         this.sqlStorage = sqlStorage;
+        this.ranksController = ranksController;
         this.players = new HashMap<>();
         init();
     }
@@ -46,13 +47,13 @@ public class PlayerController {
 
 
     public CPlayer createPlayer(Player player) {
-        User user = ClansPlugin.Ranks.getPlayerAdapter(Player.class).getUser(player);
+        RankMultiplyer rank = ranksController.parsePlayerRank(player);
         CPlayer cPlayer = new CPlayer(player.getUniqueId(),
                 null,
                 System.currentTimeMillis(),
                 0,
                 player.getName(),
-                user.getPrimaryGroup()
+                rank.getName()
         );
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.insertPlayer(cPlayer);
