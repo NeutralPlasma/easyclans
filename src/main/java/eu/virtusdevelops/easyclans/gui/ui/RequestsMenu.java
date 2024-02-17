@@ -185,7 +185,7 @@ public class RequestsMenu extends AsyncPaginator {
                     open();
                     return;
                 }
-                if(clan.getMembers().size() > plugin.getConfig().getInt("clan.max_members")){
+                if(clan.getMembers().size() >= plugin.getConfig().getInt("clan.max_members")){
                     player.sendMessage(ClansPlugin.MM.deserialize(
                             LanguageController.getLocalized("requests.too_many_members")
                                     .replace("{max}", String.valueOf(plugin.getConfig().getInt("clan.max_members")))

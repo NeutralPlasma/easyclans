@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -40,22 +41,27 @@ public class ClanCreateMenu extends GUI {
     double joinPrice;
     int kickTime;
 
-    public ClanCreateMenu(Player player, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                    RequestsController requestsController, InvitesController invitesController, LogController logController, RanksController ranksController, ClansPlugin plugin){
+    public ClanCreateMenu(Player player, ClansPlugin plugin, @Nullable String clanName){
         super(player, 54, LanguageController.getLocalized("clan_menu.title"));
-        this.clansController = clansController;
-        this.playerController = playerController;
-        this.currenciesController = currenciesController;
-        this.requestsController = requestsController;
-        this.invitesController = invitesController;
-        this.logController = logController;
-        this.ranksController = ranksController;
+        this.clansController = plugin.getClansController();
+        this.playerController = plugin.getPlayerController();
+        this.currenciesController = plugin.getCurrenciesController();
+        this.requestsController = plugin.getRequestsController();
+        this.invitesController = plugin.getInvitesController();
+        this.logController = plugin.getLogController();
+        this.ranksController = plugin.getRanksController();
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
 
-        this.clanName = player.getName();
-        this.clanDisplayName = "DISPLAY_" + player.getName();
-        clanTag = "" + clanName.charAt(0) + clanName.charAt(1);
+        this.clanName = clanName != null ?
+                clanName.length() > 2 ?
+                        clanName
+                        : player.getName()
+                : player.getName();
+
+        this.clanDisplayName = "DISPLAY_" + this.clanName;
+        clanTag = "" + this.clanName.charAt(0) + this.clanName.charAt(1);
+        clanTag = clanTag.toUpperCase();
 
         kickTime = plugin.getConfig().getInt("clan.default_kick_time") * 1000;
         joinPrice = plugin.getConfig().getDouble("clan.default_join_price");
@@ -387,6 +393,7 @@ public class ClanCreateMenu extends GUI {
                     refresh();
                     return;
                 }
+                provider.removeValue(player, plugin.getConfig().getDouble("clan.create.price.money"));
 
                 var members = new ArrayList<UUID>();
                 members.add(player.getUniqueId());
@@ -403,7 +410,7 @@ public class ClanCreateMenu extends GUI {
                         members
                 );
                 logController.addLog(new Log(clanName, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
-                new ClanMenu(target2, clan, clansController, playerController, currenciesController, requestsController, invitesController, logController, ranksController, plugin);
+                new ClanMenu(target2, clan, plugin);
 
             }, (target2) -> {
                 open();

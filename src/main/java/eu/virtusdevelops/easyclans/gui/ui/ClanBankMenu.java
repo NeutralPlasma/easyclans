@@ -167,6 +167,7 @@ public class ClanBankMenu extends AsyncPaginator {
             provider.removeValue(player, value);
             currency.setValue(currency.getValue() + value);
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
+            clansController.updateClan(clan);
             refresh();
         });
 

@@ -221,7 +221,7 @@ public class MemberSettingsMenu extends GUI {
                 ));
                 var bplayer = Bukkit.getPlayer(cTarget.getUuid());
                 if(bplayer != null){
-                    bplayer.sendMessage(LanguageController.getLocalized("members.kick.kicked"));
+                    bplayer.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("members.kick.kicked")));
                 }
                 logController.addLog(new Log( cTarget.getUuid().toString(), player.getUniqueId(), clan.getId(), LogType.MEMBER_KICK));
                 if(previousUI != null)

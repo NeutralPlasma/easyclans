@@ -13,13 +13,13 @@ soft depend:
   - VotingPlugin
   - EcoBits
 
-commands:
-  clans:
-    permission: easyclans.command.main
-    aliases: ["clan"]
-  trophy:
-    permission: easyclans.command.trophy
-    aliases: ["trophies", "ctrophy"]
+#commands:
+#  clans:
+#    permission: easyclans.command.main
+#    aliases: ["clan"]
+#  trophy:
+#    permission: easyclans.command.trophy
+#    aliases: ["trophies", "ctrophy"]
 
 permissions:
   easyclans.command.reload:

@@ -41,7 +41,7 @@ public class AbstractChatUtil implements Listener {
     public void initializeListeners(JavaPlugin plugin) {
 
         this.listener = new Listener() {
-            @EventHandler(priority = EventPriority.LOW)
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onChat(AsyncChatEvent event) {
 
                 Player player = event.getPlayer();

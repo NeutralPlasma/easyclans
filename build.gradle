@@ -7,7 +7,7 @@ plugins {
 
 def plugin = 'EasyClans'
 group = 'net.astrona'
-version = '1.1.0'
+version = '2.0.0'
 
 repositories {
     mavenCentral()
@@ -26,6 +26,13 @@ repositories {
         name = 'devmart-other'
         url = 'https://nexuslite.gcnt.net/repos/other/'
     }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+        name "sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
     maven { url 'https://jitpack.io' }
     maven{ url "https://repo.auxilor.io/repository/maven-public/" }
 }
@@ -39,6 +46,11 @@ dependencies {
     //compileOnly "com.willfp:EcoBits:<version>" -- doesnt exist T_T
 
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+    implementation "net.kyori:adventure-platform-bukkit:4.3.2"
+    implementation 'org.incendo:cloud-core:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-annotations:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-paper:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-minecraft-extras:2.0.0-beta.2'
 }
 
 java {

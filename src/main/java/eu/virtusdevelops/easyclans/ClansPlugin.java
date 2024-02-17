@@ -1,7 +1,6 @@
 package eu.virtusdevelops.easyclans;
 
-import eu.virtusdevelops.easyclans.commands.ClansCommand;
-import eu.virtusdevelops.easyclans.commands.TrophyCommand;
+import eu.virtusdevelops.easyclans.commands.CommandsRegister;
 import eu.virtusdevelops.easyclans.controller.*;
 import eu.virtusdevelops.easyclans.gui.Handler;
 import eu.virtusdevelops.easyclans.listener.PlayerChatListener;
@@ -9,15 +8,30 @@ import eu.virtusdevelops.easyclans.listener.PlayerConnectionListener;
 import eu.virtusdevelops.easyclans.listener.PlayerDamageListener;
 import me.clip.placeholderapi.PlaceholderAPI;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
+import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
+import org.incendo.cloud.paper.PaperCommandManager;
 
-import static org.bukkit.Bukkit.getServer;
+import static net.kyori.adventure.text.Component.text;
 
 public class ClansPlugin extends JavaPlugin {
+
+
+    private BukkitAudiences bukkitAudiences;
+    private MinecraftHelp<CommandSender> minecraftHelp;
+
     private Handler guiHandler;
     private PlayerController playerController;
     private ClansController clansController;
@@ -85,8 +99,54 @@ public class ClansPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, ranksController, sqlStorage));
-        getCommand("trophy").setExecutor(new TrophyCommand(this, clansController, playerController, tropyController));
+        //getCommand("clans").setExecutor(new ClansCommand(playerController, clansController, requestsController, this, logController, currenciesController, invitesController, ranksController, sqlStorage));
+        //getCommand("trophy").setExecutor(new TrophyCommand(this, clansController, playerController, tropyController));
+
+
+        final PaperCommandManager<CommandSender> manager = new PaperCommandManager<>(
+                this,
+                ExecutionCoordinator.simpleCoordinator(),
+                SenderMapper.identity()
+        );
+
+        if (manager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+            // Register Brigadier mappings for rich completions
+            manager.registerBrigadier();
+        } else if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            // Use Paper async completions API (see Javadoc for why we don't use this with Brigadier)
+            manager.registerAsynchronousCompletions();
+        }
+
+
+
+
+        this.bukkitAudiences = BukkitAudiences.create(this);
+
+        MinecraftExceptionHandler.create(this.bukkitAudiences::sender)
+                .defaultHandlers()
+                .decorator(component -> text()
+                    .append(text("[", NamedTextColor.DARK_GRAY))
+                    .append(text("Clans", NamedTextColor.GOLD))
+                    .append(text("] ", NamedTextColor.DARK_GRAY))
+                    .append(component).build()
+                )
+                .registerTo(manager);
+
+
+        this.minecraftHelp = MinecraftHelp.<CommandSender>builder()
+                .commandManager(manager)
+                .audienceProvider(bukkitAudiences::sender)
+                .commandPrefix("/clan help")
+//                .messageProvider(MinecraftHelp.captionMessageProvider(
+//                        manager.captionRegistry(),
+//                        ComponentCaptionFormatter.miniMessage()
+//                ))
+                .build();
+        //manager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
+
+
+        new CommandsRegister(this, manager);
+
     }
 
     private void registerGUI() {
@@ -104,8 +164,43 @@ public class ClansPlugin extends JavaPlugin {
     }
 
 
+    public PlayerController getPlayerController() {
+        return playerController;
+    }
 
+    public ClansController getClansController() {
+        return clansController;
+    }
 
+    public RequestsController getRequestsController() {
+        return requestsController;
+    }
 
+    public LogController getLogController() {
+        return logController;
+    }
 
+    public SQLStorage getSqlStorage() {
+        return sqlStorage;
+    }
+
+    public CurrenciesController getCurrenciesController() {
+        return currenciesController;
+    }
+
+    public InvitesController getInvitesController() {
+        return invitesController;
+    }
+
+    public TropyController getTropyController() {
+        return tropyController;
+    }
+
+    public RanksController getRanksController() {
+        return ranksController;
+    }
+
+    public MinecraftHelp<CommandSender> getMinecraftHelp() {
+        return minecraftHelp;
+    }
 }

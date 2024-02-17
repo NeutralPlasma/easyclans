@@ -28,9 +28,14 @@ public class PlayerDamageListener implements Listener {
         }
 
 
+
+
         if(event.getDamager() instanceof Player damager){
             var cDamager = playerController.getPlayer(damager.getUniqueId());
             var cVictim = playerController.getPlayer(victim.getUniqueId());
+
+            if(cVictim == null || cDamager == null) return;
+            if(cVictim.getClanID() == null || cDamager.getClanID() == null) return;
 
             if(!cDamager.getClanID().equals(cVictim.getClanID())){
                 return;
@@ -50,6 +55,9 @@ public class PlayerDamageListener implements Listener {
 
             var cDamager = playerController.getPlayer(damager.getUniqueId());
             var cVictim = playerController.getPlayer(victim.getUniqueId());
+
+            if(cVictim == null || cDamager == null) return;
+            if(cVictim.getClanID() == null || cDamager.getClanID() == null) return;
 
             if(!cDamager.getClanID().equals(cVictim.getClanID())){
                 return;

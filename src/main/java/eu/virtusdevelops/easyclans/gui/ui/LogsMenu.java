@@ -26,10 +26,7 @@ public class LogsMenu extends AsyncPaginator {
 
     private SimpleDateFormat sdf;
     public LogsMenu(Player player,
-                    ClansPlugin plugin,
-                    SQLStorage sqlStorage,
-                    ClansController clansController,
-                    PlayerController playerController) {
+                    ClansPlugin plugin) {
 
         super(player, plugin, 54, "<Gray>Logs <dark_gray>[<gold>{page}<gray>/<gold>{pages}<dark_gray>] (<gold>{total}<dark_gray>)", List.of(
                 10, 11, 12, 13, 14, 15, 16,
@@ -37,9 +34,9 @@ public class LogsMenu extends AsyncPaginator {
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
         ));
-        this.sqlStorage = sqlStorage;
-        this.clansController = clansController;
-        this.playerController = playerController;
+        this.sqlStorage = plugin.getSqlStorage();
+        this.clansController = plugin.getClansController();
+        this.playerController = plugin.getPlayerController();
         Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
         sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
         setupActions();

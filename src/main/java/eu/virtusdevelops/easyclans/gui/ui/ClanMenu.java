@@ -30,18 +30,17 @@ public class ClanMenu extends GUI {
     private final LogController logController;
     private final ClansPlugin plugin;
 
-    public ClanMenu(Player player, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                    RequestsController requestsController, InvitesController invitesController, LogController logController, RanksController ranksController, ClansPlugin plugin){
+    public ClanMenu(Player player, Clan clan, ClansPlugin plugin){
         super(player, 54, LanguageController.getLocalized("clan_menu.title"));
 
         this.clan = clan;
-        this.clansController = clansController;
-        this.playerController = playerController;
-        this.currenciesController = currenciesController;
-        this.requestsController = requestsController;
-        this.invitesController = invitesController;
-        this.logController = logController;
-        this.ranksController = ranksController;
+        this.clansController = plugin.getClansController();
+        this.playerController = plugin.getPlayerController();
+        this.currenciesController = plugin.getCurrenciesController();
+        this.requestsController = plugin.getRequestsController();
+        this.invitesController = plugin.getInvitesController();
+        this.logController = plugin.getLogController();
+        this.ranksController = plugin.getRanksController();
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
 
