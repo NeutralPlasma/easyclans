@@ -1,8 +1,11 @@
 package eu.virtusdevelops.easyclans.commands;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
 import eu.virtusdevelops.easyclans.commands.clan.*;
+import eu.virtusdevelops.easyclans.commands.trophy.TropyAddClanCommand;
+import eu.virtusdevelops.easyclans.commands.trophy.TropyCreateCommand;
+import eu.virtusdevelops.easyclans.commands.trophy.TropyDeleteCommand;
+import eu.virtusdevelops.easyclans.commands.trophy.TropyRemoveClanCommand;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
@@ -13,7 +16,7 @@ import java.util.List;
 
 public class CommandsRegister {
 
-    private static final List<AbstractFeature> COMMANDS = Arrays.asList(
+    private static final List<AbstractCommand> COMMANDS = Arrays.asList(
             new HelpCommand(),
             new ClanCommand(),
             new ClanCreateCommand(),
@@ -27,7 +30,13 @@ public class CommandsRegister {
             new ClanDebugCommand(),
             new ClanInfoCommand(),
             new ClanInterestCommand(),
-            new ClanSetBankCommand()
+            new ClanSetBankCommand(),
+            new ClanListCommand()//,
+
+            /*new TropyCreateCommand(),
+            new TropyAddClanCommand(),
+            new TropyDeleteCommand(),
+            new TropyRemoveClanCommand()*/
     );
 
     private final ClansPlugin plugin;

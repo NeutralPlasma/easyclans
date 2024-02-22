@@ -1,7 +1,7 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
 import eu.virtusdevelops.easyclans.models.Clan;
 import org.bukkit.command.CommandSender;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 
-public class ClanSetBankCommand implements AbstractFeature {
+public class ClanSetBankCommand implements AbstractCommand {
 
     private ClansPlugin plugin;
 

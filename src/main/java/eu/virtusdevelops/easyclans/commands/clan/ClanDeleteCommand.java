@@ -1,11 +1,9 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
-import eu.virtusdevelops.easyclans.gui.ui.ConfirmGUI;
 import eu.virtusdevelops.easyclans.models.Clan;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -22,10 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
-import static net.kyori.adventure.key.Key.key;
-import static net.kyori.adventure.sound.Sound.sound;
 
-public class ClanDeleteCommand implements AbstractFeature {
+public class ClanDeleteCommand implements AbstractCommand {
 
     private ClansPlugin plugin;
 
@@ -59,19 +55,8 @@ public class ClanDeleteCommand implements AbstractFeature {
             return;
         }
 
-        new ConfirmGUI(player, (t) -> {
-            // confirm
-            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            plugin.getClansController().deleteClan(clan.getId());
-            player.closeInventory();
 
-        }, (t) -> {
-            // decline
-            player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
-            player.closeInventory();
-
-        }, LanguageController.getLocalized("delete_clan.title"));
-
+        plugin.getClansController().deleteClan(clan.getId());
     }
 
     @Permission("easyclans.command.delete.admin")
@@ -86,31 +71,13 @@ public class ClanDeleteCommand implements AbstractFeature {
             return;
         }
 
+        plugin.getClansController().deleteClan(clan.getId());
 
-        if(sender instanceof Player player){
-
-            new ConfirmGUI(player, (t) -> {
-                // confirm
-                player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-                plugin.getClansController().deleteClan(clan.getId());
-                player.closeInventory();
-
-            }, (t) -> {
-                // decline
-                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
-                player.closeInventory();
-
-            }, LanguageController.getLocalized("delete_clan.title"));
-
-        }else{
-            plugin.getClansController().deleteClan(clan.getId());
-        }
     }
 
 
     @Suggestions("clan_name")
     public List<String> getClanNames(CommandContext<CommandSender> sender, String input){
         return plugin.getClansController().getClans().stream().map(Clan::getName).filter(name -> name.contains(input)).collect(Collectors.toList());
-
     }
 }

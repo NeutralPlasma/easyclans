@@ -245,6 +245,7 @@ public class SQLStorage {
                     """
                             CREATE TABLE IF NOT EXISTS ec_trophy (
                                 id CHAR(36) PRIMARY KEY,
+                                trophy_name VARCHAR(128),
                                 title VARCHAR(128),
                                 start_date BIGINT,
                                 end_date BIGINT,
@@ -991,6 +992,7 @@ public class SQLStorage {
 
                 Trophy trophy = new Trophy(
                         UUID.fromString(results.getString("id")),
+                        results.getString("trophy_name"),
                         results.getString("title"),
                         results.getString("description"),
                         results.getLong("start_date"),
@@ -1028,16 +1030,33 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO
                     ec_trophy
-                    (id, title, description, start_date, end_date)
+                    (id, trophy_name, title, description, start_date, end_date)
                     VALUES
-                    (?, ?, ?, ?, ?)
+                    (?, ?, ?, ?, ?, ?)
                     """);
             statement.setString(1, trophy.getId().toString());
-            statement.setString(2, trophy.getTitle());
-            statement.setString(3, trophy.getDescription());
-            statement.setLong(4, trophy.getStartDate());
-            statement.setLong(5, trophy.getEndDate());
+            statement.setString(2, trophy.getName());
+            statement.setString(3, trophy.getTitle());
+            statement.setString(4, trophy.getDescription());
+            statement.setLong(5, trophy.getStartDate());
+            statement.setLong(6, trophy.getEndDate());
             statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteTropyh(Trophy trophy){
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement2 = connection.prepareStatement("""
+                DELETE FROM ec_trophy
+                WHERE
+                id = ?
+                """);
+            statement2.setString(1, trophy.getId().toString());
+            statement2.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -1051,7 +1070,6 @@ public class SQLStorage {
                 DELETE FROM ec_clan_trophy
                 WHERE
                 id = ?
-                )
                 """);
             statement2.setString(1, trophy.getId().toString());
             statement2.execute();
@@ -1067,19 +1085,13 @@ public class SQLStorage {
             // insert or update
             PreparedStatement statement2 = connection.prepareStatement("""
             INSERT INTO ec_clan_trophy (id, clan_id, trophy_id, ranking, achieve_date)
-            SELECT ?, ?, ?, ?, ?
-            WHERE NOT EXISTS (
-                SELECT *
-                FROM ec_clan_trophy
-                id = ?
-            )
+            VALUES(?, ?, ?, ?, ?)
             """);
             statement2.setString(1, trophy.getId().toString());
             statement2.setString(2, trophy.getClanID().toString());
-            statement2.setString(3, trophy.getId().toString());
+            statement2.setString(3, trophy.getTrophyID().toString());
             statement2.setInt(4, trophy.getRanking());
             statement2.setLong(5, trophy.getAchievedDate());
-            statement2.setString(6, trophy.getId().toString());
             statement2.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1090,7 +1102,7 @@ public class SQLStorage {
 
     public boolean insertTrophyClans(Trophy trophy){
         try (Connection connection = dataSource.getConnection()) {
-            for(var cTrophy : trophy.getClansData()){
+            for(var cTrophy : trophy.getOrganizedTrophies().values()){
                 // insert or update
                 PreparedStatement statement2 = connection.prepareStatement("""
                 INSERT INTO ec_clan_trophy (id, clan_id, trophy_id, ranking, achieve_date)
@@ -1124,16 +1136,18 @@ public class SQLStorage {
                     UPDATE ec_trophy
                     SET
                     title = ?,
+                    name = ?
                     description = ?,
                     start_date = ?,
                     end_date = ?
                     WHERE id = ?
                     """);
             statement.setString(1, trophy.getTitle());
-            statement.setString(2, trophy.getDescription());
-            statement.setLong(3, trophy.getStartDate());
-            statement.setLong(4, trophy.getEndDate());
-            statement.setString(4, trophy.getId().toString());
+            statement.setString(2, trophy.getName());
+            statement.setString(3, trophy.getDescription());
+            statement.setLong(4, trophy.getStartDate());
+            statement.setLong(5, trophy.getEndDate());
+            statement.setString(6, trophy.getId().toString());
             statement.execute();
             insertTrophyClans(trophy);
         } catch (SQLException e) {

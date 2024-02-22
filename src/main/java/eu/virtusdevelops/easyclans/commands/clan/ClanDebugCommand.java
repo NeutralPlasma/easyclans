@@ -1,14 +1,10 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
-import eu.virtusdevelops.easyclans.controller.LanguageController;
-import eu.virtusdevelops.easyclans.gui.ui.ClanLogsMenu;
-import eu.virtusdevelops.easyclans.gui.ui.LogsMenu;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.annotations.Argument;
@@ -18,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 
-public class ClanDebugCommand implements AbstractFeature {
+public class ClanDebugCommand implements AbstractCommand {
     private ClansPlugin plugin;
 
     @Override

@@ -42,7 +42,7 @@ public class ClanCreateMenu extends GUI {
     int kickTime;
 
     public ClanCreateMenu(Player player, ClansPlugin plugin, @Nullable String clanName){
-        super(player, 54, LanguageController.getLocalized("clan_menu.title"));
+        super(player, 54, LanguageController.getLocalized("clan_create_menu.title"));
         this.clansController = plugin.getClansController();
         this.playerController = plugin.getPlayerController();
         this.currenciesController = plugin.getCurrenciesController();

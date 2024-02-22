@@ -1,10 +1,8 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
-import eu.virtusdevelops.easyclans.gui.ui.ConfirmGUI;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,7 +15,7 @@ import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
-public class ClanChatCommand implements AbstractFeature {
+public class ClanChatCommand implements AbstractCommand {
 
     private ClansPlugin plugin;
 

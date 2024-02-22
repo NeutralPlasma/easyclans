@@ -1,7 +1,7 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
 import eu.virtusdevelops.easyclans.gui.ui.ClanLogsMenu;
 import eu.virtusdevelops.easyclans.gui.ui.LogsMenu;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 
-public class ClanLogsCommand implements AbstractFeature {
+public class ClanLogsCommand implements AbstractCommand {
     private ClansPlugin plugin;
 
     @Override

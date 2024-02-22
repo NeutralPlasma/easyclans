@@ -1,30 +1,21 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
-import eu.virtusdevelops.easyclans.gui.ui.ConfirmGUI;
-import eu.virtusdevelops.easyclans.models.Clan;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.annotations.AnnotationParser;
-import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.Permission;
-import org.incendo.cloud.annotations.suggestion.Suggestions;
-import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
-public class ClanLeaveCommand implements AbstractFeature {
+public class ClanLeaveCommand implements AbstractCommand {
 
     private ClansPlugin plugin;
 
@@ -58,17 +49,9 @@ public class ClanLeaveCommand implements AbstractFeature {
             return;
         }
 
-        new ConfirmGUI(player, (t) -> {
-            // confirm
-            player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
-            cPlayer.setClanID(null);
-            plugin.getPlayerController().updatePlayer(cPlayer);
-            player.closeInventory();
-        }, (t) -> {
-            // decline
-            player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
-            player.closeInventory();
-        }, LanguageController.getLocalized("leave_confirm.title"));
+        cPlayer.setClanID(null);
+        plugin.getPlayerController().updatePlayer(cPlayer);
+
 
     }
 

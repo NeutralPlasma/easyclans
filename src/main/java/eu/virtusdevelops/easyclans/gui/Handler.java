@@ -1,6 +1,7 @@
 package eu.virtusdevelops.easyclans.gui;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -8,12 +9,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class Handler {
+    private final Plugin plugin;
     private final List<UUID> openedInv = new ArrayList<>();
     private final GUIListener listener;
 
     public Handler(Plugin plugin) {
+        this.plugin = plugin;
         this.listener = new GUIListener(this, plugin);
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
+    }
+
+    public void disable(){
+        HandlerList.unregisterAll(listener);
     }
 
     public void addPlayer(UUID player) {

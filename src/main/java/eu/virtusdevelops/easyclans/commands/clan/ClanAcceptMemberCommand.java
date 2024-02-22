@@ -1,7 +1,7 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
 import eu.virtusdevelops.easyclans.models.Log;
 import eu.virtusdevelops.easyclans.models.LogType;
@@ -27,7 +27,7 @@ import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
-public class ClanAcceptMemberCommand implements AbstractFeature {
+public class ClanAcceptMemberCommand implements AbstractCommand {
     private ClansPlugin plugin;
 
     @Override

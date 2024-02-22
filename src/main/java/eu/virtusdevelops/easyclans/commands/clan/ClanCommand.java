@@ -1,7 +1,7 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
 import eu.virtusdevelops.easyclans.gui.ui.ClanMenu;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 
-public class ClanCommand implements AbstractFeature {
+public class ClanCommand implements AbstractCommand {
 
     private ClansPlugin plugin;
 

@@ -1,16 +1,14 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.annotations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
-
-public class HelpCommand implements AbstractFeature {
+public class HelpCommand implements AbstractCommand {
     private ClansPlugin plugin;
 
     @Override

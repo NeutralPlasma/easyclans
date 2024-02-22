@@ -2,14 +2,12 @@ package eu.virtusdevelops.easyclans.listener;
 
 import eu.virtusdevelops.easyclans.controller.ClansController;
 import eu.virtusdevelops.easyclans.controller.PlayerController;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 public class PlayerDamageListener implements Listener {
     private PlayerController playerController;

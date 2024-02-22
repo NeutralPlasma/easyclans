@@ -80,7 +80,7 @@ public class TrophiesMenu extends AsyncPaginator {
             }
         });
 
-        addIcon(44, trophyCreateIcon());
+
 
     }
 
@@ -133,35 +133,5 @@ public class TrophiesMenu extends AsyncPaginator {
     }
 
 
-    private ItemStack trophyCreateItem(){
-        var item = new ItemStack(Material.BOOK);
-        var meta = item.getItemMeta();
-        meta.displayName(ClansPlugin.MM.deserialize(
-                        LanguageController.getLocalized("trophies_menu.create_trophy_item.title")
-                ).decoration(TextDecoration.ITALIC, false)
-        );
-        meta.lore(LanguageController.getLocalizedList("trophies_menu.create_trophy_item.lore").stream().map(ClansPlugin.MM::deserialize).toList());
-        item.setItemMeta(meta);
-
-
-        return item;
-    }
-
-    private Icon trophyCreateIcon(){
-        var icon = new Icon(trophyCreateItem());
-
-        icon.setVisibilityCondition((target, self) -> {
-            return target.hasPermission("easyclans.trophies.create");
-        });
-
-        icon.addClickAction((target) -> {
-            target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-            // open trophy creation menu
-            new TrophyCreateMenu(target, plugin, tropyController, playerController, clansController);
-        });
-
-
-        return icon;
-    }
 
 }

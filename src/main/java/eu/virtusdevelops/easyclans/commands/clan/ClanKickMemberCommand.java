@@ -1,9 +1,8 @@
 package eu.virtusdevelops.easyclans.commands.clan;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
-import eu.virtusdevelops.easyclans.commands.AbstractFeature;
+import eu.virtusdevelops.easyclans.commands.AbstractCommand;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
-import eu.virtusdevelops.easyclans.models.Clan;
 import eu.virtusdevelops.easyclans.models.Log;
 import eu.virtusdevelops.easyclans.models.LogType;
 import eu.virtusdevelops.easyclans.models.UserPermissions;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static eu.virtusdevelops.easyclans.ClansPlugin.MM;
 
-public class ClanKickMemberCommand implements AbstractFeature {
+public class ClanKickMemberCommand implements AbstractCommand {
     private ClansPlugin plugin;
 
     @Override
@@ -67,7 +66,7 @@ public class ClanKickMemberCommand implements AbstractFeature {
         }
         var cTarget = plugin.getPlayerController().getPlayer(pTarget.getUniqueId());
 
-        if(!clan.getMembers().contains(cTarget)){
+        if(!clan.getMembers().contains(cTarget.getUuid())){
             sender.sendMessage(MM.deserialize(LanguageController.getLocalized("invalid_player")));
             return;
         }

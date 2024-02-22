@@ -21,7 +21,6 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
-import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
@@ -87,6 +86,7 @@ public class ClansPlugin extends JavaPlugin {
     public void onDisable() {
         if (inited) {
             bgTask.cancel();
+            guiHandler.disable();
         }
     }
 

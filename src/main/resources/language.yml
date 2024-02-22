@@ -8,7 +8,7 @@ next_page: "<gold>Next page"
 previous_page: "<gold>Previous page"
 invalid_amount: "<red>Invalid amount!"
 not_enough_money: "<red>Sorry but you don't have enough money! <gray>(<red>{price}<white>$<gray>)"
-time_format: "dd. MMM yyyy HH:mm"
+time_format: "dd. MM. yyyy, HH:mm"
 not_in_clan: "<red>You are not in a clan."
 already_in_clan: "<red>You have to first leave or delete current clan you're in."
 not_owner: "<red>You're not the owner of the clan"
@@ -17,24 +17,11 @@ no_permission: "<red>No permission!"
 max_money: "<red>Theres already too much money bank."
 invalid_player: "<red>Invalid player!"
 request_expired: "<red>This request has expired."
+invalid_clan: "<red>Invalid clan!"
+updated_interest: "<green>Changed interest rate for clan to <yellow>{interest}<green>%"
+updated_bank: "<green>Changed bank <yellow>{bank}<green> for clan to <yellow>{value}<green>%"
 
-help:
-  - "<gold>Easy clans, proudly coded by VirtusDevelops <red><3"
-  - "<gray>- <gold>/clan <gray>opens clan menu"
-  - "<gray>- <gold>/clan bank <gray>opens clan bank"
-  - "<gray>- <gold>/clan members <gray>opens clan members list"
-  - "<gray>- <gold>/clan list <gray>opens clans list"
-  - "<gray>- <gold>/clan create <gray>opens clan creation menu"
-  - "<gray>- <gold>/clan menu <gray>opens clan menu"
-  - "<gray>- <gold>/clan chat <gray>toggles clan chat"
-  - "<gray>- <gold>/clan leave <gray>leave the clan you're in"
-  - "<gray>- <gold>/clan delete <gray>allows you to delete clan (if you're owner of it)"
-  - "<gray>- <gold>/clan help <gray>shows this text"
-  - "<gray>- <gold>/clan debug {player} <gray>shows debug info about player"
-  - "<gray>- <gold>/clan info <gray>shows debug info about plugin"
-
-
-clan_menu:
+clan_menu: # USED
   title: "<gold>Clan menu"
   settings_item:
     title: "<gray>[<gold>Settings<gray>]"
@@ -71,7 +58,7 @@ clan_menu:
       - "<yellow>Interest total: <gray>{interest_total}"
       - "<yellow>Tag: <gray>{tag}"
 
-members_menu:
+members_menu: # USED
   title: "<gold>Members"
   member_item:
     title: "<gold>{player}"
@@ -96,7 +83,7 @@ members_menu:
       - "<gray>Time remaining util kick:"
       - "<gray>- <red>{time_remaining}"
 
-member_menu:
+member_menu: # used
   title: "<gold>Member <red>{player}"
   member_item:
     title: "<gold>{player}"
@@ -132,7 +119,7 @@ member_menu:
 kick_confirm_menu:
   title: "<gold>Kick <red>{player}?"
 
-requests_menu:
+requests_menu: # USED
   title: "<gold>Requests"
   request_item:
     title: "<gold>{player}"
@@ -144,7 +131,7 @@ requests_menu:
       - "<gray>---------------------------"
       - "<gray>Expires: <red>{expires}"
 
-permissions_menu:
+permissions_menu: # USED
   title: "Permissions for {player}"
   has: "<green>Enabled"
   doesnt_have: "<red>Disabled"
@@ -155,7 +142,7 @@ permissions_menu:
       - "<gray>Description:"
       - "<yellow>{description}"
 
-banks_menu:
+banks_menu: # USED
   title: "<gold>Bank"
   currency_item:
     title: "<gray>[<gold>{currency}<gray>]"
@@ -168,7 +155,8 @@ banks_menu:
       - "<gray>Shift L-Click to withdraw all"
       - "<gray>Shift R-Click to deposit max"
 
-clan_create_menu:
+clan_create_menu: # USED
+  title: "<gold>Clan creation"
   banner_item:
     title: "<gray>[<gold>Banner<gray>]"
     lore:
@@ -208,7 +196,7 @@ clan_create_menu:
     title: "<green>Confirm clan creation"
     not_enough_money: "<red>Not enough money!"
 
-clan_settings_menu:
+clan_settings_menu: # USED
   title: "<gold>Clan Settings"
   banner_item:
     title: "<gray>[<gold>Banner<gray>]"
@@ -256,7 +244,7 @@ clan_settings_menu:
       - "<gray>Click to toggle"
     message: "<gray>Successfully {status} <gray>pvp!"
 
-trophies_menu:
+trophies_menu: # USED
   title: "<gold>Trophies"
   trophy_item:
     title: "<gold>{title}"
@@ -274,7 +262,7 @@ trophies_menu:
       - ""
       - "<gray>Click to add new"
 
-trophy_details_menu:
+trophy_details_menu: # USED
   title: "<gold>Trophy: <yellow>{trophy}"
   clan_item:
     title: "<gold>{position}<gray>. <yellow>{clan}"
@@ -283,7 +271,7 @@ trophy_details_menu:
       - "<gray>Achieved on: <yellow>{date}"
 
 
-trophy_create_menu:
+trophy_create_menu: # USED
   title: "<gold>Create new trophy"
   title_item:
     title: "<gray>[<gold>Trophy title<gray>]"
@@ -325,7 +313,7 @@ trophy_create_menu:
       - "<gold>Duration: "
       - "<yellow>{duration}"
 
-currencies:
+currencies: # USED
   limit_reached: "You can't deposit anymore, max deposited amount is {max}, and you're trying to deposit {value}"
   deposit: "<gray>Please enter a value you wish to deposit:"
   withdraw: "<gray>Please enter a value you wish to withdraw:"
@@ -391,7 +379,7 @@ clan:
 
 
 
-clan_list:
+clan_list: # USED
   menu:
     title: "<gold>Clan List [<white>{page}</white>]</gold>"
     banner:
@@ -410,23 +398,7 @@ invite:
   request_accepted: "<green>Your join request for clan: <red>{clan} <green>has been accepted!"
   request_declined: "<red>Your join request for clan: <green>{clan} <red>has been declined!"
   cant_request_owner: "<red>You currently own a clan, so you cannot send a join request to other clans!"
-bank:
-  menu:
-    title: "<gold>Clan Bank"
-    deposit:
-      name: "<gold>Deposit Money"
-      lore:
-        - ""
-        - "<gray>Current balance:</gray> <gold>${money}"
-        - ""
-        - "<gold>Click to deposit!"
-    withdraw:
-      name: "<gold>Withdraw Money"
-      lore:
-        - ""
-        - "<gray>Current balance:</gray> <gold>${money}"
-        - ""
-        - "<gold>Click to withdraw!"
+
 create:
   not_enough_money: "<red>You don't have enough money to create clan!"
   display_name:
@@ -478,97 +450,16 @@ create:
         - ""
         - "<gold>Click to create"
       confirm-title: "Create the clan?"
-members:
-  menu:
-    title: "<gold>Members <white>[<gold>{page}<white>]"
-    lore:
-      - "<gray>Last active: <gold>{active}"
-      - "<gray>Joined clan on: <gold>{joined}"
-      - "<gray>Currently: {status}"
-      - "<gray>Interest: <gold>{interest}"
-    inactive_lore:
-      - "<gray>Last active: <gold>{active}"
-      - "<gray>Joined clan on: <gold>{joined}"
-      - "<gray>Currently: {status}"
-      - "<gray>Time remaining util kick:"
-      - "<gray>- <red>{time_remaining}"
-    owner_lore:
-      - "<red>Clan owner"
-      - "<gray>Last active: <gold>{active}"
-      - "<gray>Joined clan on: <gold>{joined}"
-      - "<gray>Currently: {status}"
-      - "<gray>Interest: <gold>{interest}"
-  kick:
-    title: "<gray>Kick <red>{player}"
-    kick_success: "<green>Successfully kicked <red>{player}"
-    kicked: "<red>You have been kicked from the clan!"
-settings:
-  menu:
-    enter_new_tag: "<green>Please provide new tag: "
-    title: "<gold>Clan settings"
-    confirm_name_reset: "Reset name?"
-    tag_invalid: "<red>Invalid tag"
 
-    tag:
-      name: "<white>[<red>Clan tag<white>]"
-      invalid: "<red>Invalid tag, has to be 2 letters long!"
-      lore:
-        - "<gray>R-Click to reset"
-        - "<gray>L-Click to change"
-        - "<gray>-----------------"
-        - "{tag}"
-
-    kickIcon:
-      title: "<white>[<red>Kick time<white>]"
-      lore:
-        - ""
-        - "<gray>Left click to change"
-        - "<gray>Right click to reset"
-        - "<gray>--------------------------"
-        - "<gray>Current: <red>{time}"
-    priceIcon:
-      title: "<white>[<red>Join price<white>]"
-      lore:
-        - ""
-        - "<gray>Left click to change"
-        - "<gray>Right click to reset"
-        - "<gray>--------------------------"
-        - "<gray>Current: <red>{price:money}"
-    nameIcon:
-      title: "<white>[<red>Name<white>]"
-      lore:
-        - ""
-        - "<gray>Left click to change"
-        - "<gray>Right click to reset"
-        - "<gray>--------------------------"
-        - "<gray>Current: <red>{name}"
-    bannerIcon:
-      title: "<white>[<red>Banner<white>]"
-      lore:
-        - ""
-        - "<gray>Left click to buy"
-        - "<gray>Right click to change"
-        - "<gray>--------------------------"
-        - "<gray>Buy price: <red>{buy_price}<gray>$"
-        - "<gray>Change price: <red>{change_price}<gray>$"
-requests:
+requests: # USED
   decline: "<green>Declined request from: <red>{player}"
   accepted: "<green>Accepted <red>{player} <green>into the clan!"
   not_enough_money_accepter: "<red>Player you tried to accept doesn't have enough money!"
   not_enough_money_sender: "<red>Owner of clan {clan} tried to accept your request but you didn't have enough money to join!"
   too_many_members: "<red>Theres already max members in clan <gold>{current} <red>out of <gold>{max}<red>!"
-  menu:
-    invite:
-      title: "<gray>Accept <red>{player}"
-      name: "<reset><#ffffff>[<red>{player}</red><#ffffff>]"
-      lore:
-        - ""
-        - "<gray>Created on: <red>{requested}"
-        - ""
-        - "<green>Click to accept request"
-        - "<gray>---------------------------"
-        - "<gray>Expires: <red>{expires}"
-requests_own:
+
+requests_own: # USED
+  title: "<gold>Own requests <white>[<gold>{page}<white>]"
   cancel: "<green>Successfully canceled the request for clan <red>{clan}"
   cancel_menu:
     title: "<red>Cancel request sent to {clan}"
@@ -587,7 +478,7 @@ delete_clan:
   title: "<red>Delete clan?"
 
 
-# descriptions for permissions....
+# descriptions for permissions.... (used)
 permissions:
   ACCEPT_REQUEST: ""
   CLAN_SETTINGS: ""
