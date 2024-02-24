@@ -22,26 +22,19 @@ public class ClanSettingsMenu extends GUI {
     private final CPlayer cPlayer;
     private final Clan clan;
     private final ClansController clansController;
-    private final PlayerController playerController;
     private final CurrenciesController currenciesController;
-    private final RequestsController requestsController;
-    private final InvitesController invitesController;
     private final LogController logController;
     private final ClansPlugin plugin;
     private final GUI previousUI;
 
 
-    public ClanSettingsMenu(Player player, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                            RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin, GUI previusUI) {
+    public ClanSettingsMenu(Player player, Clan clan, ClansPlugin plugin, GUI previusUI) {
         super(player, 54, LanguageController.getLocalized("clan_settings_menu.title"));
-        this.clansController = clansController;
-        this.playerController = playerController;
-        this.currenciesController = currenciesController;
-        this.requestsController = requestsController;
-        this.invitesController = invitesController;
-        this.logController = logController;
+        this.clansController = plugin.getClansController();
+        this.currenciesController = plugin.getCurrenciesController();
+        this.logController = plugin.getLogController();
         this.plugin = plugin;
-        this.cPlayer = playerController.getPlayer(player.getUniqueId());
+        this.cPlayer =  plugin.getPlayerController().getPlayer(player.getUniqueId());
         this.clan = clan;
         this.previousUI = previusUI;
 
@@ -82,6 +75,7 @@ public class ClanSettingsMenu extends GUI {
         meta.lore(LanguageController.getLocalizedList("clan_settings_menu.banner_item.lore").stream()
                 .map(it -> ClansPlugin.MM.deserialize(it
                         .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner.buy_price.money")))
+                        .replace("{change_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner_change_price")))
                 ).decoration(TextDecoration.ITALIC, false)).toList());
         item.setItemMeta(meta);
 
@@ -139,6 +133,19 @@ public class ClanSettingsMenu extends GUI {
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 return;
             }
+
+            var provider = currenciesController.getProvider("Vault");
+            if(provider.getValue(player) < plugin.getConfig().getDouble("clan.banner_change_price")){
+                target.sendMessage(ClansPlugin.MM.deserialize(
+                        LanguageController.getLocalized("not_enough_money")
+                                .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.banner_change_price")))
+                ));
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                return;
+            }
+
+
+            provider.removeValue(target, plugin.getConfig().getDouble("clan.banner_change_price"));
             var newBanner = item.clone();
             newBanner = ItemUtils.removeEnchants(newBanner);
             newBanner = ItemUtils.strip(newBanner);
@@ -324,6 +331,9 @@ public class ClanSettingsMenu extends GUI {
                 .replace("{name}", clan.getName())
                 .replace("{display_name}", clan.getDisplayName())
                 .replace("{tag}", clan.getTag())
+                .replace("{name_change_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.name_change_price")))
+                .replace("{display_name_change_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.display_name_change_price")))
+                .replace("{tag_change_price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.tag_change_price")))
         )).toList());
         item.setItemMeta(meta);
 
@@ -343,6 +353,8 @@ public class ClanSettingsMenu extends GUI {
                         )
         );*/
 
+
+
         icon.addLeftClickAction((target) -> {
             if (!target.hasPermission("easyclans.edit.clan_name")
                     || (!target.getUniqueId().equals(clan.getOwner())
@@ -352,6 +364,18 @@ public class ClanSettingsMenu extends GUI {
                 player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 return;
             }
+
+            var provider = currenciesController.getProvider("Vault");
+            if(provider.getValue(player) < plugin.getConfig().getDouble("clan.name_change_price")){
+                target.sendMessage(ClansPlugin.MM.deserialize(
+                        LanguageController.getLocalized("not_enough_money")
+                                .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.name_change_price")))
+                ));
+                player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                return;
+            }
+
+
 
 
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
@@ -381,7 +405,7 @@ public class ClanSettingsMenu extends GUI {
                     else
                         clanTag += String.valueOf(clan.getName().charAt(0));
                 }
-
+                provider.removeValue(target, plugin.getConfig().getDouble("clan.name_change_price"));
                 clan.setTag(clanTag);
                 logController.addLog(new Log("name:" + stripped, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 logController.addLog(new Log("tag:" + clanTag, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
@@ -410,6 +434,17 @@ public class ClanSettingsMenu extends GUI {
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.display_name_message")));
             setForceClose(true);
             new AbstractChatUtil(target, (event) -> {
+
+                var provider = currenciesController.getProvider("Vault");
+                if(provider.getValue(player) < plugin.getConfig().getDouble("clan.display_name_change_price")){
+                    target.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("not_enough_money")
+                                    .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.display_name_change_price")))
+                    ));
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    return;
+                }
+
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if (stripped.length() > plugin.getConfig().getInt("clan.display_name_max_length")
@@ -419,7 +454,7 @@ public class ClanSettingsMenu extends GUI {
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                     return;
                 }
-
+                provider.removeValue(target, plugin.getConfig().getDouble("clan.display_name_change_price"));
                 clan.setDisplayName(stripped);
                 clansController.updateClan(clan);
                 logController.addLog(new Log("displayname:" + stripped, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
@@ -447,6 +482,17 @@ public class ClanSettingsMenu extends GUI {
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.tag_message")));
             setForceClose(true);
             new AbstractChatUtil(target, (event) -> {
+
+                var provider = currenciesController.getProvider("Vault");
+                if(provider.getValue(player) < plugin.getConfig().getDouble("clan.tag_change_price")){
+                    target.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("not_enough_money")
+                                    .replace("{price}", Formatter.formatMoney(plugin.getConfig().getDouble("clan.tag_change_price")))
+                    ));
+                    player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                    return;
+                }
+
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if (stripped.length() > plugin.getConfig().getInt("clan.tag_max_length")
@@ -456,7 +502,7 @@ public class ClanSettingsMenu extends GUI {
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                     return;
                 }
-
+                provider.removeValue(target, plugin.getConfig().getDouble("clan.tag_change_price"));
                 clan.setTag(stripped);
                 clansController.updateClan(clan);
                 logController.addLog(new Log("tag:" + stripped, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));

@@ -89,7 +89,7 @@ public class ClanMenu extends GUI {
         icon.addClickAction((target) -> {
             // open settings menu
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-            new ClanSettingsMenu(target, clan, clansController,playerController, currenciesController, requestsController, invitesController, logController, plugin, this);
+            new ClanSettingsMenu(target, clan, plugin, this);
         });
 
         return icon;

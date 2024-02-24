@@ -11,10 +11,14 @@ import java.util.UUID;
 public class Handler {
     private final Plugin plugin;
     private final List<UUID> openedInv = new ArrayList<>();
-    private final GUIListener listener;
+    private GUIListener listener;
 
     public Handler(Plugin plugin) {
         this.plugin = plugin;
+
+    }
+
+    public void init(){
         this.listener = new GUIListener(this, plugin);
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
     }

@@ -38,6 +38,10 @@ clan:
   min_name_length: 4
   max_name_length: 16 # how long can clan name be.
 
+  name_change_price: 100.0
+  display_name_change_price: 100.0
+  tag_change_price: 100.0
+
   display_name_max_length: 16
   display_name_min_length: 4
 

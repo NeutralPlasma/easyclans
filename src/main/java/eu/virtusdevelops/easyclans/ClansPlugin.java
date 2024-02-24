@@ -65,6 +65,7 @@ public class ClansPlugin extends JavaPlugin {
         this.registerListeners();
         this.registerCommands();
         this.registerGUI();
+        guiHandler.init();
 
         bgTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 

@@ -6,8 +6,8 @@ plugins {
 }
 
 def plugin = 'EasyClans'
-group = 'net.astrona'
-version = '2.1.0'
+group = 'eu.virtusdevelops'
+version = '2.1.1'
 
 repositories {
     mavenCentral()
