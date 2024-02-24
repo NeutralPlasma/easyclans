@@ -62,6 +62,9 @@ clan:
   name:
     change_price:
       money: 100000.0
+  display_name:
+    change_price:
+      money: 100000.0
   tag:
     change_price:
       money: 100000.0
