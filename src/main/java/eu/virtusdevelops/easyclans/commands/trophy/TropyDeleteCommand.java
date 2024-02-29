@@ -46,7 +46,9 @@ public class TropyDeleteCommand implements AbstractCommand {
             return;
         }
 
-        plugin.getSqlStorage().deleteTropyh(existingTrophy);
+        tropyController.deleteTrophy(existingTrophy);
+
+        //plugin.getSqlStorage().deleteTropyh(existingTrophy);
         sender.sendMessage(MM.deserialize(LanguageController.getLocalized("trophy_deleted")));
     }
 

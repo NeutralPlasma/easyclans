@@ -1001,9 +1001,9 @@ public class SQLStorage {
 
                 PreparedStatement statement2 = connection.prepareStatement("""
                     SELECT * FROM
-                    ec_clan_trophy
+                        ec_clan_trophy
                     WHERE
-                    trophy_id = ?
+                        trophy_id = ?
                     """);
                 statement2.setString(1, trophy.getId().toString());
 
@@ -1012,6 +1012,7 @@ public class SQLStorage {
                     trophy.addTrophy(new ClanTrophy(
                             UUID.fromString(ctResults.getString("id")),
                             UUID.fromString(ctResults.getString("clan_id")),
+                            trophy.getId(),
                             ctResults.getInt("ranking"),
                             ctResults.getLong("achieve_date")
                     ));

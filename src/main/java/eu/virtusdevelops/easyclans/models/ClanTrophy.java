@@ -15,6 +15,7 @@ public class ClanTrophy {
         this.achievedDate = achievedDate;
     }
 
+
     public ClanTrophy(UUID clanID, UUID trophyID, int ranking, long achievedDate) {
         this.id = UUID.randomUUID();
         this.clanID = clanID;

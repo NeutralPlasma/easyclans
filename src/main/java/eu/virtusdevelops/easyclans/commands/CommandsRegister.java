@@ -31,12 +31,12 @@ public class CommandsRegister {
             new ClanInfoCommand(),
             new ClanInterestCommand(),
             new ClanSetBankCommand(),
-            new ClanListCommand()//,
+            new ClanListCommand(),
 
-            /*new TropyCreateCommand(),
+            new TropyCreateCommand(),
             new TropyAddClanCommand(),
             new TropyDeleteCommand(),
-            new TropyRemoveClanCommand()*/
+            new TropyRemoveClanCommand()
     );
 
     private final ClansPlugin plugin;

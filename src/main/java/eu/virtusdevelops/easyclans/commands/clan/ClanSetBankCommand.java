@@ -32,7 +32,7 @@ public class ClanSetBankCommand implements AbstractCommand {
 
     @Permission("easyclans.command.setbank")
     @Command("clan setbank <clan_name> <bank_name> <value>")
-    public void setClanInterestCommand(
+    public void setClanBankCommand(
             final CommandSender sender,
             @Argument(value = "clan_name", suggestions = "clan_name") final @NonNull String name,
             @Argument(value = "bank_name", suggestions = "bank_name") final @NonNull String bankName,
@@ -59,6 +59,82 @@ public class ClanSetBankCommand implements AbstractCommand {
 
         sender.sendMessage(MM.deserialize(LanguageController.getLocalized("updated_bank")
                 .replace("{value}", value + "")
+                .replace("{bank}", bankName)
+        ));
+        plugin.getClansController().updateClan(clan);
+    }
+
+
+    @Permission("easyclans.command.addbank")
+    @Command("clan addbank <clan_name> <bank_name> <value>")
+    public void addClanBankCommand(
+            final CommandSender sender,
+            @Argument(value = "clan_name", suggestions = "clan_name") final @NonNull String name,
+            @Argument(value = "bank_name", suggestions = "bank_name") final @NonNull String bankName,
+            @Argument(value = "value") final double value
+    ){
+        var clan = plugin.getClansController().getClan(name);
+        if(clan == null){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("invalid_clan")));
+            return;
+        }
+
+        var provider = plugin.getCurrenciesController().getProvider(bankName);
+
+        if(provider == null){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("invalid_bank")));
+            return;
+        }
+        double newValue = 0;
+        for(var currency : clan.getCurrencies()){
+            if(currency.getName().equals(bankName)){
+                newValue = currency.getValue() + value;
+                currency.setValue(newValue);
+                break;
+            }
+        }
+
+        sender.sendMessage(MM.deserialize(LanguageController.getLocalized("updated_bank")
+                .replace("{value}",  + newValue + "")
+                .replace("{bank}", bankName)
+        ));
+        plugin.getClansController().updateClan(clan);
+    }
+
+
+    @Permission("easyclans.command.removebank")
+    @Command("clan removebank <clan_name> <bank_name> <value>")
+    public void removeClanBankCommand(
+            final CommandSender sender,
+            @Argument(value = "clan_name", suggestions = "clan_name") final @NonNull String name,
+            @Argument(value = "bank_name", suggestions = "bank_name") final @NonNull String bankName,
+            @Argument(value = "value") final double value
+    ){
+        var clan = plugin.getClansController().getClan(name);
+        if(clan == null){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("invalid_clan")));
+            return;
+        }
+
+        var provider = plugin.getCurrenciesController().getProvider(bankName);
+
+        if(provider == null){
+            sender.sendMessage(MM.deserialize(LanguageController.getLocalized("invalid_bank")));
+            return;
+        }
+        double newValue = 0;
+        for(var currency : clan.getCurrencies()){
+            if(currency.getName().equals(bankName)){
+                newValue = currency.getValue() - value;
+                currency.setValue(newValue);
+                break;
+            }
+        }
+        if(newValue < 0)
+            newValue = 0.0;
+
+        sender.sendMessage(MM.deserialize(LanguageController.getLocalized("updated_bank")
+                .replace("{value}",  + newValue + "")
                 .replace("{bank}", bankName)
         ));
         plugin.getClansController().updateClan(clan);
