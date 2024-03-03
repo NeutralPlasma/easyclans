@@ -4,6 +4,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
@@ -25,11 +26,9 @@ public class BannerUtils {
 
     public static List<Pattern> getPatterns(int amount){
         var randomPattern = new RandomEnumGenerator<>(PatternType.class);
-        var dyeColour = getRandomColour();
-
         List<Pattern> patterns = new ArrayList<>();
         for(int i = 0; i < amount; i++){
-            patterns.add(new Pattern(dyeColour, randomPattern.randomEnum()));
+            patterns.add(new Pattern(getRandomColour(), randomPattern.randomEnum()));
         }
         return patterns;
     }
@@ -39,6 +38,16 @@ public class BannerUtils {
         BannerMeta meta = (BannerMeta) item.getItemMeta();
         Random random = new Random();
         meta.setPatterns(getPatterns(random.nextInt(5) + 1 ));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static  ItemStack strip(ItemStack itemStack){
+        var item = itemStack.clone();
+        var meta = item.getItemMeta();
+        meta.lore(null);
+        meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+        meta.displayName(null);
         item.setItemMeta(meta);
         return item;
     }

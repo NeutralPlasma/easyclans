@@ -22,18 +22,14 @@ import static net.kyori.adventure.sound.Sound.sound;
 public class ClanListGUI extends Paginator {
 
     private ClansPlugin plugin;
-    private Player player;
     private ClansController clansController;
     private RequestsController requestsController;
     private PlayerController playerController;
     private GUI previousUI;
     private LogController logController;
 
-    public ClanListGUI(Player player, ClansController clansController,
-                       PlayerController playerController,
-                       RequestsController requestsController,
-                       GUI previousUI, LogController logController,
-                       ClansPlugin plugin) {
+    public ClanListGUI(Player player,
+                       ClansPlugin plugin, GUI previousUI) {
         super(player, List.of(
                 10, 11, 12, 13, 14, 15, 16,
                 19, 20, 21, 22, 23, 24, 25,
@@ -42,12 +38,11 @@ public class ClanListGUI extends Paginator {
         ), LanguageController.getLocalized("clan_list.menu.title"), 54);
 
         this.plugin = plugin;
-        this.player = player;
-        this.clansController = clansController;
-        this.playerController = playerController;
-        this.requestsController = requestsController;
+        this.clansController = plugin.getClansController();
+        this.playerController = plugin.getPlayerController();
+        this.requestsController = plugin.getRequestsController();
         this.previousUI = previousUI;
-        this.logController = logController;
+        this.logController = plugin.getLogController();
         init();
         this.open(0);
     }
@@ -138,7 +133,7 @@ public class ClanListGUI extends Paginator {
 
         if (previousUI != null) {
             addCloseAction((player) -> {
-                previousUI.open(player);
+                previousUI.open();
             });
         }
     }

@@ -1,13 +1,14 @@
 package eu.virtusdevelops.easyclans.gui.ui;
 
 import eu.virtusdevelops.easyclans.controller.PlayerController;
-import eu.virtusdevelops.easyclans.gui.Icon;
-import eu.virtusdevelops.easyclans.gui.actions.AsyncReturnTask;
+import eu.virtusdevelops.easyclans.models.Clan;
 import eu.virtusdevelops.easyclans.models.Log;
 import eu.virtusdevelops.easyclans.ClansPlugin;
 import eu.virtusdevelops.easyclans.controller.ClansController;
 import eu.virtusdevelops.easyclans.controller.LanguageController;
 import eu.virtusdevelops.easyclans.gui.AsyncPaginator;
+import eu.virtusdevelops.easyclans.gui.Icon;
+import eu.virtusdevelops.easyclans.gui.actions.AsyncReturnTask;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -19,17 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LogsGUI extends AsyncPaginator {
+public class ClanLogsMenu extends AsyncPaginator {
+
+
     private SQLStorage sqlStorage;
     private ClansController clansController;
     private PlayerController playerController;
+    private Clan clan;
 
     private SimpleDateFormat sdf;
-    public LogsGUI(Player player,
-                   ClansPlugin plugin,
-                   SQLStorage sqlStorage,
-                   ClansController clansController,
-                   PlayerController playerController) {
+    public ClanLogsMenu(Player player,
+                        Clan clan,
+                        ClansPlugin plugin) {
 
         super(player, plugin, 54, "<Gray>Logs <dark_gray>[<gold>{page}<gray>/<gold>{pages}<dark_gray>] (<gold>{total}<dark_gray>)", List.of(
                 10, 11, 12, 13, 14, 15, 16,
@@ -37,9 +39,10 @@ public class LogsGUI extends AsyncPaginator {
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
         ));
-        this.sqlStorage = sqlStorage;
-        this.clansController = clansController;
-        this.playerController = playerController;
+        this.sqlStorage = plugin.getSqlStorage();
+        this.clansController = plugin.getClansController();
+        this.playerController = plugin.getPlayerController();
+        this.clan = clan;
         Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
         sdf = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
         setupActions();
@@ -48,10 +51,10 @@ public class LogsGUI extends AsyncPaginator {
 
 
     private void setupActions(){
-        setFetchPageTask(new AsyncReturnTask<List<Icon>>() {
+        setFetchPageTask(new AsyncReturnTask<>() {
             @Override
             public List<Icon> fetchPageData(int page, int perPage) {
-                var logs = sqlStorage.getLogs(page, perPage);
+                var logs = sqlStorage.getClanLogs(page, perPage, clan.getId());
                 List<Icon> logIcons = new ArrayList<>();
                 for(Log log : logs){
                     var material = Material.PAPER;
@@ -72,7 +75,7 @@ public class LogsGUI extends AsyncPaginator {
                     var meta = item.getItemMeta();
                     meta.displayName(ClansPlugin.MM.deserialize("<gold>" + log.type()));
                     var lore = new ArrayList<Component>();
-                    var clan = log.clan() != -1 ? clansController.getClan(log.clan()) != null ? clansController.getClan(log.clan()).getName() : "DELETED" : "UNKNOWN";
+                    var clan = log.clan() != null ? clansController.getClan(log.clan()) != null ? clansController.getClan(log.clan()).getName() : "DELETED" : "UNKNOWN";
 
                     lore.add(ClansPlugin.MM.deserialize("<gray>-------------------"));
                     lore.add(ClansPlugin.MM.deserialize("<gray>Clan: <yellow>" + clan));
@@ -118,15 +121,15 @@ public class LogsGUI extends AsyncPaginator {
             }
         });
 
-        setGetItemsCountTask(new AsyncReturnTask<Integer>() {
+        setGetItemsCountTask(new AsyncReturnTask<>() {
             @Override
             public Integer fetchPageData(int page, int perPage) {
-                return sqlStorage.getLogsCount();
+                return sqlStorage.getLogsCount(clan.getId(), null);
             }
 
             @Override
             public Integer fetchData() {
-                return sqlStorage.getLogsCount();
+                return sqlStorage.getLogsCount(clan.getId(), null);
             }
         });
     }

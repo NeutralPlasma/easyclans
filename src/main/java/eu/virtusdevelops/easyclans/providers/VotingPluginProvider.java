@@ -19,7 +19,12 @@ public class VotingPluginProvider implements Provider{
 
     @Override
     public String getPluginName() {
-        return "VotingPlugin -> <gray>" + VotingPluginMain.plugin.getVersion();
+        return "VotingPlugin";
+    }
+
+    @Override
+    public String getVersion(){
+        return VotingPluginMain.plugin.getVersion();
     }
 
     @Override
@@ -28,18 +33,21 @@ public class VotingPluginProvider implements Provider{
     }
 
     @Override
-    public void setValue(OfflinePlayer player, double value) {
+    public boolean setValue(OfflinePlayer player, double value) {
         plugin.getUser(player.getUniqueId()).setPoints((int) value);
+        return true;
     }
 
     @Override
-    public void removeValue(OfflinePlayer player, double value) {
+    public boolean removeValue(OfflinePlayer player, double value) {
         plugin.getUser(player.getUniqueId()).removePoints((int) value);
+        return true;
     }
 
     @Override
-    public void addValue(OfflinePlayer player, double value) {
+    public boolean addValue(OfflinePlayer player, double value) {
         plugin.getUser(player.getUniqueId()).addPoints((int) value);
+        return true;
     }
 
     @Override
@@ -48,17 +56,20 @@ public class VotingPluginProvider implements Provider{
     }
 
     @Override
-    public void setIntValue(OfflinePlayer player, int value) {
+    public boolean setIntValue(OfflinePlayer player, int value) {
         plugin.getUser(player.getUniqueId()).setPoints(value);
+        return true;
     }
 
     @Override
-    public void removeIntValue(OfflinePlayer player, int value) {
+    public boolean removeIntValue(OfflinePlayer player, int value) {
         plugin.getUser(player.getUniqueId()).removePoints(value);
+        return true;
     }
 
     @Override
-    public void addIntValue(OfflinePlayer player, int value) {
+    public boolean addIntValue(OfflinePlayer player, int value) {
         plugin.getUser(player.getUniqueId()).addPoints(value);
+        return true;
     }
 }

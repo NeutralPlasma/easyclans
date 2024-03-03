@@ -1,12 +1,14 @@
 package eu.virtusdevelops.easyclans.models;
 
+import java.util.UUID;
+
 public class Currency {
-    private int id;
+    private UUID id;
     private double value;
     private String name;
-    public int clanId;
+    public UUID clanId;
 
-    public Currency(int id, double value, String name, int clanId) {
+    public Currency(UUID id, double value, String name, UUID clanId) {
         this.id = id;
         this.value = value;
         this.name = name;
@@ -33,17 +35,14 @@ public class Currency {
         this.name = name;
     }
 
-    public int getClanId() {
+    public UUID getClanId() {
         return clanId;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @Override
     public String toString() {

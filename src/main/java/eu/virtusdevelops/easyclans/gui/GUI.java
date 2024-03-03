@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class GUI implements InventoryHolder {
+    protected final Player player;
     protected List<Action> closeActions = new ArrayList<>();
 
     protected final Map<Integer, Icon> activeIcons = new HashMap<>();
@@ -22,12 +23,14 @@ public class GUI implements InventoryHolder {
     protected boolean forceClose = false;
     protected List<Integer> noBackgroundSlots = new ArrayList<>();
 
-    public GUI(int size, String title) {
+    public GUI(Player player, int size, String title) {
+        this.player = player;
         this.size = size;
         this.title = title;
     }
 
-    public GUI(int size, String title, List<Integer> noBackgroundSlots) {
+    public GUI(Player player,int size, String title, List<Integer> noBackgroundSlots) {
+        this.player = player;
         this.size = size;
         this.title = title;
         this.noBackgroundSlots = noBackgroundSlots;
@@ -59,7 +62,7 @@ public class GUI implements InventoryHolder {
         return closeActions;
     }
 
-    public void open(Player player) {
+    public void open() {
         player.openInventory(getInventory());
     }
 
@@ -117,10 +120,9 @@ public class GUI implements InventoryHolder {
     /**
      * Updates specific slot in inventory.
      *
-     * @param player to which it has to update
      * @param index  index of slot to update
      */
-    public void update(Player player, int index) {
+    public void update(int index) {
         if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI) {
             activeIcons.get(index).refresh(player);
             player.getOpenInventory().getTopInventory().setItem(index, activeIcons.get(index).itemStack);
@@ -130,11 +132,10 @@ public class GUI implements InventoryHolder {
     /**
      * Refreshes all refreshable icons in the inventory
      *
-     * @param player to which it has to update
      */
-    public void refresh(Player player) {
+    public void refresh() {
         if (player.getOpenInventory().getTopInventory().getHolder() instanceof GUI) {
-            setupIcons(player);
+            setupIcons();
             var inv = player.getOpenInventory().getTopInventory();
             activeIcons.forEach((integer, icon) -> {
                 icon.refresh(player);
@@ -144,7 +145,7 @@ public class GUI implements InventoryHolder {
         }
     }
 
-    private void setupIcons(Player player) {
+    private void setupIcons() {
         for (Map.Entry<Integer, List<Icon>> entry : this.actualIcons.entrySet()) {
             Collections.sort(entry.getValue());
             for (Icon icon : entry.getValue()) {
@@ -167,7 +168,7 @@ public class GUI implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = Bukkit.createInventory(this, this.size, ClansPlugin.MM.deserialize(this.title));
-        setupIcons(null);
+        setupIcons();
         for (Map.Entry<Integer, Icon> entry : this.activeIcons.entrySet()) {
             if (entry.getValue() == null) {
                 inventory.setItem(entry.getKey(), null);

@@ -4,8 +4,18 @@ db:
 
 
 currency:
-  Vault: "money"
-  VotingPlugin: "Tokens"
+  Vault:
+    enabled: true
+    name: "Money"
+    symbol: "$"
+  VotingPlugin:
+    enabled: true
+    name: "Tokens"
+    symbol: "Tokens"
+  Experience:
+    enabled: true
+    name: "Experience"
+    symbol: "exp"
 
 
 deposit_maxs:
@@ -19,6 +29,7 @@ currencies_max_interest_adding:
 # clan pricing
 clan:
   default_request_expire_duration: 504000 # in seconds
+  default_kick_time: 604800 # in seconds (7 days)
   max_members: 10
 
   tag_min_length: 1
@@ -26,6 +37,13 @@ clan:
 
   min_name_length: 4
   max_name_length: 16 # how long can clan name be.
+
+  name_change_price: 100.0
+  display_name_change_price: 100.0
+  tag_change_price: 100.0
+
+  display_name_max_length: 16
+  display_name_min_length: 4
 
   update_interval: 1200 # in ticks 1 sec => 20 ticks
 
@@ -44,6 +62,9 @@ clan:
   name:
     change_price:
       money: 100000.0
+  display_name:
+    change_price:
+      money: 100000.0
   tag:
     change_price:
       money: 100000.0
@@ -57,7 +78,17 @@ language:
   country: "SI"
 
 
+default_permissions:
+  - "VIEW_CLAN_INFO"
+  - "VIEW_BANK"
+  - "VIEW_MEMBERS"
+
+# higher priority better rank
 rank_interest_value:
-  default: 0.00001
-  vip: 0.000001
+  default:
+    value: 0.00001
+    priority: 1
+  vip:
+    value: 0.00001
+    priority: 2
 

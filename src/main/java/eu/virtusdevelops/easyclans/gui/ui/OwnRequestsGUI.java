@@ -17,7 +17,6 @@ import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
 
 public class OwnRequestsGUI extends Paginator {
-    private Player player;
     private ClansController clansController;
     private PlayerController playerController;
     private RequestsController requestsController;
@@ -31,9 +30,8 @@ public class OwnRequestsGUI extends Paginator {
                 19, 20, 21, 22, 23, 24, 25,
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
-        ), "<gold>Members <white>[<gold>{page}<white>]", 54);
+        ), LanguageController.getLocalized("requests_own.title"), 54);
 
-        this.player = player;
         this.clansController = clansController;
         this.playerController = playerController;
         this.requestsController = requestsController;

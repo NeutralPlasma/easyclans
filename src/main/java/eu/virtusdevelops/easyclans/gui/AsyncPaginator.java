@@ -17,7 +17,6 @@ import static net.kyori.adventure.sound.Sound.sound;
 public class AsyncPaginator extends GUI{
     private List<Integer> valid_slots;
     private String titleTemplate;
-    private Player player;
     private ClansPlugin plugin;
     private AsyncReturnTask<List<Icon>> fetchPageTask;
     private AsyncReturnTask<Integer> getItemsCountTask;
@@ -28,12 +27,11 @@ public class AsyncPaginator extends GUI{
     private Icon emptyIcon;
 
     public AsyncPaginator(Player player, ClansPlugin plugin, int size, String title, List<Integer> valid_slots) {
-        super(size, title, valid_slots);
+        super(player, size, title, valid_slots);
         titleTemplate = title;
         setTitle(titleTemplate.replace("{page}", "0")
                 .replace("{pages}", "0"));
         this.plugin = plugin;
-        this.player = player;
         this.valid_slots = valid_slots;
         this.itemsPerPage = valid_slots.size();
         emptyIcon = new Icon(new ItemStack(Material.AIR));
@@ -57,7 +55,7 @@ public class AsyncPaginator extends GUI{
 
 
 
-        open(player);
+        openStock();
         setTitle("Loading....");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             totalItems = getItemsCountTask.fetchData();
@@ -66,6 +64,7 @@ public class AsyncPaginator extends GUI{
         });
         fancyBackground();
     }
+
 
 
     private Icon firstPage(){
@@ -158,9 +157,19 @@ public class AsyncPaginator extends GUI{
             setTitle(titleTemplate.replace("{page}", "" + currentPage)
                     .replace("{pages}", "" + totalPages)
                     .replace("{total}", "" + totalItems));
-            refresh(player);
-            open(player);
+            refresh();
+            openStock();
         });
+    }
+
+
+    public void openStock(){
+        player.openInventory(getInventory());
+    }
+    @Override
+    public void open() {
+        updatePage();
+        openStock();
     }
 
 

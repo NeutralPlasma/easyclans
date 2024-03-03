@@ -2,24 +2,46 @@ package eu.virtusdevelops.easyclans.models;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CPlayer {
     private String name, rank;
     private UUID uuid;
-    private int clanId;
+    private UUID clanId;
     private long lastActive, joinClanDate;
-    private boolean isActive = false;
+    private boolean isActive;
     private boolean inClubChat = false;
+    private List<UserPermissions> userPermissionsList;
+    private List<Notification> unreadNotifications;
 
-    public CPlayer(UUID uuid, int clanId, long lastActive, long joinClanDate, String name, String rank) {
+    public CPlayer(UUID uuid, UUID clanId, long lastActive,
+                   long joinClanDate, String name, String rank) {
         this.uuid = uuid;
         this.clanId = clanId;
         this.lastActive = lastActive;
         this.joinClanDate = joinClanDate;
         this.name = name;
         this.rank = rank;
+        this.isActive = false;
+        this.unreadNotifications = new ArrayList<>();
+        userPermissionsList = new ArrayList<>();
+    }
+
+    public CPlayer(UUID uuid, UUID clanId, long lastActive, long joinClanDate,
+                   String name, String rank, List<UserPermissions> permissions) {
+        this.uuid = uuid;
+        this.clanId = clanId;
+        this.lastActive = lastActive;
+        this.joinClanDate = joinClanDate;
+        this.name = name;
+        this.rank = rank;
+        this.isActive = false;
+        this.unreadNotifications = new ArrayList<>();
+        userPermissionsList = permissions;
     }
 
     public boolean isInClubChat() {
@@ -38,19 +60,20 @@ public class CPlayer {
         this.uuid = uuid;
     }
 
-    public int getClanID() {
+    public UUID getClanID() {
         return clanId;
     }
 
-    public void setClanID(int clan_id) {
+    public void setClanID(UUID clan_id) {
         this.clanId = clan_id;
-        if(clan_id == -1){
+        if(clan_id == null){
             inClubChat = false;
         }
     }
 
     public void removeFromClan() {
-        this.clanId = -1;
+        this.userPermissionsList.clear();
+        this.clanId = null;
     }
 
     public long getLastActive() {
@@ -71,6 +94,10 @@ public class CPlayer {
 
     public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uuid);
+    }
+
+    public Player tryGetPlayer(){
+        return Bukkit.getPlayer(uuid);
     }
 
     public String getName() {
@@ -95,5 +122,37 @@ public class CPlayer {
 
     public void setRank(String rank) {
         this.rank = rank;
+    }
+
+    public void addPermission(UserPermissions permission){
+        this.userPermissionsList.add(permission);
+    }
+    public void removePermission(UserPermissions permission){
+        this.userPermissionsList.remove(permission);
+    }
+
+    public void setUserPermissionsList(List<UserPermissions> userPermissionsList) {
+        this.userPermissionsList = userPermissionsList;
+    }
+
+    public List<UserPermissions> getUserPermissionsList() {
+        return userPermissionsList;
+    }
+
+    public boolean hasPermission(UserPermissions permission){
+        return userPermissionsList.contains(permission); // TODO!
+    }
+
+
+    public List<Notification> getUnreadNotifications() {
+        return unreadNotifications;
+    }
+
+    public void setUnreadNotifications(List<Notification> unreadNotifications) {
+        this.unreadNotifications = unreadNotifications;
+    }
+
+    public void addNotification(Notification notification){
+        this.unreadNotifications.add(notification);
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Clan {
-    private int id;
+    private UUID id;
     private UUID owner;
     private String name;
     private String displayName;
@@ -15,15 +15,39 @@ public class Clan {
     private int joinPointsPrice;
     private double joinMoneyPrice;
     private ItemStack banner;
-    private double bank, interestRate, actualInterestRate;
-    private double tempInterestRate = 0.0;
+    private double interestRate;
     private String tag;
     private List<UUID> members;
+    private List<Trophy> trophies;
     private List<Currency> currencies;
     private long createdOn;
+    private boolean pvpEnabled;
 
-    public Clan(int id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
-                double joinMoneyPrice, ItemStack banner, double bank, double interestRate, String tag, List<UUID> members, long createdOn) {
+    // local stuff
+    private double tempInterestRate = 0.0, actualInterestRate;
+
+
+    public Clan(UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, boolean pvpEnabled, long createdOn) {
+        this.id = UUID.randomUUID();
+        this.owner = owner;
+        this.name = name;
+        this.displayName = displayName;
+        this.autoKickTime = autoKickTime;
+        this.joinPointsPrice = joinPointsPrice;
+        this.joinMoneyPrice = joinMoneyPrice;
+        this.interestRate = interestRate;
+        this.banner = banner;
+        this.tag = tag;
+        this.members = members;
+        this.pvpEnabled = pvpEnabled;
+        this.createdOn = createdOn;
+        this.currencies = new ArrayList<>();
+        this.trophies = new ArrayList<>();
+    }
+
+    public Clan(UUID id, UUID owner, String name, String displayName, int autoKickTime, int joinPointsPrice,
+                double joinMoneyPrice, ItemStack banner, double interestRate, String tag, List<UUID> members, boolean pvpEnabled, long createdOn) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -33,11 +57,12 @@ public class Clan {
         this.joinMoneyPrice = joinMoneyPrice;
         this.interestRate = interestRate;
         this.banner = banner;
-        this.bank = bank;
         this.tag = tag;
         this.members = members;
+        this.pvpEnabled = pvpEnabled;
         this.createdOn = createdOn;
         this.currencies = new ArrayList<>();
+        this.trophies = new ArrayList<>();
     }
 
     public long getCreatedOn() {
@@ -48,13 +73,10 @@ public class Clan {
         this.createdOn = createdOn;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public UUID getOwner() {
         return owner;
@@ -187,5 +209,13 @@ public class Clan {
 
     public void resetTempInterestRate(){
         this.tempInterestRate = 0.0;
+    }
+
+    public boolean isPvpEnabled() {
+        return pvpEnabled;
+    }
+
+    public void setPvpEnabled(boolean pvpEnabled) {
+        this.pvpEnabled = pvpEnabled;
     }
 }
