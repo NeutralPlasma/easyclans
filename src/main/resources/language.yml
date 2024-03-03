@@ -319,6 +319,8 @@ currencies: # USED
   withdraw: "<gray>Please enter a value you wish to withdraw:"
   not_enough: "<gray>You dont have enough <red>{currency}<gray>, you entered <red>{price}"
   invalid_amount: "<red>Invalid amount!"
+  withdrawn: "<green>Succesfully withdrawn: <yellow>{price}<green>{currency}"
+  deposited: "<green>Succesfully deposited: <yellow>{price}<green>{currency}"
 
 clan:
   chat:

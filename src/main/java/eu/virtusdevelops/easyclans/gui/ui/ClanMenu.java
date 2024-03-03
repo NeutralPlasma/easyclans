@@ -252,7 +252,7 @@ public class ClanMenu extends GUI {
         icon.addClickAction((target) -> {
             // open bank menu
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-            new ClanBankMenu(player, clan, clansController, playerController, currenciesController, requestsController, invitesController, logController, plugin, this);
+            new ClanBankMenu(player, clan, plugin, this);
         });
 
         return icon;

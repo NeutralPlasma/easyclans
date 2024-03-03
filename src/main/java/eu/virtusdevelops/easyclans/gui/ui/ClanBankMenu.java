@@ -14,17 +14,14 @@ import eu.virtusdevelops.easyclans.utils.AbstractChatUtil;
 import eu.virtusdevelops.easyclans.utils.Formatter;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.sound.Sound.sound;
@@ -34,29 +31,22 @@ public class ClanBankMenu extends AsyncPaginator {
     private final CPlayer cPlayer;
     private final Clan clan;
     private final ClansController clansController;
-    private final PlayerController playerController;
     private final CurrenciesController currenciesController;
-    private final RequestsController requestsController;
-    private final InvitesController invitesController;
     private final LogController logController;
     private final ClansPlugin plugin;
     private final GUI previousUI;
 
-    public ClanBankMenu(Player player, Clan clan, ClansController clansController, PlayerController playerController, CurrenciesController currenciesController,
-                        RequestsController requestsController, InvitesController invitesController, LogController logController, ClansPlugin plugin, GUI previousUI){
+    public ClanBankMenu(Player player, Clan clan, ClansPlugin plugin, GUI previousUI){
         super(player, plugin,36, LanguageController.getLocalized("banks_menu.title"), List.of(
                 10, 11, 12, 13, 14, 15, 16
         ));
 
         this.clan = clan;
-        this.clansController = clansController;
-        this.playerController = playerController;
-        this.currenciesController = currenciesController;
-        this.requestsController = requestsController;
-        this.invitesController = invitesController;
-        this.logController = logController;
+        this.clansController = plugin.getClansController();
+        this.currenciesController = plugin.getCurrenciesController();
+        this.logController = plugin.getLogController();
         this.plugin = plugin;
-        this.cPlayer = playerController.getPlayer(player.getUniqueId());
+        this.cPlayer = plugin.getPlayerController().getPlayer(player.getUniqueId());
         this.previousUI = previousUI;
 
         setup();
@@ -140,11 +130,16 @@ public class ClanBankMenu extends AsyncPaginator {
         icon.addShiftRightClickAction((target) -> {
             if(!target.getUniqueId().equals(clan.getOwner())
                     && !target.hasPermission("easyclans.admin.bank_deposit")
-                    && !(cPlayer.hasPermission(UserPermissions.BANK_DEPOSIT) && cPlayer.getClanID() == clan.getId())){
+                    && (!cPlayer.getClanID().equals(clan.getId()) || !cPlayer.hasPermission(UserPermissions.BANK_DEPOSIT))
 
+            ){
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                target.sendMessage(LanguageController.getLocalized("no_permission"));
                 return;
             }
+
+
+
 
             var provider = currenciesController.getProvider(currency.getName());
             var value = provider.getValue(player);
@@ -164,6 +159,12 @@ public class ClanBankMenu extends AsyncPaginator {
                 return;
             }
 
+            player.sendMessage(ClansPlugin.MM.deserialize(
+                    LanguageController.getLocalized("currencies.deposited")
+                            .replace("{price}", Formatter.formatMoney(value))
+                            .replace("{currency}", plugin.getConfig().getString("currency." + currency.getName() + ".symbol"))
+            ));
+
             provider.removeValue(player, value);
             currency.setValue(currency.getValue() + value);
             player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
@@ -174,11 +175,13 @@ public class ClanBankMenu extends AsyncPaginator {
         icon.addShiftLeftClickAction((target) -> {
             if(!target.getUniqueId().equals(clan.getOwner())
                     && !target.hasPermission("easyclans.admin.bank_withdraw")
-                    && !(cPlayer.hasPermission(UserPermissions.BANK_WITHDRAW) && cPlayer.getClanID() == clan.getId())){
-
+                    && (!cPlayer.getClanID().equals(clan.getId()) || !cPlayer.hasPermission(UserPermissions.BANK_WITHDRAW))
+            ){
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                target.sendMessage(LanguageController.getLocalized("no_permission"));
                 return;
             }
+
             if(currency.getValue() == 0){
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 return;
@@ -189,6 +192,12 @@ public class ClanBankMenu extends AsyncPaginator {
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 return;
             }
+
+            player.sendMessage(ClansPlugin.MM.deserialize(
+                    LanguageController.getLocalized("currencies.withdrawn")
+                            .replace("{price}", Formatter.formatMoney(currency.getValue()))
+                            .replace("{currency}", plugin.getConfig().getString("currency." + currency.getName() + ".symbol"))
+            ));
 
             provider.addValue(player, currency.getValue());
             logController.addLog(new Log("currency:" + currency.getName() + ":" + currency.getValue(), player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
@@ -202,9 +211,10 @@ public class ClanBankMenu extends AsyncPaginator {
         icon.addLeftClickAction((target) -> {
             if(!target.getUniqueId().equals(clan.getOwner())
                     && !target.hasPermission("easyclans.admin.bank_deposit")
-                    && !(cPlayer.hasPermission(UserPermissions.BANK_DEPOSIT) && cPlayer.getClanID() == clan.getId())){
-
+                    && (!cPlayer.getClanID().equals(clan.getId()) || !cPlayer.hasPermission(UserPermissions.BANK_DEPOSIT))
+            ){
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                target.sendMessage(LanguageController.getLocalized("no_permission"));
                 return;
             }
 
@@ -232,6 +242,13 @@ public class ClanBankMenu extends AsyncPaginator {
                 if (provider.getValue(player) >= value) {
                     provider.removeValue(player, value);
                     currency.setValue(currency.getValue() + value);
+
+                    player.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("currencies.deposited")
+                                    .replace("{price}", Formatter.formatMoney(value))
+                                    .replace("{currency}", plugin.getConfig().getString("currency." + currency.getName() + ".symbol"))
+                    ));
+
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
                     logController.addLog(new Log("deposit:" + currency.getName() + ":" + value, player.getUniqueId(), clan.getId(), LogType.DEPOSIT));
 
@@ -257,11 +274,13 @@ public class ClanBankMenu extends AsyncPaginator {
         icon.addRightClickAction((target) -> {
             if(!target.getUniqueId().equals(clan.getOwner())
                     && !target.hasPermission("easyclans.admin.bank_withdraw")
-                    && !(cPlayer.hasPermission(UserPermissions.BANK_WITHDRAW) && cPlayer.getClanID() == clan.getId())){
-
+                    && (!cPlayer.getClanID().equals(clan.getId()) || !cPlayer.hasPermission(UserPermissions.BANK_WITHDRAW))
+            ){
                 target.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
+                target.sendMessage(LanguageController.getLocalized("no_permission"));
                 return;
             }
+
             var provider = currenciesController.getProvider(currency.getName());
             player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("currencies.withdraw")));
             setForceClose(true);
@@ -287,6 +306,13 @@ public class ClanBankMenu extends AsyncPaginator {
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));
                     logController.addLog(new Log("currency:" + currency.getName() + ":" + value, player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                 }else{
+
+                    player.sendMessage(ClansPlugin.MM.deserialize(
+                            LanguageController.getLocalized("currencies.withdrawn")
+                                    .replace("{price}", Formatter.formatMoney(value))
+                                    .replace("{currency}", plugin.getConfig().getString("currency." + currency.getName() + ".symbol"))
+                    ));
+
                     currenciesController.getProvider(currency.getName()).addValue(player, value);
                     currency.setValue(currency.getValue() - value);
                     player.playSound(sound(key("block.note_block.cow_bell"), Sound.Source.MASTER, 1f, 1.19f));

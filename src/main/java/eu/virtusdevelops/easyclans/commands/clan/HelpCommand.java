@@ -28,5 +28,17 @@ public class HelpCommand implements AbstractCommand {
 
     }
 
+    @Permission("easyclans.command.reload")
+    @Command("clan reload")
+    public void reloadCommand(
+            final CommandSender sender
+    ){
+        long start = System.currentTimeMillis();
+        plugin.reload();
+        long ms = System.currentTimeMillis() - start;
+        sender.sendMessage(ClansPlugin.MM.deserialize("<green>Sucessfully reloaded plugin took: <yellow>" + ms + "<green>ms!"));
+    }
+
+
 
 }
