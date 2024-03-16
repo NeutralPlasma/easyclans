@@ -13,6 +13,7 @@ public class RanksController {
 
     private final ClansPlugin plugin;
     private final List<RankMultiplyer> rankMultiplyerList = new ArrayList<>();
+    private final RankMultiplyer nullMultiplier = new RankMultiplyer("null", 0.0, -1);
 
     public RanksController(ClansPlugin plugin) {
         this.plugin = plugin;
@@ -51,7 +52,7 @@ public class RanksController {
                 return rank;
             }
         }
-        return null;
+        return nullMultiplier;
     }
 
 
