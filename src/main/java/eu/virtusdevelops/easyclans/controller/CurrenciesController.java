@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CurrenciesController {
-    private ClansPlugin plugin;
-    private Map<String, Provider> currencyProviders = new HashMap<>();
+    private final ClansPlugin plugin;
+    private final Map<String, Provider> currencyProviders = new HashMap<>();
 
     public CurrenciesController(ClansPlugin plugin){
         this.plugin = plugin;

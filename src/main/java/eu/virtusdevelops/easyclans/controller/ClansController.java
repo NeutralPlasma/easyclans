@@ -34,8 +34,10 @@ public class ClansController {
             for(var currency : currenciesController.getCurrencyProviders().keySet()){
                 boolean has = false;
                 for(var clanCurrency : clan.getCurrencies()){
-                    if(clanCurrency.getName().equals(currency))
+                    if (clanCurrency.getName().equals(currency)) {
                         has = true;
+                        break;
+                    }
                 }
                 if(!has){
                     var newCurrency = new eu.virtusdevelops.easyclans.models.Currency(UUID.randomUUID(), 0.0, currency, clan.getId());

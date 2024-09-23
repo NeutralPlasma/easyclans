@@ -44,6 +44,7 @@ public class CPlayer {
         userPermissionsList = permissions;
     }
 
+
     public boolean isInClubChat() {
         return inClubChat;
     }

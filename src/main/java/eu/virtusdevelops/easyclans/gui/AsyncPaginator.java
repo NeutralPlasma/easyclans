@@ -15,7 +15,7 @@ import static net.kyori.adventure.sound.Sound.sound;
 
 
 public class AsyncPaginator extends GUI{
-    private List<Integer> valid_slots;
+    private List<Integer> validSlots;
     private String titleTemplate;
     private ClansPlugin plugin;
     private AsyncReturnTask<List<Icon>> fetchPageTask;
@@ -26,14 +26,14 @@ public class AsyncPaginator extends GUI{
     private int itemsPerPage;
     private Icon emptyIcon;
 
-    public AsyncPaginator(Player player, ClansPlugin plugin, int size, String title, List<Integer> valid_slots) {
-        super(player, size, title, valid_slots);
+    public AsyncPaginator(Player player, ClansPlugin plugin, int size, String title, List<Integer> validSlots) {
+        super(player, size, title, validSlots);
         titleTemplate = title;
         setTitle(titleTemplate.replace("{page}", "0")
                 .replace("{pages}", "0"));
         this.plugin = plugin;
-        this.valid_slots = valid_slots;
-        this.itemsPerPage = valid_slots.size();
+        this.validSlots = validSlots;
+        this.itemsPerPage = validSlots.size();
         emptyIcon = new Icon(new ItemStack(Material.AIR));
 
         //init();
@@ -146,7 +146,7 @@ public class AsyncPaginator extends GUI{
     private void updatePageFunction(){
         var data = fetchPageTask.fetchPageData(currentPage, itemsPerPage);
         for(int i = 0; i < itemsPerPage ; i++){
-            int slot = valid_slots.get(i);
+            int slot = validSlots.get(i);
             if(data.size() > i)
                 setIcon(slot, data.get(i));
             else
@@ -161,6 +161,7 @@ public class AsyncPaginator extends GUI{
             openStock();
         });
     }
+
 
 
     public void openStock(){
