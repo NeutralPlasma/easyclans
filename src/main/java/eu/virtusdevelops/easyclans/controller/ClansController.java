@@ -162,7 +162,10 @@ public class ClansController {
             if(System.currentTimeMillis() - player.getLastActive() > clan.getAutoKickTime()){
                 player.setClanID(null);
                 // TODO: send kick notification
-                sqlStorage.addLog(new Log("Inactivity kick", player.getUuid(), clan.getId(), LogType.AUTO_KICK, System.currentTimeMillis()));
+
+                // String log, UUID player, UUID clan, LogType type
+
+                sqlStorage.addLog(new Log("Inactivity kick", player.getUuid(), clan.getId(), LogType.AUTO_KICK));
                 sqlStorage.updatePlayer(player);
             }
         }
@@ -177,16 +180,16 @@ public class ClansController {
             double max = plugin.getConfig().getDouble("clan.max_interest_rate");
             if(clan.getInterestRate() + toAddInterest >= max){
                 clan.setInterestRate(max);
-                sqlStorage.addLog(new Log("interest:max:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD, System.currentTimeMillis()));
+                sqlStorage.addLog(new Log("interest:max:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
             }else{
                 clan.setInterestRate(clan.getInterestRate()+toAddInterest);
-                sqlStorage.addLog(new Log("interest:add:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD, System.currentTimeMillis()));
+                sqlStorage.addLog(new Log("interest:add:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
             }
 
 
             var cOwner = playerController.getPlayer(clan.getOwner());
             if(System.currentTimeMillis() - cOwner.getLastActive() > 7 * 24 * 60 * 60 * 1000){
-                sqlStorage.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET, System.currentTimeMillis()));
+                sqlStorage.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET));
                 clan.setInterestRate(0);
             }
 
@@ -202,7 +205,7 @@ public class ClansController {
                     var toAdd = interestMultiplier * (interestFull/100);
                     if(toAdd > 0){
                         currency.addValue(toAdd);
-                        sqlStorage.addLog(new Log("currency:" + currency.getName() + ":" + toAdd , null, clan.getId(), LogType.MONEY_ADD, System.currentTimeMillis()));
+                        sqlStorage.addLog(new Log("currency:" + currency.getName() + ":" + toAdd , null, clan.getId(), LogType.MONEY_ADD));
                     }
                 }
             }

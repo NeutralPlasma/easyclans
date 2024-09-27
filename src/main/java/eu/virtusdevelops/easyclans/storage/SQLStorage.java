@@ -65,7 +65,7 @@ public class SQLStorage {
         //hikariConfig.addDataSourceProperty("database", database);
         this.dataSource = new HikariDataSource(hikariConfig);
 
-        logger.info("Creating database tables...");
+        /*logger.info("Creating database tables...");
         this.createPlayersTable();
         this.createClansTable();
         this.createTrophiesTable();
@@ -77,9 +77,12 @@ public class SQLStorage {
         this.createClanJoinRequestsTable();
         this.createCurrenciesTable();
 
-        this.createLogsTable();
+        this.createLogsTable();*/
     }
 
+    public HikariDataSource getDataSource() {
+        return dataSource;
+    }
 
     // <editor-fold desc="Table creation">
     private void createPlayersTable() {
@@ -908,6 +911,7 @@ public class SQLStorage {
             while (result.next()) {
                 UUID uuid = result.getString("player_id").isEmpty() ? null : UUID.fromString(result.getString("player_id"));
                 logs.add(new Log(
+                        result.getLong("id"),
                         result.getString("message"),
                         uuid,
                         UUID.fromString(result.getString("clan_id")),

@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class InvitesController {
-    private final Map<Integer, CInvite> invites;
-    private int count;
+    private final Map<UUID, CInvite> invites;
     private final ClansPlugin plugin;
     private final SQLStorage sqlStorage;
 
@@ -29,9 +28,8 @@ public class InvitesController {
      * @param createdTime the creation time of the invite.
      * @return the newly created invite object.
      */
-    public CInvite addInvite(int clanId, UUID playerUuid, long expireTime, long createdTime) {
-        this.count = this.count + 1;
-        CInvite cInvite = new CInvite(this.count, clanId, playerUuid, expireTime, createdTime);
+    public CInvite addInvite(UUID clanId, UUID playerUuid, long expireTime, long createdTime) {
+        CInvite cInvite = new CInvite(UUID.randomUUID(), clanId, playerUuid, expireTime, createdTime);
 
         invites.put(cInvite.inviteId(), cInvite);
         return cInvite;

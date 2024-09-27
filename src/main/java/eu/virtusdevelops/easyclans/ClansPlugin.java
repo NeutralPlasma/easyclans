@@ -2,10 +2,14 @@ package eu.virtusdevelops.easyclans;
 
 import eu.virtusdevelops.easyclans.commands.CommandsRegister;
 import eu.virtusdevelops.easyclans.controller.*;
+import eu.virtusdevelops.easyclans.dao.*;
 import eu.virtusdevelops.easyclans.gui.Handler;
 import eu.virtusdevelops.easyclans.listener.PlayerChatListener;
 import eu.virtusdevelops.easyclans.listener.PlayerConnectionListener;
 import eu.virtusdevelops.easyclans.listener.PlayerDamageListener;
+import eu.virtusdevelops.easyclans.models.CPlayer;
+import eu.virtusdevelops.easyclans.storage.mysql.CInviteMysql;
+import eu.virtusdevelops.easyclans.storage.mysql.CPlayerMysql;
 import me.clip.placeholderapi.PlaceholderAPI;
 import eu.virtusdevelops.easyclans.storage.SQLStorage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -43,6 +47,17 @@ public class ClansPlugin extends JavaPlugin {
     private PlayerConnectionListener connectionListener;
     private RanksController ranksController;
 
+
+    private CInviteDao inviteDao;
+    private ClanDao clanDao;
+    private CPlayerDao playerDao;
+    private CRequestDao requestDao;
+    private CurrencyDao currencyDao;
+    private LogDao logDao;
+    private NotificationDao notificationDao;
+    private TrophyDao trophyDao;
+
+
     private BukkitTask bgTask;
     private boolean inited = false;
     public final static MiniMessage MM = MiniMessage.miniMessage();
@@ -52,7 +67,10 @@ public class ClansPlugin extends JavaPlugin {
         saveDefaultConfig();
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
-        logController = new LogController(sqlStorage, this);
+        // init all database stuff
+        initDAO();
+
+        /*logController = new LogController(sqlStorage, this);
 
         currenciesController = new CurrenciesController(this);
         ranksController = new RanksController(this);
@@ -79,7 +97,10 @@ public class ClansPlugin extends JavaPlugin {
                     this, playerController, clansController, requestsController));
         }
 
-        ranksController.loadRankMultipliers();
+        ranksController.loadRankMultipliers();*/
+
+
+
         this.inited = true;
     }
 
@@ -153,6 +174,26 @@ public class ClansPlugin extends JavaPlugin {
     private void registerGUI() {
         guiHandler = new Handler(this);
     }
+
+    /*
+        private CInviteDao inviteDao;
+        private ClanDao clanDao;
+        private CPlayerDao playerDao;
+        private CRequestDao requestDao;
+        private CurrencyDao currencyDao;
+        private LogDao logDao;
+        private NotificationDao notificationDao;
+        private TrophyDao trophyDao;
+     */
+    private void initDAO(){
+        inviteDao = new CInviteMysql(getLogger(), sqlStorage.getDataSource());
+        playerDao = new CPlayerMysql(getLogger(), sqlStorage.getDataSource());
+
+
+        inviteDao.init();
+        playerDao.init();
+    }
+
 
     public String getVersion(){
         return getPluginMeta().getVersion();
