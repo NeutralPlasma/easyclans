@@ -13,27 +13,25 @@ import java.util.UUID;
 
 public class TropyController {
     private ClansPlugin plugin;
-    private SQLStorage sqlStorage;
     private List<Trophy> trophyList;
 
-    public TropyController(ClansPlugin plugin, SQLStorage sqlStorage) {
+    public TropyController(ClansPlugin plugin) {
         this.plugin = plugin;
-        this.sqlStorage = sqlStorage;
         init();
     }
 
     private void init(){
         plugin.getLogger().info("Loading all trophies...");
-        trophyList = sqlStorage.loadAllTrophies();
+        //trophyList = sqlStorage.loadAllTrophies();
     }
 
     public Trophy createTrophy(String name, String title, String description, long startDate, long endDate) {
         Trophy trophy = new Trophy(name, title, description, startDate, endDate);
         // TODO: insert into DB
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if(!sqlStorage.saveTrophy(trophy)){
+            /*if(!sqlStorage.saveTrophy(trophy)){
                 sqlStorage.saveTrophy(trophy);
-            }
+            }*/
         });
         trophyList.add(trophy);
         return trophy;
@@ -41,37 +39,37 @@ public class TropyController {
 
     public void deleteTrophy(Trophy trophy){
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            for(ClanTrophy clanTrophy : trophy.getOrganizedTrophies().values()){
+            /*for(ClanTrophy clanTrophy : trophy.getOrganizedTrophies().values()){
                 sqlStorage.removeClanFromTrophy(clanTrophy);
             }
-            sqlStorage.deleteTropyh(trophy);
+            sqlStorage.deleteTropyh(trophy);*/
         });
         trophyList.remove(trophy);
     }
 
     public void updateTrophy(Trophy trophy){
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        /*Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sqlStorage.updateTrophy(trophy);
-        });
+        });*/
     }
 
 
 
 
     public boolean removeClanFromTrophy(Trophy trophy, Clan clan){
-        var cTrophy = trophy.getTrophy(clan);
+        /*var cTrophy = trophy.getTrophy(clan);
         if(cTrophy != null){
             trophy.getOrganizedTrophies().remove(cTrophy.getRanking());
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 sqlStorage.removeClanFromTrophy(cTrophy);
             });
             return true;
-        }
+        }*/
         return false;
     }
 
     public boolean addClanToTrophy(Trophy trophy, Clan clan, int ranking, long achieveDate){
-        var cTrophy = trophy.getTrophy(clan);
+        /*var cTrophy = trophy.getTrophy(clan);
         if (cTrophy == null)
             cTrophy = trophy.getTrophy(ranking);
 
@@ -82,7 +80,7 @@ public class TropyController {
                 sqlStorage.addClanToTrophy(newTrophy);
             });
             return true;
-        }
+        }*/
         return false;
     }
 

@@ -1,5 +1,7 @@
 package eu.virtusdevelops.easyclans.controller;
 
+import eu.virtusdevelops.easyclans.dao.CurrencyDao;
+import eu.virtusdevelops.easyclans.models.Currency;
 import eu.virtusdevelops.easyclans.providers.ExperienceProvider;
 import eu.virtusdevelops.easyclans.providers.VaultProvider;
 import eu.virtusdevelops.easyclans.ClansPlugin;
@@ -13,9 +15,11 @@ import java.util.Map;
 public class CurrenciesController {
     private final ClansPlugin plugin;
     private final Map<String, Provider> currencyProviders = new HashMap<>();
+    private final CurrencyDao currencyDao;
 
-    public CurrenciesController(ClansPlugin plugin){
+    public CurrenciesController(ClansPlugin plugin, CurrencyDao currencyDao){
         this.plugin = plugin;
+        this.currencyDao = currencyDao;
         load();
     }
 
@@ -37,6 +41,12 @@ public class CurrenciesController {
                 addProvider(provider, "Experience");
         }
 
+    }
+
+    public void saveCurrency(Currency currency){
+        ClansPlugin.getExecutor().submit(() -> {
+            currencyDao.save(currency);
+        });
     }
 
     public void addProvider(Provider provider, String name){

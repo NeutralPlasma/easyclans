@@ -1,58 +1,90 @@
 package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
+import eu.virtusdevelops.easyclans.dao.ClanDao;
+import eu.virtusdevelops.easyclans.dao.CurrencyDao;
+import eu.virtusdevelops.easyclans.dao.LogDao;
 import eu.virtusdevelops.easyclans.models.*;
 import eu.virtusdevelops.easyclans.models.Currency;
-import eu.virtusdevelops.easyclans.storage.SQLStorage;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
 public class ClansController {
-    private PlayerController playerController;
-    private CurrenciesController currenciesController;
-    private RanksController ranksController;
+    private final PlayerController playerController;
+    private final CurrenciesController currenciesController;
+    private final RanksController ranksController;
+    private final LogController logController;
     private final Map<UUID, Clan> clans;
     private final ClansPlugin plugin;
-    private final SQLStorage sqlStorage;
+    private final ClanDao clanDao;
 
-    public ClansController(ClansPlugin plugin, SQLStorage sqlStorage, PlayerController playerController,
-                           CurrenciesController currenciesController, RanksController ranksController) {
+    public ClansController(ClansPlugin plugin, PlayerController playerController,
+                           CurrenciesController currenciesController, RanksController ranksController,
+                           ClanDao clanDao, LogController logController) {
         this.plugin = plugin;
-        this.sqlStorage = sqlStorage;
         this.playerController = playerController;
         this.currenciesController = currenciesController;
         this.ranksController = ranksController;
+        this.clanDao = clanDao;
+        this.logController = logController;
         this.clans = new HashMap<>();
 
         loadClans();
     }
 
     private void loadClans() {
-        for (var clan : sqlStorage.getAllClans()) {
-            for(var currency : currenciesController.getCurrencyProviders().keySet()){
-                boolean has = false;
-                for(var clanCurrency : clan.getCurrencies()){
-                    if (clanCurrency.getName().equals(currency)) {
-                        has = true;
-                        break;
-                    }
-                }
-                if(!has){
-                    var newCurrency = new eu.virtusdevelops.easyclans.models.Currency(UUID.randomUUID(), 0.0, currency, clan.getId());
-                    clan.addCurrency(newCurrency);
-                    sqlStorage.insertSingleClanCurrency(newCurrency);
 
+        // load all clans
+        // verify they have all the currencies supported.
 
-                }
-
-            }
-
-
-            this.clans.put(clan.getId(), clan);
-
+        for(var clan : clanDao.getAll()){
+            clans.put(clan.getId(), clan);
+            setupClanCurrencies(clan);
         }
+    }
+
+
+    private void setupClanCurrencies(Clan clan) {
+
+        for(var currency : currenciesController.getCurrencyProviders().keySet()){
+            boolean has = false;
+
+            for(var clanCurrency : clan.getCurrencies())
+                if(clanCurrency.getName().equals(currency)) { has = true; break; }
+
+            if(!has){
+                var newCurrency = new Currency(UUID.randomUUID(), 0.0, currency, clan.getId());
+                clan.addCurrency(newCurrency);
+                currenciesController.saveCurrency(newCurrency);
+            }
+        }
+    }
+
+
+
+
+    public Clan createClan(Clan clan){
+        setupClanCurrencies(clan);
+
+
+
+        ClansPlugin.getExecutor().submit(() -> {
+            var saved = clanDao.save(clan);
+
+            // update player
+            if(saved != null) {
+                var player = playerController.getPlayer(saved.getOwner());
+                if(player != null) {
+                    player.setClanID(saved.getId());
+                    player.setJoinClanDate(System.currentTimeMillis());
+                    playerController.updatePlayer(player);
+                }
+                addClan(saved);
+            }
+        });
+
+
+        return clan;
     }
 
 
@@ -60,52 +92,19 @@ public class ClansController {
         clans.put(clan.getId(), clan);
     }
 
-
-    public Clan createClan(UUID owner, String name, String displayName, int autoKickTime,
-                           int joinPointsPrice, double joinMoneyPrice,
-                           ItemStack banner, double interestRate, String tag, List<UUID> members) {
-
-        Clan clan = new Clan(owner, name, displayName, autoKickTime, joinPointsPrice, joinMoneyPrice,
-                banner, interestRate, tag, members, false, System.currentTimeMillis());
-
-        for(var currency : currenciesController.getCurrencyProviders().keySet()){
-            var newCurrency = new Currency(UUID.randomUUID(), 0.0, currency, clan.getId());
-            clan.addCurrency(newCurrency);
-        }
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if(sqlStorage.saveClan(clan)){
-                var player = playerController.getPlayer(clan.getOwner());
-                player.setClanID(clan.getId());
-                player.setJoinClanDate(System.currentTimeMillis());
-                playerController.updatePlayer(player);
-                addClan(clan);
-            }else{
-                // FAILED inserting new clan into database notify.
-                var player = playerController.getPlayer(clan.getOwner());
-                var oPlayer = player.tryGetPlayer();
-                if(oPlayer!= null) {
-                    oPlayer.closeInventory();
-                }
-            }
-        });
-        return clan;
-    }
-
-    public void deleteClan(UUID id){
-        if(!clans.containsKey(id)) return;
-        Clan clan = clans.get(id);
-        clans.remove(id);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+    public void deleteClan(Clan clan) {
+        clans.remove(clan.getId());
+        ClansPlugin.getExecutor().submit(() -> {
             for(var uuid : clan.getMembers()){
                 var player = playerController.getPlayer(uuid);
                 player.setClanID(null);
                 playerController.updatePlayer(player);
             }
-            sqlStorage.deleteClan(clan);
+            clanDao.delete(clan);
         });
-
     }
+
+
 
     /**
      * Retrieves a clan object by its id.
@@ -127,10 +126,9 @@ public class ClansController {
     }
 
     public void updateClan(Clan clan){
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.updateClan(clan);
+        ClansPlugin.getExecutor().submit(() -> {
+            clanDao.save(clan);
         });
-
     }
 
     public List<Clan> getClans() {
@@ -163,10 +161,8 @@ public class ClansController {
                 player.setClanID(null);
                 // TODO: send kick notification
 
-                // String log, UUID player, UUID clan, LogType type
-
-                sqlStorage.addLog(new Log("Inactivity kick", player.getUuid(), clan.getId(), LogType.AUTO_KICK));
-                sqlStorage.updatePlayer(player);
+                logController.addLog(new Log("Inactivity kick", player.getUuid(), clan.getId(), LogType.AUTO_KICK));
+                playerController.updatePlayer(player);
             }
         }
 
@@ -180,16 +176,16 @@ public class ClansController {
             double max = plugin.getConfig().getDouble("clan.max_interest_rate");
             if(clan.getInterestRate() + toAddInterest >= max){
                 clan.setInterestRate(max);
-                sqlStorage.addLog(new Log("interest:max:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
+                logController.addLog(new Log("interest:max:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
             }else{
                 clan.setInterestRate(clan.getInterestRate()+toAddInterest);
-                sqlStorage.addLog(new Log("interest:add:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
+                logController.addLog(new Log("interest:add:" + toAddInterest, null, clan.getId(), LogType.INTEREST_ADD));
             }
 
 
             var cOwner = playerController.getPlayer(clan.getOwner());
             if(System.currentTimeMillis() - cOwner.getLastActive() > 7 * 24 * 60 * 60 * 1000){
-                sqlStorage.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET));
+                logController.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET));
                 clan.setInterestRate(0);
             }
 
@@ -205,11 +201,11 @@ public class ClansController {
                     var toAdd = interestMultiplier * (interestFull/100);
                     if(toAdd > 0){
                         currency.addValue(toAdd);
-                        sqlStorage.addLog(new Log("currency:" + currency.getName() + ":" + toAdd , null, clan.getId(), LogType.MONEY_ADD));
+                        logController.addLog(new Log("currency:" + currency.getName() + ":" + toAdd , null, clan.getId(), LogType.MONEY_ADD));
                     }
                 }
             }
-            sqlStorage.updateClan(clan);
+            updateClan(clan);
         }
     }
 }

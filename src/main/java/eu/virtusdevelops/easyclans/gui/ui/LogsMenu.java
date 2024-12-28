@@ -1,6 +1,8 @@
 package eu.virtusdevelops.easyclans.gui.ui;
 
+import eu.virtusdevelops.easyclans.controller.LogController;
 import eu.virtusdevelops.easyclans.controller.PlayerController;
+import eu.virtusdevelops.easyclans.dao.LogDao;
 import eu.virtusdevelops.easyclans.gui.Icon;
 import eu.virtusdevelops.easyclans.gui.actions.AsyncReturnTask;
 import eu.virtusdevelops.easyclans.models.Log;
@@ -18,11 +20,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public class LogsMenu extends AsyncPaginator {
-    private SQLStorage sqlStorage;
-    private ClansController clansController;
-    private PlayerController playerController;
+    private final LogDao logDao;
+    private final ClansController clansController;
+    private final PlayerController playerController;
 
     private SimpleDateFormat sdf;
     public LogsMenu(Player player,
@@ -34,7 +37,7 @@ public class LogsMenu extends AsyncPaginator {
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
         ));
-        this.sqlStorage = plugin.getSqlStorage();
+        this.logDao = plugin.getSqlStorage().getLogDao();
         this.clansController = plugin.getClansController();
         this.playerController = plugin.getPlayerController();
         Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
@@ -45,10 +48,11 @@ public class LogsMenu extends AsyncPaginator {
 
 
     private void setupActions(){
-        setFetchPageTask(new AsyncReturnTask<List<Icon>>() {
+        setFetchPageTask(new AsyncReturnTask<>() {
             @Override
             public List<Icon> fetchPageData(int page, int perPage) {
-                var logs = sqlStorage.getPlayerLogs(page, perPage, player.getUniqueId());
+                // TODO
+                var logs = logDao.getPlayerClanLogs(UUID.randomUUID(), player.getUniqueId(), page, perPage);
                 List<Icon> logIcons = new ArrayList<>();
                 for(Log log : logs){
                     var material = Material.PAPER;
@@ -118,12 +122,12 @@ public class LogsMenu extends AsyncPaginator {
         setGetItemsCountTask(new AsyncReturnTask<Integer>() {
             @Override
             public Integer fetchPageData(int page, int perPage) {
-                return sqlStorage.getLogsCount(null, player.getUniqueId());
+                return 0; //sqlStorage.getLogsCount(null, player.getUniqueId());
             }
 
             @Override
             public Integer fetchData() {
-                return sqlStorage.getLogsCount(null, player.getUniqueId());
+                return 0;//sqlStorage.getLogsCount(null, player.getUniqueId());
             }
         });
     }

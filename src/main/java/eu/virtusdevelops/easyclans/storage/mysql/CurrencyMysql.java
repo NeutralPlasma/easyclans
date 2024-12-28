@@ -31,11 +31,11 @@ public class CurrencyMysql implements CurrencyDao {
             PreparedStatement statement = connection.prepareStatement(
             """
                 CREATE TABLE IF NOT EXISTS ec_clan_currencies(
-                    id CHAR(36) PRIMARY KEY,
+                    id UUID PRIMARY KEY,
                     amount DOUBLE,
                     currency_name VARCHAR(128),
                     clan_id VARCHAR(36),
-                    FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE
+                    FOREIGN KEY (clan_id) REFERENCES ec_clan(id) ON DELETE CASCADE
                 )
                 """
             );
@@ -110,7 +110,7 @@ public class CurrencyMysql implements CurrencyDao {
             statement.setObject(1, currency.getId());
             statement.setDouble(2, currency.getValue());
             statement.setString(3, currency.getName());
-            statement.setString(4, currency.getClanId().toString());
+            statement.setObject(4, currency.getClanId());
 
 
             if(statement.executeUpdate() > 0){

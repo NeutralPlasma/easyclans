@@ -1,6 +1,8 @@
 package eu.virtusdevelops.easyclans.gui.ui;
 
+import eu.virtusdevelops.easyclans.controller.LogController;
 import eu.virtusdevelops.easyclans.controller.PlayerController;
+import eu.virtusdevelops.easyclans.dao.LogDao;
 import eu.virtusdevelops.easyclans.models.Clan;
 import eu.virtusdevelops.easyclans.models.Log;
 import eu.virtusdevelops.easyclans.ClansPlugin;
@@ -23,7 +25,7 @@ import java.util.Locale;
 public class ClanLogsMenu extends AsyncPaginator {
 
 
-    private SQLStorage sqlStorage;
+    private LogDao logDao;
     private ClansController clansController;
     private PlayerController playerController;
     private Clan clan;
@@ -39,7 +41,7 @@ public class ClanLogsMenu extends AsyncPaginator {
                 28, 29, 30, 31, 32, 33, 34,
                 37, 38, 39, 40, 41, 42, 43
         ));
-        this.sqlStorage = plugin.getSqlStorage();
+        this.logDao = plugin.getSqlStorage().getLogDao();
         this.clansController = plugin.getClansController();
         this.playerController = plugin.getPlayerController();
         this.clan = clan;
@@ -54,7 +56,7 @@ public class ClanLogsMenu extends AsyncPaginator {
         setFetchPageTask(new AsyncReturnTask<>() {
             @Override
             public List<Icon> fetchPageData(int page, int perPage) {
-                var logs = sqlStorage.getClanLogs(page, perPage, clan.getId());
+                var logs = logDao.getClanLogs(clan.getId(), page, perPage);
                 List<Icon> logIcons = new ArrayList<>();
                 for(Log log : logs){
                     var material = Material.PAPER;
@@ -124,12 +126,12 @@ public class ClanLogsMenu extends AsyncPaginator {
         setGetItemsCountTask(new AsyncReturnTask<>() {
             @Override
             public Integer fetchPageData(int page, int perPage) {
-                return sqlStorage.getLogsCount(clan.getId(), null);
+                return 0;/*logDao.getLogsCount(clan.getId(), null);*/
             }
 
             @Override
             public Integer fetchData() {
-                return sqlStorage.getLogsCount(clan.getId(), null);
+                return 0;//logDao.getLogsCount(clan.getId(), null);
             }
         });
     }

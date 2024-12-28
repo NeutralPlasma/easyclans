@@ -27,6 +27,9 @@ import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.paper.PaperCommandManager;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static net.kyori.adventure.text.Component.text;
 
 public class ClansPlugin extends JavaPlugin {
@@ -48,15 +51,7 @@ public class ClansPlugin extends JavaPlugin {
     private RanksController ranksController;
 
 
-    private CInviteDao inviteDao;
-    private ClanDao clanDao;
-    private CPlayerDao playerDao;
-    private CRequestDao requestDao;
-    private CurrencyDao currencyDao;
-    private LogDao logDao;
-    private NotificationDao notificationDao;
-    private TrophyDao trophyDao;
-
+    private static ExecutorService executor;
 
     private BukkitTask bgTask;
     private boolean inited = false;
@@ -66,19 +61,18 @@ public class ClansPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         LanguageController.loadLocals(this);
+        executor = Executors.newFixedThreadPool(2);
         sqlStorage = new SQLStorage(this);
-        // init all database stuff
-        initDAO();
+        logController = new LogController(sqlStorage.getLogDao());
 
-        /*logController = new LogController(sqlStorage, this);
-
-        currenciesController = new CurrenciesController(this);
-        ranksController = new RanksController(this);
-        playerController = new PlayerController(this, sqlStorage, ranksController);
-        clansController = new ClansController(this, sqlStorage, playerController, currenciesController, ranksController);
-        requestsController = new RequestsController(this, sqlStorage);
-        invitesController = new InvitesController(this, sqlStorage);
-        tropyController = new TropyController(this, sqlStorage);
+        currenciesController = new CurrenciesController(this, sqlStorage.getCurrencyDao());
+        ranksController = new RanksController(this, this.getLogger());
+        playerController = new PlayerController(this, sqlStorage.getcPlayerDao(), ranksController);
+        clansController = new ClansController(this, playerController, currenciesController, ranksController,
+                sqlStorage.getClanDao(), logController);
+        requestsController = new RequestsController(sqlStorage.getcRequestDao());
+        invitesController = new InvitesController(this);
+        tropyController = new TropyController(this);
 
         this.registerListeners();
         this.registerCommands();
@@ -93,11 +87,10 @@ public class ClansPlugin extends JavaPlugin {
         }, 100L, getConfig().getLong("clan.update_interval"));
 
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
-            PlaceholderAPI.registerExpansion(new PlaceholderController(
-                    this, playerController, clansController, requestsController));
+            new PlaceholderController(this, playerController, clansController).register();
         }
 
-        ranksController.loadRankMultipliers();*/
+        ranksController.loadRankMultipliers();
 
 
 
@@ -106,10 +99,16 @@ public class ClansPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // check if database initied, then force save
+
+        // check executorservice and clear it
+
+
         if (inited) {
             bgTask.cancel();
             guiHandler.disable();
         }
+        executor.shutdown();
     }
 
     private void registerListeners() {
@@ -175,24 +174,6 @@ public class ClansPlugin extends JavaPlugin {
         guiHandler = new Handler(this);
     }
 
-    /*
-        private CInviteDao inviteDao;
-        private ClanDao clanDao;
-        private CPlayerDao playerDao;
-        private CRequestDao requestDao;
-        private CurrencyDao currencyDao;
-        private LogDao logDao;
-        private NotificationDao notificationDao;
-        private TrophyDao trophyDao;
-     */
-    private void initDAO(){
-        inviteDao = new CInviteMysql(getLogger(), sqlStorage.getDataSource());
-        playerDao = new CPlayerMysql(getLogger(), sqlStorage.getDataSource());
-
-
-        inviteDao.init();
-        playerDao.init();
-    }
 
 
     public String getVersion(){
@@ -244,5 +225,9 @@ public class ClansPlugin extends JavaPlugin {
 
     public MinecraftHelp<CommandSender> getMinecraftHelp() {
         return minecraftHelp;
+    }
+
+    public static ExecutorService getExecutor(){
+        return executor;
     }
 }

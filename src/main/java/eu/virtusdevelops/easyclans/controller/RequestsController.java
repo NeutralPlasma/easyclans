@@ -1,6 +1,7 @@
 package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
+import eu.virtusdevelops.easyclans.dao.CRequestDao;
 import eu.virtusdevelops.easyclans.models.CRequest;
 import eu.virtusdevelops.easyclans.models.Log;
 import eu.virtusdevelops.easyclans.models.LogType;
@@ -14,20 +15,17 @@ import java.util.UUID;
 
 public class RequestsController {
     private final Map<UUID, CRequest> requests;
-    private int count;
-    private final ClansPlugin plugin;
-    private final SQLStorage sqlStorage;
+    private final CRequestDao requestDao;
 
-    public RequestsController(ClansPlugin plugin, SQLStorage sqlStorage) {
-        this.plugin = plugin;
-        this.sqlStorage = sqlStorage;
+    public RequestsController(CRequestDao requestDao) {
+        this.requestDao = requestDao;
         this.requests = new HashMap<>();
         init();
     }
 
     private void init() {
-        for (var request : sqlStorage.getAllRequests()) {
-            requests.put(request.getRequestId(), request);
+        for (var request : requestDao.getAll()) {
+            requests.put(request.getId(), request);
         }
     }
 
@@ -43,11 +41,11 @@ public class RequestsController {
     public CRequest createRequest(UUID clanId, UUID playerUuid, long expireTime, long createdTime) {
         CRequest cRequest = new CRequest(UUID.randomUUID(), clanId, playerUuid, expireTime, createdTime);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.insertRequest(cRequest);
-            requests.put(cRequest.getRequestId(), cRequest);
-        });
 
+        ClansPlugin.getExecutor().submit(() -> {
+            if(requestDao.save(cRequest) != null)
+                requests.put(cRequest.getId(), cRequest);
+        });
         return cRequest;
     }
 
@@ -66,9 +64,10 @@ public class RequestsController {
     }
 
     public void deleteRequest(CRequest cRequest) {
-        requests.remove(cRequest.getRequestId());
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.deleteRequest(cRequest);
+        requests.remove(cRequest.getId());
+
+        ClansPlugin.getExecutor().submit(() -> {
+           requestDao.delete(cRequest);
         });
     }
 
@@ -76,10 +75,10 @@ public class RequestsController {
     public void cleanExpired(){
         for(var request : requests.values()){
             if(request.getExpireTime() < System.currentTimeMillis()){
-                sqlStorage.deleteRequest(request);
+                //sqlStorage.deleteRequest(request);
                 // todo: make notification
-                sqlStorage.addLog(new Log(String.valueOf(request.getExpireTime()), request.getPlayerUuid(), request.getClanId(), LogType.REQUEST_EXPIRED));
-                requests.remove(request.getRequestId());
+                //sqlStorage.addLog(new Log(String.valueOf(request.getExpireTime()), request.getPlayerUuid(), request.getClanId(), LogType.REQUEST_EXPIRED));
+                //requests.remove(request.getId());
             }
         }
     }

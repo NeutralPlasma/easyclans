@@ -31,15 +31,14 @@ public class LogMysql implements LogDao {
             PreparedStatement statement = connection.prepareStatement(
             """
                     CREATE TABLE IF NOT EXISTS ec_log (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
                         message TEXT,
                         clan_id VARCHAR(36),
                         player_id VARCHAR(36),
                         log_type VARCHAR(25),
-                        created_on BIGINT,
-                        
-                        FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id),
-                        FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid)
+                        created_on TIMESTAMP,
+                        FOREIGN KEY (clan_id) REFERENCES ec_clan(id),
+                        FOREIGN KEY (player_id) REFERENCES ec_player(uuid)
                     );
                     """
             );

@@ -40,26 +40,25 @@ public class CPlayerMysql implements CPlayerDao {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
             """
-                CREATE TABLE IF NOT EXISTS ec_player_data (
+                CREATE TABLE IF NOT EXISTS ec_player (
                     uuid UUID PRIMARY KEY,
                     clan_id UUID,
-                    last_active BIGINT,
-                    joined_clan BIGINT,
+                    last_active TIMESTAMP,
+                    joined_clan TIMESTAMP,
                     name TEXT,
                     rank VARCHAR(255)
                 );
-                
                 """
             );
             statement.execute();
 
             statement = connection.prepareStatement(
         """
-            CREATE TABLE IF NOT EXISTS ec_permission (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                CREATE TABLE IF NOT EXISTS ec_permission (
+                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
                     player_id UUID,
                     permission VARCHAR(128),
-                    FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid) ON DELETE CASCADE
+                    FOREIGN KEY (player_id) REFERENCES ec_player(uuid) ON DELETE CASCADE
                 );
             """);
             statement.executeUpdate();
@@ -79,9 +78,9 @@ public class CPlayerMysql implements CPlayerDao {
         try (Connection connection = dataSource.getConnection()){
             String sql =
             """
-            SELECT ec_player_data.*, ec_permission.*
-            FROM ec_player_data
-            LEFT JOIN ec_permission ON ec_player_data.uuid = ec_permission.player_id
+            SELECT ec_player.*, ec_permission.*
+            FROM ec_player
+            LEFT JOIN ec_permission ON ec_player.uuid = ec_permission.player_id
             WHERE uuid = ?
             """;
             var statement = connection.prepareStatement(sql);
@@ -116,10 +115,10 @@ public class CPlayerMysql implements CPlayerDao {
         try (Connection connection = dataSource.getConnection()) {
             String sql =
             """
-            SELECT ec_player_data.*, ec_permission.*
-            FROM ec_player_data
-            LEFT JOIN ec_permission ON ec_player_data.uuid = ec_permission.player_id
-            ORDER BY ec_player_data.uuid DESC
+            SELECT ec_player.*, ec_permission.*
+            FROM ec_player
+            LEFT JOIN ec_permission ON ec_player.uuid = ec_permission.player_id
+            ORDER BY ec_player.uuid DESC
             """;
             var statement = connection.prepareStatement(sql);
             CPlayer currentUser = null;
@@ -166,7 +165,7 @@ public class CPlayerMysql implements CPlayerDao {
         try(Connection connection = dataSource.getConnection()){
             String sql =
             """
-            INSERT INTO ec_player_data (uuid, clan_id, last_active, joined_clan, rank)
+            INSERT INTO ec_player (uuid, clan_id, last_active, joined_clan, rank)
             VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(uuid) DO UPDATE SET
                 clan_id = excluded.clan_id,
@@ -250,7 +249,7 @@ public class CPlayerMysql implements CPlayerDao {
         try(Connection connection = dataSource.getConnection()){
             String sql =
             """
-            DELETE FROM ec_player_data
+            DELETE FROM ec_player
             WHERE uuid = ?
             """;
 

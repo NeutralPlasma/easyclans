@@ -56,7 +56,7 @@ public class ClanDeleteCommand implements AbstractCommand {
         }
 
 
-        plugin.getClansController().deleteClan(clan.getId());
+        plugin.getClansController().deleteClan(clan);
     }
 
     @Permission("easyclans.command.delete.admin")
@@ -71,7 +71,7 @@ public class ClanDeleteCommand implements AbstractCommand {
             return;
         }
 
-        plugin.getClansController().deleteClan(clan.getId());
+        plugin.getClansController().deleteClan(clan);
 
     }
 

@@ -397,7 +397,8 @@ public class ClanCreateMenu extends GUI {
 
                 var members = new ArrayList<UUID>();
                 members.add(player.getUniqueId());
-                Clan clan = clansController.createClan(
+
+                var clan = new Clan(
                         target2.getUniqueId(),
                         clanName,
                         clanDisplayName,
@@ -407,7 +408,14 @@ public class ClanCreateMenu extends GUI {
                         BannerUtils.strip(clanBanner),
                         0.0,
                         clanTag,
-                        members
+                        members,
+                        false,
+                        System.currentTimeMillis()
+                );
+
+
+                clan = clansController.createClan(
+                        clan
                 );
                 logController.addLog(new Log(clanName, player.getUniqueId(), clan.getId(), LogType.CLAN_CREATE));
                 new ClanMenu(target2, clan, plugin);

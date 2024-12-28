@@ -18,7 +18,7 @@ public class CRequest {
     }
 
 
-    public UUID getRequestId() {
+    public UUID getId() {
         return requestId;
     }
 

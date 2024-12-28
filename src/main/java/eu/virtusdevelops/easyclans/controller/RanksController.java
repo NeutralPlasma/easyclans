@@ -8,15 +8,18 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class RanksController {
 
     private final ClansPlugin plugin;
+    private final Logger logger;
     private final List<RankMultiplyer> rankMultiplyerList = new ArrayList<>();
     private final RankMultiplyer nullMultiplier = new RankMultiplyer("null", 0.0, -1);
 
-    public RanksController(ClansPlugin plugin) {
+    public RanksController(ClansPlugin plugin, Logger logger) {
         this.plugin = plugin;
+        this.logger = logger;
         loadRankMultipliers();
     }
 
@@ -35,7 +38,7 @@ public class RanksController {
             ));
         }
         rankMultiplyerList.sort((o1, o2) -> o2.getPriority()-o1.getPriority());
-        plugin.getLogger().info("Loaded " + rankMultiplyerList.size() + " rank multipliers");
+        logger.info("Loaded " + rankMultiplyerList.size() + " rank multipliers");
     }
     public RankMultiplyer parsePlayerRank(Player player){
         for(RankMultiplyer rank : rankMultiplyerList){

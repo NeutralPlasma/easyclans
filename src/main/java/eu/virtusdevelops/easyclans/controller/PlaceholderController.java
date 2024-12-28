@@ -15,15 +15,13 @@ public class PlaceholderController extends PlaceholderExpansion {
     private ClansPlugin plugin;
     private PlayerController playerController;
     private ClansController clansController;
-    private RequestsController requestsController;
     private SimpleDateFormat dateFormat;
 
 
-    public PlaceholderController(ClansPlugin plugin, PlayerController playerController, ClansController clansController, RequestsController requestsController){
+    public PlaceholderController(ClansPlugin plugin, PlayerController playerController, ClansController clansController){
         this.plugin = plugin;
         this.playerController = playerController;
         this.clansController = clansController;
-        this.requestsController = requestsController;
         Locale loc = new Locale(plugin.getConfig().getString("language.language"), plugin.getConfig().getString("language.country"));
         dateFormat = new SimpleDateFormat(LanguageController.getLocalized("time_format"), loc);
 

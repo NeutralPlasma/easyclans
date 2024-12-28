@@ -11,11 +11,9 @@ import java.util.UUID;
 public class InvitesController {
     private final Map<UUID, CInvite> invites;
     private final ClansPlugin plugin;
-    private final SQLStorage sqlStorage;
 
-    public InvitesController(ClansPlugin plugin, SQLStorage sqlStorage) {
+    public InvitesController(ClansPlugin plugin) {
         this.plugin = plugin;
-        this.sqlStorage = sqlStorage;
         this.invites = new HashMap<>();
     }
 

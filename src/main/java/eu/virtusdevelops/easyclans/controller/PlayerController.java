@@ -1,11 +1,10 @@
 package eu.virtusdevelops.easyclans.controller;
 
 import eu.virtusdevelops.easyclans.ClansPlugin;
+import eu.virtusdevelops.easyclans.dao.CPlayerDao;
 import eu.virtusdevelops.easyclans.models.CPlayer;
 import eu.virtusdevelops.easyclans.models.RankMultiplyer;
 import eu.virtusdevelops.easyclans.models.UserPermissions;
-import eu.virtusdevelops.easyclans.storage.SQLStorage;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -14,19 +13,19 @@ public class PlayerController {
     private final Map<UUID, CPlayer> players;
     private List<UserPermissions> permissions = new ArrayList<>();
     private final ClansPlugin plugin;
-    private final SQLStorage sqlStorage;
+    private final CPlayerDao playerDao;
     private final RanksController ranksController;
 
-    public PlayerController(ClansPlugin plugin, SQLStorage sqlStorage, RanksController ranksController) {
+    public PlayerController(ClansPlugin plugin, CPlayerDao playerDao, RanksController ranksController) {
         this.plugin = plugin;
-        this.sqlStorage = sqlStorage;
+        this.playerDao = playerDao;
         this.ranksController = ranksController;
         this.players = new HashMap<>();
         init();
     }
 
     private void init() {
-        var lPlayers = sqlStorage.getAllPlayers();
+        var lPlayers = playerDao.getAll();
         for (CPlayer cplayer : lPlayers) {
             players.put(cplayer.getUuid(), cplayer);
         }
@@ -55,9 +54,11 @@ public class PlayerController {
                 player.getName(),
                 rank.getName()
         );
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.insertPlayer(cPlayer);
+
+        ClansPlugin.getExecutor().submit(() -> {
+            playerDao.save(cPlayer);
         });
+
         addPlayer(cPlayer);
         return cPlayer;
     }
@@ -104,8 +105,8 @@ public class PlayerController {
      * @param cPlayer the clan player
      */
     public void updatePlayer(CPlayer cPlayer) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sqlStorage.updatePlayer(cPlayer);
+        ClansPlugin.getExecutor().submit(() -> {
+            playerDao.save(cPlayer);
         });
     }
 

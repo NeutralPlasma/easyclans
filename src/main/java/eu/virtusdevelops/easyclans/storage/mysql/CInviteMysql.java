@@ -35,10 +35,10 @@ public class CInviteMysql implements CInviteDao {
                     id UUID PRIMARY KEY,
                     clan_id UUID,
                     player_id UUID,
-                    expire_date BIGINT,
-                    created_on BIGINT,
-                    FOREIGN KEY (player_id) REFERENCES ec_player_data(uuid) ON DELETE CASCADE,
-                    FOREIGN KEY (clan_id) REFERENCES ec_clan_data(id) ON DELETE CASCADE
+                    expire_date TIMESTAMP,
+                    created_on TIMESTAMP,
+                    FOREIGN KEY (player_id) REFERENCES ec_player(uuid) ON DELETE CASCADE,
+                    FOREIGN KEY (clan_id) REFERENCES ec_clan(id) ON DELETE CASCADE
                 );
                 """
             );
