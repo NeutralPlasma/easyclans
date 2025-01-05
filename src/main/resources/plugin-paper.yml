@@ -1,0 +1,25 @@
+name: EasyClans
+main: eu.virtusdevelops.easyclans.ClansPlugin
+api-version: 1.19
+version: @version@
+
+
+dependencies:
+  server:
+    LuckPerms:
+      load: BEFORE
+      required: true
+    Vault:
+      load: BEFORE
+      required: true
+    PlaceholderAPI:
+      load: BEFORE
+      required: true
+
+    # SOFT DEPEND
+    VotingPlugin:
+      load: BEFORE
+      required: false
+    EcoBits:
+      load: BEFORE
+      required: false

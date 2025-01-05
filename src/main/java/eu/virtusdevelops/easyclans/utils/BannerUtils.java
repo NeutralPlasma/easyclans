@@ -25,10 +25,10 @@ public class BannerUtils {
     }
 
     public static List<Pattern> getPatterns(int amount){
-        var randomPattern = new RandomEnumGenerator<>(PatternType.class);
+        var randomPattern = new RandompatternTypeGenerator();
         List<Pattern> patterns = new ArrayList<>();
         for(int i = 0; i < amount; i++){
-            patterns.add(new Pattern(getRandomColour(), randomPattern.randomEnum()));
+            patterns.add(new Pattern(getRandomColour(), randomPattern.randomPatternType()));
         }
         return patterns;
     }

@@ -7,16 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerUtils {
-    /**
-     * Plays the breaking of item animation to player
-     * @param player - player to play animation to.
-     * @param itemStack - item that breaks.
-     */
-    public static void breakAnimation(Player player, ItemStack itemStack){
-        Location loc = player.getLocation();
-        player.playSound(loc, Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-        player.spawnParticle(Particle.ITEM_CRACK, loc.add(loc.getDirection()), 10, 0.3, 0.5, 0.3, 0.0, itemStack);
-    }
+
 
     /**
      *

@@ -21,6 +21,7 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
@@ -49,6 +50,7 @@ public class ClansPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         saveDefaultConfig();
         LanguageController.loadLocals(this);
         sqlStorage = new SQLStorage(this);
@@ -104,14 +106,14 @@ public class ClansPlugin extends JavaPlugin {
         //getCommand("trophy").setExecutor(new TrophyCommand(this, clansController, playerController, tropyController));
 
 
-        final PaperCommandManager<CommandSender> manager = new PaperCommandManager<>(
+        final LegacyPaperCommandManager<CommandSender> manager = new LegacyPaperCommandManager<>(
                 this,
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.identity()
         );
 
         if (manager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            // Register Brigadier mappings for rich completions
+            // Register Brigadier mappings for rich completions;
             manager.registerBrigadier();
         } else if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             // Use Paper async completions API (see Javadoc for why we don't use this with Brigadier)
