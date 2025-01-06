@@ -22,10 +22,6 @@ repositories {
         name = 'BenCodez Repo'
         url = 'https://nexus.bencodez.com/repository/maven-public/'
     }
-    maven{
-        name = 'devmart-other'
-        url = 'https://nexuslite.gcnt.net/repos/other/'
-    }
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots/"
         name "sonatype-snapshots"
