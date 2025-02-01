@@ -182,14 +182,23 @@ public class ClansController {
             }
 
 
+            boolean reset = false;
             var cOwner = playerController.getPlayer(clan.getOwner());
             if(System.currentTimeMillis() - cOwner.getLastActive() > 7 * 24 * 60 * 60 * 1000){
-                sqlStorage.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET, System.currentTimeMillis()));
+                sqlStorage.addLog(new Log(
+                        "interest:reset:" + cOwner.getLastActive(),
+                        null,
+                        clan.getId(),
+                        LogType.INTEREST_RESET,
+                        System.currentTimeMillis())
+                );
+
                 clan.setInterestRate(0);
+                reset = true;
             }
 
 
-            double interestFull = clan.getActualInterestRate() + clan.getInterestRate();
+            double interestFull = reset ? 0.0 : clan.getActualInterestRate() + clan.getInterestRate();
             if(interestFull != 0){
                 for(var currency: clan.getCurrencies()){
                     if(currency.getValue() == 0) continue;
