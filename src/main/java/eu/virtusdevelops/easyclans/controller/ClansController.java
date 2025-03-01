@@ -187,6 +187,8 @@ public class ClansController {
             if(System.currentTimeMillis() - cOwner.getLastActive() > 7 * 24 * 60 * 60 * 1000){
                 logController.addLog(new Log("interest:reset:" + cOwner.getLastActive(), null, clan.getId(), LogType.INTEREST_RESET));
                 clan.setInterestRate(0);
+                clan.resetTempInterestRate();
+                clan.updateActualInterestRate();
             }
 
 

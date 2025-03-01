@@ -3,7 +3,7 @@ package eu.virtusdevelops.easyclans.providers;
 import eu.virtusdevelops.easyclans.utils.Experience;
 import org.bukkit.OfflinePlayer;
 
-public class ExperienceProvider implements Provider{
+public class ExperienceProvider implements Provider<Integer>{
     @Override
     public ProviderType type() {
         return ProviderType.INT;
@@ -25,27 +25,7 @@ public class ExperienceProvider implements Provider{
     }
 
     @Override
-    public double getValue(OfflinePlayer player) {
-        return getIntValue(player);
-    }
-
-    @Override
-    public boolean setValue(OfflinePlayer player, double value) {
-        return setIntValue(player, (int) value);
-    }
-
-    @Override
-    public boolean removeValue(OfflinePlayer player, double value) {
-        return removeIntValue(player, (int) value);
-    }
-
-    @Override
-    public boolean addValue(OfflinePlayer player, double value) {
-        return addIntValue(player, (int) value);
-    }
-
-    @Override
-    public int getIntValue(OfflinePlayer player) {
+    public Integer getValue(OfflinePlayer player) {
         if(!player.isOnline())
             return 0;
         var oplayer = player.getPlayer();
@@ -55,7 +35,7 @@ public class ExperienceProvider implements Provider{
     }
 
     @Override
-    public boolean setIntValue(OfflinePlayer player, int value) {
+    public boolean setValue(OfflinePlayer player, Integer value) {
         if(!player.isOnline())
             return false;
         var oplayer = player.getPlayer();
@@ -67,7 +47,7 @@ public class ExperienceProvider implements Provider{
     }
 
     @Override
-    public boolean removeIntValue(OfflinePlayer player, int value) {
+    public boolean removeValue(OfflinePlayer player, Integer value) {
         if(!player.isOnline())
             return false;
         var oplayer = player.getPlayer();
@@ -80,7 +60,7 @@ public class ExperienceProvider implements Provider{
     }
 
     @Override
-    public boolean addIntValue(OfflinePlayer player, int value) {
+    public boolean addValue(OfflinePlayer player, Integer value) {
         if(!player.isOnline())
             return false;
         var oplayer = player.getPlayer();

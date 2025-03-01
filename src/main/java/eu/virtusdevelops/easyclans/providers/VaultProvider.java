@@ -7,7 +7,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class VaultProvider implements Provider{
+public class VaultProvider implements Provider<Double>{
 
     private net.milkbowl.vault.economy.Economy Economy = null;
 
@@ -43,42 +43,23 @@ public class VaultProvider implements Provider{
     }
 
     @Override
-    public double getValue(OfflinePlayer player) {
+    public Double getValue(OfflinePlayer player) {
         return Economy.getBalance(player);
     }
 
     @Override
-    public boolean setValue(OfflinePlayer player, double value) {
+    public boolean setValue(OfflinePlayer player, Double value) {
         return Economy.withdrawPlayer(player, getValue(player)).transactionSuccess();
     }
 
     @Override
-    public boolean removeValue(OfflinePlayer player, double value) {
+    public boolean removeValue(OfflinePlayer player, Double value) {
         return Economy.withdrawPlayer(player, value).transactionSuccess();
     }
 
     @Override
-    public boolean addValue(OfflinePlayer player, double value) {
+    public boolean addValue(OfflinePlayer player, Double value) {
         return Economy.depositPlayer(player, value).transactionSuccess();
     }
 
-    @Override
-    public int getIntValue(OfflinePlayer player) {
-        return (int) Economy.getBalance(player);
-    }
-
-    @Override
-    public boolean setIntValue(OfflinePlayer player, int value) {
-        return Economy.withdrawPlayer(player, getValue(player)).transactionSuccess();
-    }
-
-    @Override
-    public boolean removeIntValue(OfflinePlayer player, int value) {
-        return Economy.withdrawPlayer(player, value).transactionSuccess();
-    }
-
-    @Override
-    public boolean addIntValue(OfflinePlayer player, int value) {
-        return Economy.depositPlayer(player, value).transactionSuccess();
-    }
 }

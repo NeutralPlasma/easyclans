@@ -39,7 +39,7 @@ public class ClanAcceptMemberCommand implements AbstractCommand {
 
     @Permission("easyclans.command.accept")
     @Command("clan accept <member_name>")
-    public void kickMemberCommand(
+    public void acceptMemberCommand(
             final CommandSender sender,
             @Argument(value = "member_name", suggestions = "request_name") final @NonNull String memberName
     ){
@@ -88,7 +88,7 @@ public class ClanAcceptMemberCommand implements AbstractCommand {
 
 
         var provider =  plugin.getCurrenciesController().getProvider("Vault");
-        if(provider.getValue(pTarget) < clan.getJoinMoneyPrice()){
+        if((double) provider.getValue(pTarget) < clan.getJoinMoneyPrice()){
             sender.sendMessage(ClansPlugin.MM.deserialize(
                     LanguageController.getLocalized("requests.not_enough_money_accepter")
                             .replace("{player}", cTarget.getName())));

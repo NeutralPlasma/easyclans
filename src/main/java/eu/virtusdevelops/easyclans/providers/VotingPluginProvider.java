@@ -3,7 +3,7 @@ package eu.virtusdevelops.easyclans.providers;
 import com.bencodez.votingplugin.VotingPluginMain;
 import org.bukkit.OfflinePlayer;
 
-public class VotingPluginProvider implements Provider{
+public class VotingPluginProvider implements Provider<Integer>{
 
     private VotingPluginMain plugin;
 
@@ -28,48 +28,26 @@ public class VotingPluginProvider implements Provider{
     }
 
     @Override
-    public double getValue(OfflinePlayer player) {
+    public Integer getValue(OfflinePlayer player) {
         return plugin.getUser(player.getUniqueId()).getPoints();
     }
 
     @Override
-    public boolean setValue(OfflinePlayer player, double value) {
-        plugin.getUser(player.getUniqueId()).setPoints((int) value);
-        return true;
-    }
-
-    @Override
-    public boolean removeValue(OfflinePlayer player, double value) {
-        plugin.getUser(player.getUniqueId()).removePoints((int) value);
-        return true;
-    }
-
-    @Override
-    public boolean addValue(OfflinePlayer player, double value) {
-        plugin.getUser(player.getUniqueId()).addPoints((int) value);
-        return true;
-    }
-
-    @Override
-    public int getIntValue(OfflinePlayer player) {
-        return plugin.getUser(player.getUniqueId()).getPoints();
-    }
-
-    @Override
-    public boolean setIntValue(OfflinePlayer player, int value) {
+    public boolean setValue(OfflinePlayer player, Integer value) {
         plugin.getUser(player.getUniqueId()).setPoints(value);
         return true;
     }
 
     @Override
-    public boolean removeIntValue(OfflinePlayer player, int value) {
+    public boolean removeValue(OfflinePlayer player, Integer value) {
         plugin.getUser(player.getUniqueId()).removePoints(value);
         return true;
     }
 
     @Override
-    public boolean addIntValue(OfflinePlayer player, int value) {
+    public boolean addValue(OfflinePlayer player, Integer value) {
         plugin.getUser(player.getUniqueId()).addPoints(value);
         return true;
     }
+
 }
