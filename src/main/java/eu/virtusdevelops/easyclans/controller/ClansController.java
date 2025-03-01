@@ -194,6 +194,8 @@ public class ClansController {
                 );
 
                 clan.setInterestRate(0);
+                clan.resetTempInterestRate();
+                clan.updateActualInterestRate();
                 reset = true;
             }
 
