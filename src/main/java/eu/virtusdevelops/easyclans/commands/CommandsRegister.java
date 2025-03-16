@@ -32,6 +32,8 @@ public class CommandsRegister {
             new ClanInterestCommand(),
             new ClanSetBankCommand(),
             new ClanListCommand(),
+            new ClanBankCommand(),
+            new ClanMembersCommand(),
 
             new TropyCreateCommand(),
             new TropyAddClanCommand(),
