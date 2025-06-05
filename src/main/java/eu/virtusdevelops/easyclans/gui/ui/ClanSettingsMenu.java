@@ -25,6 +25,7 @@ public class ClanSettingsMenu extends GUI {
     private final CurrenciesController currenciesController;
     private final LogController logController;
     private final ClansPlugin plugin;
+    private final ChatUtilController chatUtilController;
     private final GUI previousUI;
 
 
@@ -33,6 +34,7 @@ public class ClanSettingsMenu extends GUI {
         this.clansController = plugin.getClansController();
         this.currenciesController = plugin.getCurrenciesController();
         this.logController = plugin.getLogController();
+        this.chatUtilController = plugin.getChatUtilController();
         this.plugin = plugin;
         this.cPlayer =  plugin.getPlayerController().getPlayer(player.getUniqueId());
         this.clan = clan;
@@ -225,7 +227,8 @@ public class ClanSettingsMenu extends GUI {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.join_price_item.message")));
             setForceClose(true);
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 try {
                     double price = Double.parseDouble(event.message());
                     if (price < 0) {
@@ -240,11 +243,11 @@ public class ClanSettingsMenu extends GUI {
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.join_price_item.invalid_message")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
                 setForceClose(false);
-            });
+            }));
 
         });
 
@@ -291,7 +294,8 @@ public class ClanSettingsMenu extends GUI {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.kicktime_item.message")));
             setForceClose(true);
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 try {
                     int time = Integer.parseInt(event.message());
                     if (time < -1) {
@@ -306,11 +310,12 @@ public class ClanSettingsMenu extends GUI {
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_settings_menu.kicktime_item.invalid_message")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
                 setForceClose(false);
-            });
+            }));
+
 
         });
 
@@ -381,11 +386,12 @@ public class ClanSettingsMenu extends GUI {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.message")));
             setForceClose(true);
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if (stripped.length() > plugin.getConfig().getInt("clan.max_name_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.min_name_length")) {
+                    || stripped.length() < plugin.getConfig().getInt("clan.min_name_length")) {
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_name")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -411,12 +417,12 @@ public class ClanSettingsMenu extends GUI {
                 logController.addLog(new Log("tag:" + clanTag, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 clansController.updateClan(clan);
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
                 setForceClose(false);
-            });
+            }));
+
         });
 
         icon.addRightClickAction((target) -> {
@@ -433,8 +439,8 @@ public class ClanSettingsMenu extends GUI {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.display_name_message")));
             setForceClose(true);
-            new AbstractChatUtil(target, (event) -> {
 
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var provider = currenciesController.getProvider("Vault");
                 if(provider.getValue(player) < plugin.getConfig().getDouble("clan.display_name.change_price.money")){
                     target.sendMessage(ClansPlugin.MM.deserialize(
@@ -448,7 +454,7 @@ public class ClanSettingsMenu extends GUI {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if (stripped.length() > plugin.getConfig().getInt("clan.display_name_max_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.display_name_min_length")) {
+                    || stripped.length() < plugin.getConfig().getInt("clan.display_name_min_length")) {
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_display_name")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -459,12 +465,11 @@ public class ClanSettingsMenu extends GUI {
                 clansController.updateClan(clan);
                 logController.addLog(new Log("displayname:" + stripped, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
                 setForceClose(true);
-            });
+            }));
         });
 
         icon.addShiftLeftClickAction((target) -> {
@@ -481,8 +486,8 @@ public class ClanSettingsMenu extends GUI {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.tag_message")));
             setForceClose(true);
-            new AbstractChatUtil(target, (event) -> {
 
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var provider = currenciesController.getProvider("Vault");
                 if(provider.getValue(player) < plugin.getConfig().getDouble("clan.tag.change_price.money")){
                     target.sendMessage(ClansPlugin.MM.deserialize(
@@ -496,7 +501,7 @@ public class ClanSettingsMenu extends GUI {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if (stripped.length() > plugin.getConfig().getInt("clan.tag_max_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.tag_min_length")) {
+                    || stripped.length() < plugin.getConfig().getInt("clan.tag_min_length")) {
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_tag")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -507,12 +512,11 @@ public class ClanSettingsMenu extends GUI {
                 clansController.updateClan(clan);
                 logController.addLog(new Log("tag:" + stripped, player.getUniqueId(), clan.getId(), LogType.CLAN_SETTING_CHANGED));
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
                 setForceClose(false);
-            });
+            }));
         });
 
         return icon;

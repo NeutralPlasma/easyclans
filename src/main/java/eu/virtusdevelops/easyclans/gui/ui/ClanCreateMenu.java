@@ -5,7 +5,6 @@ import eu.virtusdevelops.easyclans.controller.*;
 import eu.virtusdevelops.easyclans.gui.GUI;
 import eu.virtusdevelops.easyclans.gui.Icon;
 import eu.virtusdevelops.easyclans.models.*;
-import eu.virtusdevelops.easyclans.utils.AbstractChatUtil;
 import eu.virtusdevelops.easyclans.utils.BannerUtils;
 import eu.virtusdevelops.easyclans.utils.ItemUtils;
 import net.kyori.adventure.sound.Sound;
@@ -32,6 +31,7 @@ public class ClanCreateMenu extends GUI {
     private final LogController logController;
     private final RanksController ranksController;
     private final ClansPlugin plugin;
+    private final ChatUtilController chatUtilController;
 
     // clan specific
     private ItemStack clanBanner = new ItemStack(Material.BLACK_BANNER);
@@ -50,6 +50,7 @@ public class ClanCreateMenu extends GUI {
         this.invitesController = plugin.getInvitesController();
         this.logController = plugin.getLogController();
         this.ranksController = plugin.getRanksController();
+        this.chatUtilController = plugin.getChatUtilController();
         this.plugin = plugin;
         this.cPlayer = playerController.getPlayer(player.getUniqueId());
 
@@ -162,7 +163,8 @@ public class ClanCreateMenu extends GUI {
         icon.addClickAction((target) -> {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.join_price_item.message")));
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 try{
                     double price = Double.parseDouble(event.message());
                     if(price < 0) {
@@ -176,10 +178,11 @@ public class ClanCreateMenu extends GUI {
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.join_price_item.invalid_message")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
-            });
+            }));
+
 
         });
 
@@ -217,7 +220,8 @@ public class ClanCreateMenu extends GUI {
         icon.addClickAction((target) -> {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.kicktime_item.message")));
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 try{
                     int time = Integer.parseInt(event.message());
                     if(time < -1) {
@@ -231,11 +235,10 @@ public class ClanCreateMenu extends GUI {
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.kicktime_item.invalid_message")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
                 }
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
-            });
-
+            }));
         });
 
         return icon;
@@ -273,11 +276,12 @@ public class ClanCreateMenu extends GUI {
         icon.addLeftClickAction((target) -> {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.message")));
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if(stripped.length() > plugin.getConfig().getInt("clan.max_name_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.min_name_length")){
+                   || stripped.length() < plugin.getConfig().getInt("clan.min_name_length")){
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_name")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -297,21 +301,21 @@ public class ClanCreateMenu extends GUI {
                         clanTag += String.valueOf(clanName.charAt(0));
                 }
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
-            });
+            }));
         });
 
         icon.addRightClickAction((target) -> {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.display_name_message")));
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if(stripped.length() > plugin.getConfig().getInt("clan.display_name_max_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.display_name_min_length")){
+                   || stripped.length() < plugin.getConfig().getInt("clan.display_name_min_length")){
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_display_name")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -320,21 +324,21 @@ public class ClanCreateMenu extends GUI {
 
                 clanDisplayName = stripped;
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
-            });
+            }));
         });
 
         icon.addShiftLeftClickAction((target) -> {
             target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
             target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.tag_message")));
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(target, new ChatUtilController.ChatAction((event) -> {
                 var name = event.message();
                 var stripped = name.replace(" ", "_").strip().trim();
                 if(stripped.length() > plugin.getConfig().getInt("clan.tag_max_length")
-                        || stripped.length() < plugin.getConfig().getInt("clan.tag_min_length")){
+                   || stripped.length() < plugin.getConfig().getInt("clan.tag_min_length")){
                     // not good
                     target.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("clan_create_menu.name_item.invalid_tag")));
                     player.playSound(sound(key("block.note_block.didgeridoo"), Sound.Source.MASTER, 1f, 1.19f));
@@ -343,11 +347,10 @@ public class ClanCreateMenu extends GUI {
 
                 clanTag = stripped;
                 target.playSound(sound(key("ui.button.click"), Sound.Source.MASTER, 1f, 1.19f));
-
-            }, plugin).setOnClose(() -> {
+            }, () -> {
                 open();
                 refresh();
-            });
+            }));
         });
 
         return icon;

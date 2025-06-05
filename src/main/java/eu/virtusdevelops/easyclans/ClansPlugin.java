@@ -43,6 +43,7 @@ public class ClansPlugin extends JavaPlugin {
     private TropyController tropyController;
     private PlayerConnectionListener connectionListener;
     private RanksController ranksController;
+    private ChatUtilController chatUtilController;
 
     private BukkitTask bgTask;
     private boolean inited = false;
@@ -63,6 +64,7 @@ public class ClansPlugin extends JavaPlugin {
         requestsController = new RequestsController(this, sqlStorage);
         invitesController = new InvitesController(this, sqlStorage);
         tropyController = new TropyController(this, sqlStorage);
+        chatUtilController = new ChatUtilController(this);
 
         this.registerListeners();
         this.registerCommands();
@@ -90,6 +92,7 @@ public class ClansPlugin extends JavaPlugin {
         if (inited) {
             bgTask.cancel();
             guiHandler.disable();
+            chatUtilController.unload();
         }
     }
 
@@ -174,6 +177,9 @@ public class ClansPlugin extends JavaPlugin {
     public ClansController getClansController() {
         return clansController;
     }
+
+    public ChatUtilController getChatUtilController() {return chatUtilController;}
+
 
     public RequestsController getRequestsController() {
         return requestsController;

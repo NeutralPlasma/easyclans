@@ -10,7 +10,6 @@ import eu.virtusdevelops.easyclans.models.*;
 import eu.virtusdevelops.easyclans.providers.Provider;
 import eu.virtusdevelops.easyclans.providers.ProviderType;
 import eu.virtusdevelops.easyclans.providers.VotingPluginProvider;
-import eu.virtusdevelops.easyclans.utils.AbstractChatUtil;
 import eu.virtusdevelops.easyclans.utils.Formatter;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -32,6 +31,7 @@ public class ClanBankMenu extends AsyncPaginator {
     private final Clan clan;
     private final ClansController clansController;
     private final CurrenciesController currenciesController;
+    private final ChatUtilController chatUtilController;
     private final LogController logController;
     private final ClansPlugin plugin;
     private final GUI previousUI;
@@ -45,15 +45,13 @@ public class ClanBankMenu extends AsyncPaginator {
         this.clansController = plugin.getClansController();
         this.currenciesController = plugin.getCurrenciesController();
         this.logController = plugin.getLogController();
+        this.chatUtilController = plugin.getChatUtilController();
         this.plugin = plugin;
         this.cPlayer = plugin.getPlayerController().getPlayer(player.getUniqueId());
         this.previousUI = previousUI;
 
         setup();
         init();
-
-
-
     }
 
     private void setup(){
@@ -224,7 +222,7 @@ public class ClanBankMenu extends AsyncPaginator {
             player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("currencies.deposit")));
             setForceClose(true);
 
-            new AbstractChatUtil(target, (event) -> {
+            chatUtilController.newChat(player, new ChatUtilController.ChatAction((event -> {
                 double value = parseFromEvent(provider, event);
                 if(value == -1) return;
 
@@ -262,12 +260,12 @@ public class ClanBankMenu extends AsyncPaginator {
 
                 }
                 clansController.updateClan(clan);
-            }, plugin)
-            .setOnClose(() -> {
+
+            }), () -> {
                 setForceClose(false);
                 open();
                 refresh();
-            });
+            }));
         });
 
 
@@ -285,7 +283,8 @@ public class ClanBankMenu extends AsyncPaginator {
             player.sendMessage(ClansPlugin.MM.deserialize(LanguageController.getLocalized("currencies.withdraw")));
             setForceClose(true);
 
-            new AbstractChatUtil(target, (event) -> {
+
+            chatUtilController.newChat(player, new ChatUtilController.ChatAction((event -> {
                 double value = parseFromEvent(provider, event);
                 if(value == -1) return;
 
@@ -319,24 +318,18 @@ public class ClanBankMenu extends AsyncPaginator {
                     logController.addLog(new Log("currency:" + currency.getName() + ":" + value, player.getUniqueId(), clan.getId(), LogType.WITHDRAW));
                 }
                 clansController.updateClan(clan);
-
-
-            }, plugin)
-            .setOnClose(() -> {
+            }), () -> {
                 setForceClose(false);
                 open();
                 refresh();
-            });
-
-
-
+            }));
         });
 
         return icon;
     }
 
 
-    private double parseFromEvent(Provider provider, AbstractChatUtil.ChatConfirmEvent event){
+    private double parseFromEvent(Provider provider, ChatUtilController.ChatConfirmEvent event){
         double value = -1;
         try{
             if(provider.type() == ProviderType.INT){
