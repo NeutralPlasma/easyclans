@@ -146,6 +146,9 @@ public class ClanBankMenu extends AsyncPaginator {
             if((currency.getValue() + value) > plugin.getConfig().getDouble("deposit_maxs." +currency.getName())){
                 value = plugin.getConfig().getDouble("deposit_maxs." +currency.getName()) - currency.getValue();
             }
+            if(value < 0){
+                value = value * -1;
+            }
 
             if((currency.getValue() + value) > plugin.getConfig().getDouble("deposit_maxs." +currency.getName())){
                 player.sendMessage(ClansPlugin.MM.deserialize(
