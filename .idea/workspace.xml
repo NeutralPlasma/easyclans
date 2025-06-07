@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cead35d8-2508-4cc6-9c8d-603abd438923" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/api">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EasyClans" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EasyClans" type="f1a62948:ProjectNode" />
+                <item name="api" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EasyClans" type="f1a62948:ProjectNode" />
+                <item name="api" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EasyClans" type="f1a62948:ProjectNode" />
+                <item name="api" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Record" />
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Kotlin Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NeutralPlasma&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NeutralPlasma/easyclans.git&quot;,
+    &quot;accountId&quot;: &quot;b00b8f5b-f991-443a-9829-ee73bf023bb7&quot;
+  }
+}</component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2VAt8QGgkwWzMkg2W8LcOdQSmmr" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.easyclans [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.easyclans [dependencies].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.easyclans [init].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.easyclans [shadowJar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.easyclans:api [build].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;new&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Programing/Java/easyclans&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
+    ],
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;MariaDB&quot;,
+      &quot;MySQL&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="eu.virtusdevelops.easyclans.clan" />
+      <recent name="eu.virtusdevelops.easyclans.models" />
+      <recent name="eu.virtusdevelops.easyclans.controllers" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="eu.virtusdevelops.easyclans.commands.clan" />
+      <recent name="eu.virtusdevelops.easyclans.commands.trophy" />
+      <recent name="net.astrona.easyclans.gui.ui" />
+      <recent name="net.astrona.easyclans.utils" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.easyclans:api [build]">
+    <configuration name="easyclans [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="easyclans [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dependencies" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="easyclans [init]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="init" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="easyclans [shadowJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="shadowJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="easyclans:api [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/api" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="kotlin.scripts.KotlinBuildScript.api\build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="kotlin.scripts.KotlinBuildScript.api\build.gradle.kts" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.easyclans:api [build]" />
+        <item itemvalue="Gradle.easyclans [shadowJar]" />
+        <item itemvalue="Gradle.easyclans [clean]" />
+        <item itemvalue="Gradle.easyclans [dependencies]" />
+        <item itemvalue="Gradle.easyclans [init]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26094.121" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-IU-251.26094.121" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cead35d8-2508-4cc6-9c8d-603abd438923" name="Changes" comment="" />
+      <created>1694290552461</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1694290552461</updated>
+      <workItem from="1694290553473" duration="4382000" />
+      <workItem from="1694445876888" duration="2438000" />
+      <workItem from="1694464028087" duration="2930000" />
+      <workItem from="1694525709156" duration="12575000" />
+      <workItem from="1694616165311" duration="3718000" />
+      <workItem from="1694625839402" duration="2865000" />
+      <workItem from="1694684691124" duration="8823000" />
+      <workItem from="1694716025400" duration="42000" />
+      <workItem from="1694716076931" duration="5025000" />
+      <workItem from="1694851274778" duration="21000" />
+      <workItem from="1694851304974" duration="6168000" />
+      <workItem from="1694886056967" duration="542000" />
+      <workItem from="1694886616219" duration="237000" />
+      <workItem from="1695318915246" duration="1383000" />
+      <workItem from="1695456427663" duration="10904000" />
+      <workItem from="1695499359261" duration="4498000" />
+      <workItem from="1695545312563" duration="4969000" />
+      <workItem from="1695641241223" duration="12072000" />
+      <workItem from="1695713991324" duration="81000" />
+      <workItem from="1695714082790" duration="6075000" />
+      <workItem from="1695738699544" duration="6000" />
+      <workItem from="1695738715387" duration="2032000" />
+      <workItem from="1695824434356" duration="1724000" />
+      <workItem from="1696149840990" duration="6606000" />
+      <workItem from="1696271380494" duration="8000" />
+      <workItem from="1696271399651" duration="7907000" />
+      <workItem from="1696325057865" duration="34000" />
+      <workItem from="1696325101777" duration="1732000" />
+      <workItem from="1696331521691" duration="12592000" />
+      <workItem from="1696445303662" duration="794000" />
+      <workItem from="1696756945535" duration="879000" />
+      <workItem from="1696875919714" duration="3276000" />
+      <workItem from="1697279282118" duration="2884000" />
+      <workItem from="1697287302181" duration="6025000" />
+      <workItem from="1697306045788" duration="827000" />
+      <workItem from="1697359815036" duration="20102000" />
+      <workItem from="1697387510954" duration="3280000" />
+      <workItem from="1697479744499" duration="196000" />
+      <workItem from="1697479950375" duration="810000" />
+      <workItem from="1697483121277" duration="664000" />
+      <workItem from="1697534797609" duration="22885000" />
+      <workItem from="1697573804805" duration="582000" />
+      <workItem from="1697808021264" duration="25000" />
+      <workItem from="1697808562301" duration="1411000" />
+      <workItem from="1697811767364" duration="938000" />
+      <workItem from="1697905190902" duration="4293000" />
+      <workItem from="1698140769142" duration="65000" />
+      <workItem from="1698140841973" duration="451000" />
+      <workItem from="1698141319540" duration="1000" />
+      <workItem from="1698144114669" duration="6314000" />
+      <workItem from="1698169018171" duration="100000" />
+      <workItem from="1698328721506" duration="3944000" />
+      <workItem from="1698341354428" duration="697000" />
+      <workItem from="1698404985985" duration="4822000" />
+      <workItem from="1698568852439" duration="2867000" />
+      <workItem from="1698571844990" duration="6150000" />
+      <workItem from="1698586472075" duration="96000" />
+      <workItem from="1698586577224" duration="3893000" />
+      <workItem from="1699002255153" duration="3889000" />
+      <workItem from="1699009888863" duration="3986000" />
+      <workItem from="1699040916361" duration="2130000" />
+      <workItem from="1699043079969" duration="2053000" />
+      <workItem from="1699092828874" duration="2936000" />
+      <workItem from="1702817400472" duration="265000" />
+      <workItem from="1702817967878" duration="19000" />
+      <workItem from="1702817997406" duration="33000" />
+      <workItem from="1703502679344" duration="1067000" />
+      <workItem from="1703865483674" duration="1591000" />
+      <workItem from="1703933842841" duration="2421000" />
+      <workItem from="1704034391704" duration="1451000" />
+      <workItem from="1704204045742" duration="6397000" />
+      <workItem from="1704305711674" duration="602000" />
+      <workItem from="1705231140109" duration="54000" />
+      <workItem from="1706217882293" duration="5000" />
+      <workItem from="1706381074312" duration="1438000" />
+      <workItem from="1706869312012" duration="1024000" />
+      <workItem from="1706870539976" duration="11936000" />
+      <workItem from="1707491342812" duration="6911000" />
+      <workItem from="1707774668224" duration="1540000" />
+      <workItem from="1707821126738" duration="350000" />
+      <workItem from="1707821710205" duration="75000" />
+      <workItem from="1707904177219" duration="25000" />
+      <workItem from="1707904284508" duration="34000" />
+      <workItem from="1707935257809" duration="600000" />
+      <workItem from="1708024124754" duration="5995000" />
+      <workItem from="1708035638784" duration="1348000" />
+      <workItem from="1708103238042" duration="1402000" />
+      <workItem from="1708194863784" duration="14011000" />
+      <workItem from="1708249161139" duration="3310000" />
+      <workItem from="1708266802632" duration="4914000" />
+      <workItem from="1708282116231" duration="1718000" />
+      <workItem from="1708343008955" duration="2239000" />
+      <workItem from="1708384502573" duration="678000" />
+      <workItem from="1708595271995" duration="1711000" />
+      <workItem from="1708609101591" duration="1290000" />
+      <workItem from="1708694391275" duration="86000" />
+      <workItem from="1708788152339" duration="29000" />
+      <workItem from="1708795264385" duration="3661000" />
+      <workItem from="1709067606434" duration="35000" />
+      <workItem from="1709210054819" duration="1789000" />
+      <workItem from="1709221260317" duration="1534000" />
+      <workItem from="1709289087775" duration="1702000" />
+      <workItem from="1709315601410" duration="1318000" />
+      <workItem from="1709317708770" duration="5794000" />
+      <workItem from="1709375793789" duration="2038000" />
+      <workItem from="1709492119760" duration="3705000" />
+      <workItem from="1709567179787" duration="1318000" />
+      <workItem from="1709751241959" duration="22000" />
+      <workItem from="1709751379855" duration="1801000" />
+      <workItem from="1709840908697" duration="13000" />
+      <workItem from="1709841000753" duration="8000" />
+      <workItem from="1710577666015" duration="256000" />
+      <workItem from="1719425741909" duration="96000" />
+      <workItem from="1720360917390" duration="616000" />
+      <workItem from="1722371451337" duration="358000" />
+      <workItem from="1723534766022" duration="1077000" />
+      <workItem from="1727083829701" duration="2166000" />
+      <workItem from="1727086025912" duration="3926000" />
+      <workItem from="1727116978046" duration="3444000" />
+      <workItem from="1727166830987" duration="5567000" />
+      <workItem from="1727465973032" duration="3573000" />
+      <workItem from="1727598979468" duration="19123000" />
+      <workItem from="1727786858838" duration="5433000" />
+      <workItem from="1727802402329" duration="3378000" />
+      <workItem from="1727972403981" duration="1806000" />
+      <workItem from="1729260249546" duration="605000" />
+      <workItem from="1729266201296" duration="311000" />
+      <workItem from="1729336569846" duration="238000" />
+      <workItem from="1729785182430" duration="510000" />
+      <workItem from="1730058010166" duration="265000" />
+      <workItem from="1730063948751" duration="92000" />
+      <workItem from="1730304324426" duration="1465000" />
+      <workItem from="1730660835499" duration="272000" />
+      <workItem from="1735144546768" duration="1142000" />
+      <workItem from="1735414707205" duration="1116000" />
+      <workItem from="1735421793659" duration="144000" />
+      <workItem from="1735421946040" duration="3487000" />
+      <workItem from="1735748581960" duration="4241000" />
+      <workItem from="1735896440538" duration="1910000" />
+      <workItem from="1736098714919" duration="131000" />
+      <workItem from="1736201635942" duration="991000" />
+      <workItem from="1736253902279" duration="1285000" />
+      <workItem from="1736540874031" duration="6000" />
+      <workItem from="1736540911246" duration="4099000" />
+      <workItem from="1736546729747" duration="597000" />
+      <workItem from="1737293322176" duration="1444000" />
+      <workItem from="1738413598829" duration="2062000" />
+      <workItem from="1738525865010" duration="15000" />
+      <workItem from="1739008377595" duration="4769000" />
+      <workItem from="1739806342741" duration="6552000" />
+      <workItem from="1739963814983" duration="699000" />
+      <workItem from="1740000089472" duration="5249000" />
+      <workItem from="1740863676727" duration="388000" />
+      <workItem from="1742143549239" duration="620000" />
+      <workItem from="1742144183947" duration="2745000" />
+      <workItem from="1742487546878" duration="515000" />
+      <workItem from="1749146297519" duration="4653000" />
+      <workItem from="1749288787368" duration="4819000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.papermc.paper/paper-api/1.21.4-R0.1-SNAPSHOT/c411d1142136a6042ed11707b972443242205cbf/paper-api-1.21.4-R0.1-SNAPSHOT.jar!/org/bukkit/block/banner/PatternType.class</url>
+          <line>20</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

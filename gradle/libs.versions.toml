@@ -1,0 +1,37 @@
+
+
+[versions]
+kotlin = "2.1.10"
+kotlinxDatetime = "0.6.1"
+kotlinxSerializationJSON = "1.7.2"
+kotlinxCoroutines = "1.8.1"
+vault = "1.7"
+votingPlugin =  "6.14.1"
+hikariCP = "5.0.1"
+cloudCore = "2.0.0"
+cloudAnnotations = "2.0.0"
+cloudPaper = "2.0.0-beta.10"
+cloudMinecraftExtras = "2.0.0-beta.10"
+coinsEngine = "2.4.1"
+
+[libraries]
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+vault = { module = "com.github.MilkBowl:VaultAPI", version.ref="vault"}
+votingPlugin = {module = "com.bencodez:votingplugin", version.ref="votingPlugin"}
+hikariCP = { module = "com.zaxxer:HikariCP", version.ref="hikariCP"}
+cloudCore = { module = "org.incendo:cloud-core", version.ref="cloudCore"}
+cloudAnnotations = { module = "org.incendo:cloud-annotations", version.ref="cloudAnnotations"}
+cloudPaper = { module = "org.incendo:cloud-paper", version.ref="cloudPaper"}
+cloudMinecraftExtras = { module = "org.incendo:cloud-minecraft-extras", version.ref="cloudMinecraftExtras"}
+coinsEngine = { module = "su.nightexpress.coinsengine:CoinsEngine", version.ref="coinsEngine"}
+
+# Libraries can be bundled together for easier import
+[bundles]
+kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutines"]
+cloudEcosystem = ["cloudCore", "cloudAnnotations", "cloudPaper", "cloudMinecraftExtras"]
+
+[plugins]
+kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
