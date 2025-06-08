@@ -15,14 +15,12 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
         maven(url = "https://repo.papermc.io/repository/maven-public/")
-
         maven(url = "https://repo.rosewooddev.io/repository/public/")
         maven(url = "https://hub.spigotmc.org/nexus/content/groups/public/")
         maven(url = "https://nexus.bencodez.com/repository/maven-public/")
         maven(url = "https://repo.nightexpressdev.com/releases/")
         maven(url = "https://jitpack.io/")
         maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
-
         mavenLocal()
     }
 }
@@ -44,3 +42,5 @@ gradle.beforeProject {
 rootProject.name = "EasyClans"
 
 include(":api")
+include(":core")
+include(":plugin")

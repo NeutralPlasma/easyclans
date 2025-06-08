@@ -1,5 +1,6 @@
 package eu.virtusdevelops.easyclans.api.request
 
+import eu.virtusdevelops.easyclans.api.Success
 import eu.virtusdevelops.easyclans.api.clan.Clan
 import eu.virtusdevelops.easyclans.api.player.ClanPlayer
 import java.util.Date
@@ -18,4 +19,8 @@ interface ClanRequest {
 
     fun isCancelled(): Boolean
 
+
+    fun accept(): Result<Success>
+
+    fun decline()
 }

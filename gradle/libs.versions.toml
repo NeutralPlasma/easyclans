@@ -7,12 +7,13 @@ kotlinxSerializationJSON = "1.7.2"
 kotlinxCoroutines = "1.8.1"
 vault = "1.7"
 votingPlugin =  "6.14.1"
-hikariCP = "5.0.1"
 cloudCore = "2.0.0"
 cloudAnnotations = "2.0.0"
 cloudPaper = "2.0.0-beta.10"
 cloudMinecraftExtras = "2.0.0-beta.10"
 coinsEngine = "2.4.1"
+mccorutine = "2.22.0"
+hikariCP = "5.0.1"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -27,6 +28,7 @@ cloudAnnotations = { module = "org.incendo:cloud-annotations", version.ref="clou
 cloudPaper = { module = "org.incendo:cloud-paper", version.ref="cloudPaper"}
 cloudMinecraftExtras = { module = "org.incendo:cloud-minecraft-extras", version.ref="cloudMinecraftExtras"}
 coinsEngine = { module = "su.nightexpress.coinsengine:CoinsEngine", version.ref="coinsEngine"}
+mcCorutines = { module = "com.github.shynixn.mccoroutine:mccoroutine-bukkit-api", version.ref="mccorutine"}
 
 # Libraries can be bundled together for easier import
 [bundles]
