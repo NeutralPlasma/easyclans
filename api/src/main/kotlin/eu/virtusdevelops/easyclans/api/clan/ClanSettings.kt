@@ -22,4 +22,5 @@ interface ClanSettings {
 
     fun toggleRequests(boolean: Boolean): Result<Success>
 
+    fun banner(itemStack: ItemStack): Result<Success>
 }

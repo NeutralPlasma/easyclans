@@ -22,6 +22,8 @@ interface ClanMember {
 
     fun isActive(): Boolean
 
+    fun interestRate(): Double
+
 
     // permissions
 

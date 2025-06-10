@@ -35,4 +35,7 @@ class ClanSettingsImpl : ClanSettings {
         TODO("Not yet implemented")
     }
 
+    override fun banner(itemStack: ItemStack): Result<Success> {
+        TODO("Not yet implemented")
+    }
 }

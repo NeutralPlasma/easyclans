@@ -30,4 +30,8 @@ class ClanDaoMysqlImpl(dataSource: HikariDataSource) : ClanDao {
     override fun deleteById(id: UUID): Result<Success> {
         TODO("Not yet implemented")
     }
+
+    override fun getClanSettings(clan: Clan): Result<ClanSettingsImpl> {
+        TODO("Not yet implemented")
+    }
 }

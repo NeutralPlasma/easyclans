@@ -12,8 +12,8 @@ import eu.virtusdevelops.easyclans.api.invite.ClanInvite
 import eu.virtusdevelops.easyclans.api.member.ClanMember
 import eu.virtusdevelops.easyclans.api.player.ClanPlayer
 import eu.virtusdevelops.easyclans.api.request.ClanRequest
-import eu.virtusdevelops.easyclans.core.EasyClansPlugin
 import eu.virtusdevelops.easyclans.core.ExpiringCache
+import eu.virtusdevelops.easyclans.core.database.Database
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
@@ -38,6 +38,10 @@ class ClanImpl(
 
     private val api by lazy {
         EasyClansAPI.get()
+    }
+
+    private val database by lazy {
+        Database.get()
     }
 
     override fun name(): String {
@@ -140,29 +144,73 @@ class ClanImpl(
         TODO("Not yet implemented")
     }
 
-    override fun setTag(tag: String): Result<Success> {
-        this.tag = tag
-        api.plugin().launch {
+    override suspend fun setTagAsync(tag: String): Result<Success>
+    = withContext(api.plugin().asyncDispatcher) {
+
+        this@ClanImpl.tag = tag
             // save clan
-            
+        val status = database.clanDao().save(this@ClanImpl)
+        if(status.isFailure) {
+            api.plugin().logger.severe("Could not save clan to database! ${this@ClanImpl}")
+            api.plugin().logger.severe("Errors: ${status.exceptionOrNull()}")
 
 
+            return@withContext status
         }
-        TODO("Not yet implemented")
+
+
+        return@withContext Result.success(Success)
     }
 
-    override fun setBanner(itemStack: Any): Result<Success> {
-        // clan settings set banner
+    override suspend fun setBannerAsync(itemStack: ItemStack): Result<Success>
+    = withContext(api.plugin().asyncDispatcher) {
+        val cache = clanSettings.get()
+        if(cache == null){
+            // get new settings
+            val status = database.clanDao().getClanSettings(this@ClanImpl)
+
+            status.onFailure { e ->
+                return@withContext Result.failure(e)
+            }
+
+
+            TODO("Not yet implemented")
+
+            return@withContext Result.success(Success)
+
+        }else{
+            cache.banner(itemStack)
+            clanSettings.put(cache)
+            val status = database.clanDao().update(this@ClanImpl)
+            status.onFailure { e ->
+                return@withContext Result.failure(e)
+            }
+            return@withContext Result.success(Success)
+        }
     }
 
-    override fun getBanner(
+
+
+    override suspend fun getBannerAsync(
         clanMember: ClanMember,
         bypass: Boolean
-    ): Result<ItemStack> {
+    ): Result<ItemStack> = withContext(api.plugin().asyncDispatcher) {
         //
+        val cache = clanSettings.get()
+        if(cache != null){
+            return@withContext Result.success(cache.banner())
+        }
+
+        val status = database.clanDao().getClanSettings(this@ClanImpl)
+        status.onFailure { e ->
+            return@withContext Result.failure(e)
+        }
+
+        clanSettings = ExpiringCache<ClanSettingsImpl>(1, TimeUnit.HOURS)
+        clanSettings.put(status.getOrThrow())
 
 
-        TODO("Not yet implemented")
+        return@withContext Result.success(clanSettings.get()!!.banner())
     }
 
 
