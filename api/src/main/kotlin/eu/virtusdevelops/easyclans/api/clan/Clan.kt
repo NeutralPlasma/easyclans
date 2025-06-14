@@ -37,16 +37,16 @@ interface Clan {
     fun clanSettings(): CompletionStage<ClanSettings>
 
     //
-    suspend fun kickMember(clanMember: ClanMember): Result<Success>
-    fun kickMember(clanMember: ClanMember, bypass: Boolean = false): CompletionStage<Result<Success>>
+    suspend fun kickMemberAsync(clanMember: ClanMember): Result<Success>
+    fun kickMember(clanMember: ClanMember): CompletionStage<Result<Success>>
 
-    suspend fun addMember(clanPlayer: ClanPlayer): ClanMember
-    fun addMember(clanPlayer: ClanPlayer, bypass: Boolean = false): CompletionStage<ClanMember>
+    suspend fun addMemberAsync(clanPlayer: ClanPlayer): ClanMember
+    fun addMember(clanPlayer: ClanPlayer): CompletionStage<Result<ClanMember>>
 
 
     suspend fun setTagAsync(tag: String): Result<Success>
 
     suspend fun setBannerAsync(itemStack: ItemStack):Result<Success>
 
-    suspend fun getBannerAsync(clanMember: ClanMember, bypass: Boolean = false): Result<ItemStack>
+    suspend fun getBannerAsync(): Result<ItemStack>
 }

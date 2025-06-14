@@ -12,7 +12,5 @@ interface DaoCrud <T, ID> {
 
     fun save(t: T): Result<Success>
 
-    fun update(t: T): Result<Success>
-
     fun deleteById(id: ID): Result<Success>
 }

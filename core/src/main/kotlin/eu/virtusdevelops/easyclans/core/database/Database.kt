@@ -1,8 +1,13 @@
 package eu.virtusdevelops.easyclans.core.database
 
 import com.zaxxer.hikari.HikariDataSource
+import eu.virtusdevelops.easyclans.api.invite.ClanInvite
+import eu.virtusdevelops.easyclans.api.request.ClanRequest
 import eu.virtusdevelops.easyclans.core.clan.ClanDao
 import eu.virtusdevelops.easyclans.core.clan.ClanDaoMysqlImpl
+import eu.virtusdevelops.easyclans.core.invite.InviteDao
+import eu.virtusdevelops.easyclans.core.member.MemberDao
+import eu.virtusdevelops.easyclans.core.request.RequestDao
 import org.bukkit.plugin.java.JavaPlugin
 
 class Database(
@@ -41,6 +46,12 @@ class Database(
     }
 
     fun clanDao(): ClanDao = clanDao
+
+    fun memberDao(): MemberDao = TODO("Not yet implemented")
+
+    fun clanInviteDao(): InviteDao = TODO("Not yet implemented")
+
+    fun clanRequestDao(): RequestDao = TODO("Not yet implemented")
 
 
 }
