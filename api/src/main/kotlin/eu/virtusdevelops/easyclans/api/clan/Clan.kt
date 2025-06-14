@@ -8,17 +8,20 @@ import eu.virtusdevelops.easyclans.api.player.ClanPlayer
 import eu.virtusdevelops.easyclans.api.request.ClanRequest
 import org.bukkit.inventory.ItemStack
 import java.util.Date
+import java.util.UUID
 import java.util.concurrent.CompletionStage
 
 
 interface Clan {
 
+    fun id(): UUID
+
     fun name(): String
 
     fun tag(): String
 
-    suspend fun ownerAsync(): ClanMember
-    fun owner(): CompletionStage<ClanMember>
+    suspend fun ownerAsync(): Result<ClanMember>
+    fun owner(): CompletionStage<Result<ClanMember>>
 
     suspend fun membersAsync(): Set<ClanMember>
     fun members(): CompletionStage<Set<ClanMember>>
@@ -29,7 +32,8 @@ interface Clan {
     suspend fun requestsAsync(): Set<ClanRequest>
     fun requests(): CompletionStage<Set<ClanRequest>>
 
-    fun economies(): Set<Economy<Any>>
+    suspend fun economiesAsync(): Set<Economy<Any>>
+    fun economies(): CompletionStage<Set<Economy<Any>>>
 
     fun created(): Date
 
@@ -40,7 +44,7 @@ interface Clan {
     suspend fun kickMemberAsync(clanMember: ClanMember): Result<Success>
     fun kickMember(clanMember: ClanMember): CompletionStage<Result<Success>>
 
-    suspend fun addMemberAsync(clanPlayer: ClanPlayer): ClanMember
+    suspend fun addMemberAsync(clanPlayer: ClanPlayer): Result<ClanMember>
     fun addMember(clanPlayer: ClanPlayer): CompletionStage<Result<ClanMember>>
 
 

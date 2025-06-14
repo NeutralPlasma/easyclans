@@ -6,10 +6,10 @@ import java.util.concurrent.CompletionStage
 
 interface MemberController {
 
+    suspend fun getAsync(clanPlayer: ClanPlayer): Result<ClanMember>
     fun get(clanPlayer: ClanPlayer): CompletionStage<ClanMember?>
-    suspend fun getAsync(clanPlayer: ClanPlayer): ClanMember?
 
 
-    suspend fun getClanMembersAsync(clan: Clan): Set<ClanMember>
+    suspend fun getClanMembersAsync(clan: Clan): Result<Set<ClanMember>>
     fun getClanMembers(clan: Clan): CompletionStage<Set<ClanMember>>
 }

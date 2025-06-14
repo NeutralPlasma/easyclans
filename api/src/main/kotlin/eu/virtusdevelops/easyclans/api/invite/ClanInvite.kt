@@ -8,11 +8,15 @@ import java.util.concurrent.CompletionStage
 
 interface ClanInvite {
 
-    fun clan(): Clan
+    suspend fun clanAsync(): Clan
+    fun clan(): CompletionStage<Clan>
 
-    fun sender(): ClanPlayer
+    suspend fun senderAsync(): ClanPlayer
+    fun sender(): CompletionStage<ClanPlayer>
 
-    fun target(): ClanPlayer
+    suspend fun targetAsync(): ClanPlayer
+    fun target(): CompletionStage<ClanPlayer>
+
 
     fun sentDate(): Date
 

@@ -7,5 +7,5 @@ import java.util.UUID
 interface ClanDao : DaoCrud<Clan, UUID> {
 
 
-    fun getClanSettings(clan: Clan): Result<ClanSettingsImpl>
+
 }

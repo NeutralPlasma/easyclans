@@ -3,14 +3,18 @@ package eu.virtusdevelops.easyclans.api.member
 import eu.virtusdevelops.easyclans.api.Success
 import eu.virtusdevelops.easyclans.api.clan.Clan
 import eu.virtusdevelops.easyclans.api.permission.ClanPermission
+import eu.virtusdevelops.easyclans.api.permission.Permission
 import eu.virtusdevelops.easyclans.api.player.ClanPlayer
 import java.util.Date
+import java.util.concurrent.CompletionStage
 
 interface ClanMember {
 
-    fun clan(): Clan
+    suspend fun clanAsync(): Clan
+    fun clan(): CompletionStage<Clan>
 
-    fun player(): ClanPlayer
+    suspend fun playerAsync(): ClanPlayer
+    fun player(): CompletionStage<ClanPlayer>
 
     fun permissions(): Set<ClanPermission>
 
@@ -27,9 +31,11 @@ interface ClanMember {
 
     // permissions
 
-    fun has(permission: ClanPermission): Boolean
+    fun has(permission: Permission): Boolean
 
-    fun add(permission: ClanPermission): Result<Success>
+    suspend fun addAsync(permission: ClanPermission): Result<Success>
+    fun add(permission: ClanPermission): CompletionStage<Result<Success>>
 
-    fun remove(permission: ClanPermission): Result<Success>
+    suspend fun removeAsync(permission: Permission): Result<Success>
+    fun remove(permission: Permission): CompletionStage<Result<Success>>
 }

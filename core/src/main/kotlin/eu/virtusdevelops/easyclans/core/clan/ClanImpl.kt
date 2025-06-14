@@ -24,6 +24,7 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit
 
 class ClanImpl(
+    private val id: UUID,
     private var name: String,
     private var tag: String,
     private var owner: UUID,
@@ -32,10 +33,13 @@ class ClanImpl(
 
     private var members: ExpiringCache<Set<ClanMember>>,
     private var invites: ExpiringCache<Set<ClanInvite>>,
-    private var requests: ExpiringCache<Set<ClanRequest>>
+    private var requests: ExpiringCache<Set<ClanRequest>>,
+    private var economies: ExpiringCache<Set<Economy<Any>>>
 ) : Clan {
 
-
+    override fun id(): UUID {
+        return id
+    }
 
     private val api by lazy {
         EasyClansAPI.get()
@@ -53,15 +57,16 @@ class ClanImpl(
         return tag
     }
 
-    override suspend fun ownerAsync(): ClanMember = withContext(api.plugin().asyncDispatcher) {
+    override suspend fun ownerAsync(): Result<ClanMember> = withContext(api.plugin().asyncDispatcher) {
         val player = api.playerController().getAsync(owner)
-        if(player == null) throw IllegalStateException()
-        val member = api.membersController().getAsync(player)
-        if(member == null) throw IllegalStateException()
-        member
+        if(player.isFailure)
+            return@withContext Result.failure(player.exceptionOrNull()!!)
+
+        api.membersController().getAsync(player.getOrNull()!!)
+
     }
 
-    override fun owner(): CompletionStage<ClanMember> {
+    override fun owner(): CompletionStage<Result<ClanMember>> {
         return api.plugin().scope.future {
             ownerAsync()
         }
@@ -75,7 +80,12 @@ class ClanImpl(
             val newMembers = withContext(api.plugin().asyncDispatcher) {
                 api.membersController().getClanMembersAsync(this@ClanImpl)
             }
-            members.put(newMembers)
+            if(newMembers.isFailure) {
+                api.plugin().logger.severe("Could not retrieve members from database! ${this@ClanImpl}")
+                api.plugin().logger.severe("Errors: ${newMembers.exceptionOrNull()}")
+                return emptySet()
+            }
+            members.put(newMembers.getOrNull()!!)
             return members.get()!!
         }
     }
@@ -125,7 +135,7 @@ class ClanImpl(
         }
 
         if(status.isFailure) {
-            api.plugin().logger.severe("Could not retrieve invites from database! ${this@ClanImpl}")
+            api.plugin().logger.severe("Could not retrieve requests from database! ${this@ClanImpl}")
             api.plugin().logger.severe("Errors: ${status.exceptionOrNull()}")
             return emptySet()
         }
@@ -140,20 +150,55 @@ class ClanImpl(
         }
     }
 
-    override fun economies(): Set<Economy<Any>> {
-        TODO("Not yet implemented")
+    override suspend fun economiesAsync(): Set<Economy<Any>> {
+        val cached = economies.get()
+        if(cached != null)
+            return cached
+
+        val status = withContext(api.plugin().asyncDispatcher){
+            database.economyDao().getByClan(this@ClanImpl)
+        }
+
+        if(status.isFailure) {
+            api.plugin().logger.severe("Could not retrieve economies from database! ${this@ClanImpl}")
+            api.plugin().logger.severe("Errors: ${status.exceptionOrNull()}")
+            return emptySet()
+        }
+        economies.put(status.getOrNull()!!)
+        return status.getOrNull()!!
+    }
+
+    override fun economies(): CompletionStage<Set<Economy<Any>>>{
+        return api.plugin().scope.future {
+            economiesAsync()
+        }
     }
 
     override fun created(): Date {
-        TODO("Not yet implemented")
+        return createDate
     }
 
     override suspend fun clanSettingsAsync(): ClanSettings {
-        TODO("Not yet implemented")
+        val cached = clanSettings.get()
+        if(cached != null)
+            return cached
+
+        val status = withContext(api.plugin().asyncDispatcher){
+            database.clanSettingsDao().getById(id())
+        }
+        if(status.isFailure) {
+            api.plugin().logger.severe("Could not retrieve clan settings from database! ${this@ClanImpl}")
+            api.plugin().logger.severe("Errors: ${status.exceptionOrNull()}")
+            return ClanSettingsImpl()
+        }
+        clanSettings.put(status.getOrNull()!!)
+        return clanSettings.get()!!
     }
 
     override fun clanSettings(): CompletionStage<ClanSettings> {
-        TODO("Not yet implemented")
+        return api.plugin().scope.future {
+            clanSettingsAsync()
+        }
     }
 
     override suspend fun kickMemberAsync(clanMember: ClanMember): Result<Success> {
@@ -162,11 +207,13 @@ class ClanImpl(
             return Result.failure(MemberNotFound("Member not found in clan!"))
 
         val status = withContext(api.plugin().asyncDispatcher) {
-            database.memberDao().deleteById(clanMember.player().uuid())
+            val player = clanMember.playerAsync()
+
+            database.memberDao().deleteById(player.uuid())
         }
 
         if(status.isFailure) {
-            api.plugin().logger.severe("Could not delete member from database! ${clanMember.player().uuid()}")
+            api.plugin().logger.severe("Could not delete member from database! $clanMember")
             api.plugin().logger.severe("Errors: ${status.exceptionOrNull()}")
             return Result.failure(status.exceptionOrNull()!!)
         }
@@ -182,12 +229,20 @@ class ClanImpl(
         }
     }
 
-    override suspend fun addMemberAsync(clanPlayer: ClanPlayer): ClanMember {
-        TODO("Not yet implemented")
+    override suspend fun addMemberAsync(clanPlayer: ClanPlayer): Result<ClanMember> {
+        val membersCached = membersAsync()
+
+        if(clanPlayer.isInClan())
+            return Result.failure(MemberNotFound("Player is already in a clan!"))
+
+        TODO("Create clan member and add player to the clan")
+
     }
 
     override fun addMember(clanPlayer: ClanPlayer): CompletionStage<Result<ClanMember>> {
-        TODO("Not yet implemented")
+        return api.plugin().scope.future {
+            addMemberAsync(clanPlayer)
+        }
     }
 
     override suspend fun setTagAsync(tag: String): Result<Success> {
@@ -212,24 +267,35 @@ class ClanImpl(
         if(cache == null){
             // get new settings
             val status = withContext(api.plugin().asyncDispatcher) {
-                database.clanDao().getClanSettings(this@ClanImpl)
+                database.clanSettingsDao().getById(this@ClanImpl.id())
             }
+
             status.onFailure { e ->
                 return Result.failure(e)
             }
 
+            val newSettings = status.getOrThrow()
+            newSettings.banner(itemStack)
 
-            TODO("Not yet implemented")
+            val status2 = withContext(api.plugin().asyncDispatcher) {
+                database.clanSettingsDao().save(newSettings)
+            }
 
-            return Result.success(Success)
-
+            status2.onSuccess { _ ->
+                clanSettings.put(newSettings)
+            }
+            return status2
         }else{
+            val old = cache.banner()
             cache.banner(itemStack)
-            clanSettings.put(cache)
             val status = withContext(api.plugin().asyncDispatcher) {
                 database.clanDao().save(this@ClanImpl)
             }
+            status.onSuccess {
+                clanSettings.put(cache)
+            }
             status.onFailure { e ->
+                cache.banner(old)
                 return Result.failure(e)
             }
             return Result.success(Success)
@@ -245,13 +311,8 @@ class ClanImpl(
             return Result.success(cache.banner())
         }
 
-        val status = withContext(api.plugin().asyncDispatcher){
-            database.clanDao().getClanSettings(this@ClanImpl)
-        }
-        status.onFailure { e ->
-            return Result.failure(e)
-        }
-        clanSettings.put(status.getOrThrow())
+        val newSettings = clanSettingsAsync()
+        clanSettings.put(newSettings as ClanSettingsImpl)
         return Result.success(clanSettings.get()!!.banner())
     }
 
