@@ -34,19 +34,14 @@ class ClanImpl(
     private var members: ExpiringCache<Set<ClanMember>>,
     private var invites: ExpiringCache<Set<ClanInvite>>,
     private var requests: ExpiringCache<Set<ClanRequest>>,
-    private var economies: ExpiringCache<Set<Economy<Any>>>
+    private var economies: ExpiringCache<Set<Economy<Any>>>,
+
+    private val api: EasyClansAPI,
+    private val database: Database,
 ) : Clan {
 
     override fun id(): UUID {
         return id
-    }
-
-    private val api by lazy {
-        EasyClansAPI.get()
-    }
-
-    private val database by lazy {
-        Database.get()
     }
 
     override fun name(): String {
@@ -230,13 +225,16 @@ class ClanImpl(
     }
 
     override suspend fun addMemberAsync(clanPlayer: ClanPlayer): Result<ClanMember> {
-        val membersCached = membersAsync()
+        val member =  api.membersController().create(this, clanPlayer)
 
-        if(clanPlayer.isInClan())
-            return Result.failure(MemberNotFound("Player is already in a clan!"))
+        if(member.isFailure)
+            return Result.failure(member.exceptionOrNull()!!)
 
-        TODO("Create clan member and add player to the clan")
+        val cached = membersAsync()
 
+        members.put(cached.plus(member.getOrNull()!!))
+
+        return Result.success(member.getOrNull()!!)
     }
 
     override fun addMember(clanPlayer: ClanPlayer): CompletionStage<Result<ClanMember>> {

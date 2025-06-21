@@ -19,6 +19,8 @@ class EasyClansPlugin : JavaPlugin() {
             ServicePriority.Highest
         )
 
+
+        logger.info("EasyClansPlugin loaded")
     }
 
 

@@ -17,13 +17,14 @@ class Database(
 ) {
 
     companion object {
-        @JvmStatic
+
         lateinit var instance: Database
 
         fun init(instance: Database) {
             this.instance = instance
         }
 
+        @JvmStatic
         fun get(): Database = instance
     }
 
@@ -33,10 +34,10 @@ class Database(
     private lateinit var dataSource: HikariDataSource
 
 
-    fun init(){
+    suspend fun init(){
         // load configuration watever shit
         setupDataSource()
-        clanDao = ClanDaoMysqlImpl(dataSource)
+        clanDao = ClanDaoMysqlImpl(dataSource, plugin.logger)
         clanDao.init()
         Database.init(this)
     }

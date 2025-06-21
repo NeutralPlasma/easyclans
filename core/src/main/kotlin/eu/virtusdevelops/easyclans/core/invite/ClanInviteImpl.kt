@@ -21,15 +21,10 @@ class ClanInviteImpl(
     private val expireDate: Date,
 
     private var isCancelled: Boolean = false,
+
+    private val api: EasyClansAPI,
+    private val database: Database
 ) : ClanInvite {
-
-    private val api by lazy {
-        EasyClansAPI.get()
-    }
-
-    private val database by lazy {
-        Database.get()
-    }
 
     override suspend fun clanAsync(): Clan {
         return api.clanController().getClanAsync(clan)!!
@@ -80,6 +75,7 @@ class ClanInviteImpl(
         // get clan
         // try to add player to clan
         // if success then gud
+
 
 
     }

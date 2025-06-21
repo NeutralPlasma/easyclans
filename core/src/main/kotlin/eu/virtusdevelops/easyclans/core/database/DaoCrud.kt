@@ -4,13 +4,13 @@ import eu.virtusdevelops.easyclans.api.Success
 
 interface DaoCrud <T, ID> {
 
-    fun init(): Result<Success>
+    suspend fun init(): Result<Success>
 
-    fun getById(id: ID): Result<T>
+    suspend fun getById(id: ID): Result<T>
 
-    fun getAll(): Result<List<T>>
+    suspend fun getAll(): Result<List<T>>
 
-    fun save(t: T): Result<Success>
+    suspend fun save(t: T): Result<Success>
 
-    fun deleteById(id: ID): Result<Success>
+    suspend fun deleteById(id: ID): Result<Success>
 }

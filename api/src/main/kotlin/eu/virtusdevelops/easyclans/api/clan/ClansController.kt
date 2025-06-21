@@ -7,12 +7,11 @@ import java.util.concurrent.CompletionStage
 
 interface ClansController {
 
-    fun createClan(clanName: String, tag: String, owner: ClanPlayer): Clan
-
+    suspend fun createClanAsync(clanName: String, tag: String, owner: ClanPlayer): Result<Clan>
+    fun createClan(clanName: String, tag: String, owner: ClanPlayer): CompletionStage<Result<Clan>>
 
     suspend fun getClanAsync(id: UUID): Clan?
     fun getClan(id: UUID): CompletionStage<Clan?>
-
 
     suspend fun deleteClanAsync(clan: Clan): Result<Success>
     fun deleteClan(clan: Clan): CompletionStage<Result<Success>>
