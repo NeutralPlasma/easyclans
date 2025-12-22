@@ -8,6 +8,11 @@ import java.util.concurrent.CompletionStage
 
 interface ClanInvite {
 
+    val sentDate: Date
+    val expireDate: Date
+    val expired: Boolean
+    val cancelled: Boolean
+
     suspend fun clanAsync(): Clan
     fun clan(): CompletionStage<Clan>
 
@@ -16,17 +21,6 @@ interface ClanInvite {
 
     suspend fun targetAsync(): ClanPlayer
     fun target(): CompletionStage<ClanPlayer>
-
-
-    fun sentDate(): Date
-
-    fun expireDate(): Date
-
-    fun isExpired(): Boolean
-
-    fun isCancelled(): Boolean
-
-
 
     suspend fun declineAsync()
     fun decline(): CompletionStage<Void>

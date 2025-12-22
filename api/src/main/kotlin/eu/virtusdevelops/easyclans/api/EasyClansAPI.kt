@@ -6,7 +6,6 @@ import eu.virtusdevelops.easyclans.api.invite.InviteController
 import eu.virtusdevelops.easyclans.api.member.MemberController
 import eu.virtusdevelops.easyclans.api.player.PlayerController
 import eu.virtusdevelops.easyclans.api.request.RequestController
-import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.annotations.ApiStatus
 
 interface EasyClansAPI {
@@ -44,8 +43,6 @@ interface EasyClansAPI {
 
     }
 
-
-    fun plugin(): JavaPlugin
 
     fun clanController(): ClansController
 

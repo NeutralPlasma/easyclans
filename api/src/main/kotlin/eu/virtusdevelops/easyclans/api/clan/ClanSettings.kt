@@ -1,20 +1,15 @@
 package eu.virtusdevelops.easyclans.api.clan
 
 import eu.virtusdevelops.easyclans.api.Success
-import org.bukkit.inventory.ItemStack
+import eu.virtusdevelops.easyclans.api.item.ClanItem
 
 interface ClanSettings {
 
-    fun pvpEnabled(): Boolean
+    val banner : ClanItem
+    val pvp : Boolean
+    val invites : Boolean
+    val requests : Boolean
 
-    fun invitesEnabled(): Boolean
-
-    fun requestsEnabled(): Boolean
-
-    fun banner(): ItemStack
-
-
-    
 
     fun pvp(boolean: Boolean): Result<Success>
 
@@ -22,5 +17,5 @@ interface ClanSettings {
 
     fun toggleRequests(boolean: Boolean): Result<Success>
 
-    fun banner(itemStack: ItemStack): Result<Success>
+    fun banner(itemStack: ClanItem): Result<Success>
 }

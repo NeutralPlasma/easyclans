@@ -9,10 +9,12 @@ import eu.virtusdevelops.easyclans.api.clan.Clan
 import eu.virtusdevelops.easyclans.api.clan.ClanSettings
 import eu.virtusdevelops.easyclans.api.economy.Economy
 import eu.virtusdevelops.easyclans.api.invite.ClanInvite
+import eu.virtusdevelops.easyclans.api.item.ClanItem
 import eu.virtusdevelops.easyclans.api.member.ClanMember
 import eu.virtusdevelops.easyclans.api.member.MemberNotFound
 import eu.virtusdevelops.easyclans.api.player.ClanPlayer
 import eu.virtusdevelops.easyclans.api.request.ClanRequest
+import eu.virtusdevelops.easyclans.core.EasyClansAPIImpl
 import eu.virtusdevelops.easyclans.core.ExpiringCache
 import eu.virtusdevelops.easyclans.core.database.Database
 import kotlinx.coroutines.future.future
@@ -24,11 +26,11 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit
 
 class ClanImpl(
-    private val id: UUID,
-    private var name: String,
-    private var tag: String,
+    override val id: UUID,
+    override var name: String,
+    override var tag: String,
     private var owner: UUID,
-    private var createDate: Date,
+    override var created: Date,
     private var clanSettings: ExpiringCache<ClanSettingsImpl>,
 
     private var members: ExpiringCache<Set<ClanMember>>,
@@ -36,21 +38,11 @@ class ClanImpl(
     private var requests: ExpiringCache<Set<ClanRequest>>,
     private var economies: ExpiringCache<Set<Economy<Any>>>,
 
-    private val api: EasyClansAPI,
+    private val api: EasyClansAPIImpl,
     private val database: Database,
 ) : Clan {
 
-    override fun id(): UUID {
-        return id
-    }
 
-    override fun name(): String {
-        return name
-    }
-
-    override fun tag(): String {
-        return tag
-    }
 
     override suspend fun ownerAsync(): Result<ClanMember> = withContext(api.plugin().asyncDispatcher) {
         val player = api.playerController().getAsync(owner)
@@ -73,7 +65,8 @@ class ClanImpl(
             return cached
         }else{
             val newMembers = withContext(api.plugin().asyncDispatcher) {
-                api.membersController().getClanMembersAsync(this@ClanImpl)
+                // members dao
+                database.memberDao().getClanMembers(this@ClanImpl)
             }
             if(newMembers.isFailure) {
                 api.plugin().logger.severe("Could not retrieve members from database! ${this@ClanImpl}")
@@ -169,9 +162,6 @@ class ClanImpl(
         }
     }
 
-    override fun created(): Date {
-        return createDate
-    }
 
     override suspend fun clanSettingsAsync(): ClanSettings {
         val cached = clanSettings.get()
@@ -179,7 +169,7 @@ class ClanImpl(
             return cached
 
         val status = withContext(api.plugin().asyncDispatcher){
-            database.clanSettingsDao().getById(id())
+            database.clanSettingsDao().getById(id)
         }
         if(status.isFailure) {
             api.plugin().logger.severe("Could not retrieve clan settings from database! ${this@ClanImpl}")
@@ -260,12 +250,12 @@ class ClanImpl(
         return Result.success(Success)
     }
 
-    override suspend fun setBannerAsync(itemStack: ItemStack): Result<Success> {
+    override suspend fun setBannerAsync(itemStack: ClanItem): Result<Success> {
         val cache = clanSettings.get()
         if(cache == null){
             // get new settings
             val status = withContext(api.plugin().asyncDispatcher) {
-                database.clanSettingsDao().getById(this@ClanImpl.id())
+                database.clanSettingsDao().getById(this@ClanImpl.id)
             }
 
             status.onFailure { e ->
@@ -302,16 +292,16 @@ class ClanImpl(
 
 
 
-    override suspend fun getBannerAsync(): Result<ItemStack> {
+    override suspend fun getBannerAsync(): Result<ClanItem> {
         //
         val cache = clanSettings.get()
         if(cache != null){
-            return Result.success(cache.banner())
+            return Result.success(cache.banner)
         }
 
         val newSettings = clanSettingsAsync()
         clanSettings.put(newSettings as ClanSettingsImpl)
-        return Result.success(clanSettings.get()!!.banner())
+        return Result.success(clanSettings.get()!!.banner)
     }
 
 

@@ -17,10 +17,9 @@ class ClanInviteImpl(
     private val clan: UUID,
     private val sender: UUID,
     private val target: UUID,
-    private val sentDate: Date,
-    private val expireDate: Date,
-
-    private var isCancelled: Boolean = false,
+    override val sentDate: Date,
+    override val expireDate: Date,
+    override val cancelled: Boolean = false,
 
     private val api: EasyClansAPI,
     private val database: Database
@@ -56,10 +55,7 @@ class ClanInviteImpl(
         }
     }
 
-    override fun sentDate(): Date = sentDate
-    override fun expireDate(): Date = expireDate
-    override fun isExpired(): Boolean = expireDate.before(Date())
-    override fun isCancelled(): Boolean = isCancelled
+    override val expired: Boolean = expireDate.before(Date())
 
     override suspend fun declineAsync() {
         TODO("Not yet implemented")

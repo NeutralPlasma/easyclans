@@ -10,9 +10,5 @@ interface MemberController {
     fun get(clanPlayer: ClanPlayer): CompletionStage<ClanMember?>
 
 
-    suspend fun getClanMembersAsync(clan: Clan): Result<Set<ClanMember>>
-    fun getClanMembers(clan: Clan): CompletionStage<Set<ClanMember>>
-
-
     suspend fun create(clan: Clan, clanPlayer: ClanPlayer): Result<ClanMember>
 }

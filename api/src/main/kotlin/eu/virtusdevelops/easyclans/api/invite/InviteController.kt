@@ -8,7 +8,6 @@ interface InviteController {
 
     fun invitePlayer(target: ClanPlayer, sender: ClanPlayer, clan: Clan): ClanInvite?
 
-
     suspend fun getInvitesBySenderAsync(sender: ClanPlayer, expired: Boolean): Set<ClanInvite>
     fun getInvitesBySender(sender: ClanPlayer, expired: Boolean): CompletionStage<Set<ClanInvite>>
 

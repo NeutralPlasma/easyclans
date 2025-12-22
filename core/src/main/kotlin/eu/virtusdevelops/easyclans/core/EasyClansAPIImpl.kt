@@ -15,7 +15,7 @@ class EasyClansAPIImpl(private val plugin: JavaPlugin) : EasyClansAPI {
         EasyClansAPI.load(this)
     }
 
-    override fun plugin(): JavaPlugin {
+    fun plugin(): JavaPlugin {
         return plugin
     }
 

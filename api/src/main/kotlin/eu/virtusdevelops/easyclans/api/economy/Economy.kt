@@ -2,7 +2,7 @@ package eu.virtusdevelops.easyclans.api.economy
 
 interface Economy<T> {
 
-    fun name(): String
+    val name: String
 
     fun get(): T
 
